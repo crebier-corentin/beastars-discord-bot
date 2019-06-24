@@ -19,6 +19,8 @@ client.on('message', async msg => {
     //Is message command?
     if (msg.content.startsWith(prefix)) {
 
+        console.log(`Processing command : "${msg.content}" by ${msg.author.username}`);
+
         const response = await responder.respond(parser.parseCommand(msg.content));
 
         msg.channel.send(response);
