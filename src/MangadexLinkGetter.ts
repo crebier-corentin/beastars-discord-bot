@@ -1,5 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
 import Cache from "./Cache";
+import {Manga} from "./types";
 
 interface Chapter {
     id: string;
@@ -25,9 +26,9 @@ export default class MangadexLinkGetter {
         this.cache = new Cache(60 * 60);
     }
 
-    async getPageLink(chapterNo: number): Promise<string> {
+    async getPageLink(chapterNo: number, manga: Manga): Promise<string> {
 
-        const chapters = <Chapter[]>await this.cache.get("chapters", MangadexLinkGetter.getChapterList);
+        const chapters = <Chapter[]>await this.cache.get(manga, MangadexLinkGetter.getChapterList.bind(null, manga));
 
         const chapter = chapters.find((el) => el.chapter == chapterNo);
 
@@ -41,10 +42,8 @@ export default class MangadexLinkGetter {
 
     }
 
-    private static async getChapterList(): Promise<Chapter[]> {
-        const beastarsId = "20523";
-
-        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${beastarsId}`).catch(() => {
+    private static async getChapterList(mangaId: Manga): Promise<Chapter[]> {
+        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => {
             return [];
         });
 

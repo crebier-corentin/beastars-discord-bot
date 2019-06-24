@@ -1,5 +1,5 @@
 import {escapeRegExp} from "./helpers";
-import {Action, ActionType} from "./types";
+import {Action, ActionType, Manga} from "./types";
 
 export default class Parser {
     prefix: string;
@@ -11,7 +11,7 @@ export default class Parser {
         this.prefix = escapeRegExp(prefix);
 
         this.helpRegex = new RegExp(`^${this.prefix}\\s+(help|h)\\s*$`, "gi");
-        this.chapterRegex = new RegExp(`^${this.prefix}\\s+(chapter|c)\\s+([0-9]+)\\s*$`, 'gi');
+        this.chapterRegex = new RegExp(`^(bs|bc)!\\s+([0-9]+)\\s*$`, 'gi');
 
     }
 
@@ -30,7 +30,11 @@ export default class Parser {
 
         //Chapter
         if ((match = this.chapterRegex.exec(command)) != null) {
-            return {type: ActionType.Chapter, chapter: Number(match[2])}
+            return {
+                type: ActionType.Chapter,
+                chapter: Number(match[2]),
+                manga: match[1].toLowerCase() == "bs" ? Manga.Beastars : Manga.BeastComplex
+            }
         }
 
         return {type: ActionType.Invalid};

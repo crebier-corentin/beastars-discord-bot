@@ -6,7 +6,7 @@ class Parser {
     constructor(prefix) {
         this.prefix = helpers_1.escapeRegExp(prefix);
         this.helpRegex = new RegExp(`^${this.prefix}\\s+(help|h)\\s*$`, "gi");
-        this.chapterRegex = new RegExp(`^${this.prefix}\\s+(chapter|c)\\s+([0-9]+)\\s*$`, 'gi');
+        this.chapterRegex = new RegExp(`^(bs|bc)!\\s+([0-9]+)\\s*$`, 'gi');
     }
     parseCommand(command) {
         //Reset last index
@@ -19,7 +19,11 @@ class Parser {
         }
         //Chapter
         if ((match = this.chapterRegex.exec(command)) != null) {
-            return { type: types_1.ActionType.Chapter, chapter: Number(match[2]) };
+            return {
+                type: types_1.ActionType.Chapter,
+                chapter: Number(match[2]),
+                manga: match[1].toLowerCase() == "bs" ? types_1.Manga.Beastars : types_1.Manga.BeastComplex
+            };
         }
         return { type: types_1.ActionType.Invalid };
     }

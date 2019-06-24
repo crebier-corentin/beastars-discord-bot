@@ -14,7 +14,8 @@ class Responder {
             case types_1.ActionType.Help:
                 return this.helpCommand();
             case types_1.ActionType.Chapter:
-                return await this.chapterCommand(action.chapter);
+                const chapterAction = action;
+                return await this.chapterCommand(chapterAction.chapter, chapterAction.manga);
         }
     }
     invalidCommand() {
@@ -26,14 +27,19 @@ class Responder {
 \`${this.prefix} help\` or \`${this.prefix} h\`
 Show this help command
 ${delimiter}
-\`${this.prefix} chapter [chapter]\` or \`${this.prefix} c [chapter]\`
-Send link to chapter Nº[chapter]
+\`bs! [chapter]\`
+Send link to Beastars chapter Nº[chapter]
 
-**Example :** \`${this.prefix} chapter 10\`
+**Example :** \`bs! 10\`
+${delimiter}
+\`bc! [chapter]\`
+Send link to Beast Complex chapter Nº[chapter]
+
+**Example :** \`bc! 2\`
 `;
     }
-    async chapterCommand(chapter) {
-        return await this.mangadex.getPageLink(chapter);
+    async chapterCommand(chapter, manga) {
+        return await this.mangadex.getPageLink(chapter, manga);
     }
 }
 exports.default = Responder;

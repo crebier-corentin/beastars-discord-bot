@@ -1,4 +1,4 @@
-import {Action, ActionType, ChapterAction} from "./types";
+import {Action, ActionType, ChapterAction, Manga} from "./types";
 import MangadexLinkGetter from "./MangadexLinkGetter";
 
 export default class Responder {
@@ -18,7 +18,8 @@ export default class Responder {
             case ActionType.Help:
                 return this.helpCommand();
             case ActionType.Chapter:
-                return await this.chapterCommand((<ChapterAction>action).chapter);
+                const chapterAction = <ChapterAction>action;
+                return await this.chapterCommand(chapterAction.chapter, chapterAction.manga);
         }
     }
 
@@ -34,15 +35,20 @@ export default class Responder {
 \`${this.prefix} help\` or \`${this.prefix} h\`
 Show this help command
 ${delimiter}
-\`${this.prefix} chapter [chapter]\` or \`${this.prefix} c [chapter]\`
-Send link to chapter Nº[chapter]
+\`bs! [chapter]\`
+Send link to Beastars chapter Nº[chapter]
 
-**Example :** \`${this.prefix} chapter 10\`
+**Example :** \`bs! 10\`
+${delimiter}
+\`bc! [chapter]\`
+Send link to Beast Complex chapter Nº[chapter]
+
+**Example :** \`bc! 2\`
 `
     }
 
-    private async chapterCommand(chapter: number): Promise<string> {
-        return await this.mangadex.getPageLink(chapter);
+    private async chapterCommand(chapter: number, manga: Manga): Promise<string> {
+        return await this.mangadex.getPageLink(chapter, manga);
     }
 
 

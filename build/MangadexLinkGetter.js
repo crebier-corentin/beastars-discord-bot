@@ -7,8 +7,8 @@ class MangadexLinkGetter {
         //1H cache
         this.cache = new Cache_1.default(60 * 60);
     }
-    async getPageLink(chapterNo) {
-        const chapters = await this.cache.get("chapters", MangadexLinkGetter.getChapterList);
+    async getPageLink(chapterNo, manga) {
+        const chapters = await this.cache.get(manga, MangadexLinkGetter.getChapterList.bind(null, manga));
         const chapter = chapters.find((el) => el.chapter == chapterNo);
         //Chapter not found
         if (chapter == undefined) {
@@ -17,9 +17,8 @@ class MangadexLinkGetter {
         //Return chapter Link
         return `https://mangadex.org/chapter/${chapter.id}`;
     }
-    static async getChapterList() {
-        const beastarsId = "20523";
-        const result = await axios_1.default.get(`https://mangadex.org/api/manga/${beastarsId}`).catch(() => {
+    static async getChapterList(mangaId) {
+        const result = await axios_1.default.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => {
             return [];
         });
         const chapters = [];

@@ -17,7 +17,7 @@ client.on('ready', () => {
 
 client.on('message', async msg => {
     //Is message command?
-    if (msg.content.startsWith(prefix)) {
+    if (msg.content.startsWith(prefix) || msg.content.startsWith("bs!") || msg.content.startsWith("bc!")) {
 
         console.log(`Processing command : "${msg.content}" by ${msg.author.username}`);
 
