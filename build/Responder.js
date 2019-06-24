@@ -1,35 +1,27 @@
-import {Action, ActionType, ChapterAction} from "./types";
-import MangadexLinkGetter from "./MangadexLinkGetter";
-
-export default class Responder {
-
-    prefix: string;
-    mangadex: MangadexLinkGetter;
-
-    constructor(prefix: string) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("./types");
+const MangadexLinkGetter_1 = require("./MangadexLinkGetter");
+class Responder {
+    constructor(prefix) {
         this.prefix = prefix;
-        this.mangadex = new MangadexLinkGetter();
+        this.mangadex = new MangadexLinkGetter_1.default();
     }
-
-    async respond(action: Action): Promise<string> {
+    async respond(action) {
         switch (action.type) {
-            case ActionType.Invalid:
+            case types_1.ActionType.Invalid:
                 return this.invalidCommand();
-            case ActionType.Help:
+            case types_1.ActionType.Help:
                 return this.helpCommand();
-            case ActionType.Chapter:
-                return await this.chapterCommand((<ChapterAction>action).chapter);
+            case types_1.ActionType.Chapter:
+                return await this.chapterCommand(action.chapter);
         }
     }
-
-    private invalidCommand(): string {
+    invalidCommand() {
         return `Invalid command, to see the list of commands use \`${this.prefix} help\``;
     }
-
-    private helpCommand(): string {
-
+    helpCommand() {
         const delimiter = "=====================================================================";
-
         return `
 \`${this.prefix} help\` or \`${this.prefix} h\`
 Show this help command
@@ -38,12 +30,11 @@ ${delimiter}
 Send link to chapter Nº[chapter]
 
 **Example :** \`${this.prefix} chapter 10\`
-`
+`;
     }
-
-    private async chapterCommand(chapter: number): Promise<string> {
+    async chapterCommand(chapter) {
         return await this.mangadex.getPageLink(chapter);
     }
-
-
 }
+exports.default = Responder;
+//# sourceMappingURL=Responder.js.map

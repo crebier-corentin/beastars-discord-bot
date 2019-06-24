@@ -25,20 +25,19 @@ export default class MangadexLinkGetter {
         this.cache = new Cache(60 * 60);
     }
 
-    async getPageLink(chapterNo: number): string {
+    async getPageLink(chapterNo: number): Promise<string> {
 
         const chapters = <Chapter[]>await this.cache.get("chapters", MangadexLinkGetter.getChapterList);
 
         const chapter = chapters.find((el) => el.chapter == chapterNo);
 
         //Chapter not found
-        if (chapterNo == undefined) {
+        if (chapter == undefined) {
             return `Cannot find chapter Nº ${chapterNo}`;
         }
 
-        //Send chapter Link
-        const chapterBaseLink = "https://mangadex.org/chapter/";
-        return chapterBaseLink + chapter.id;
+        //Return chapter Link
+        return `https://mangadex.org/chapter/${chapter.id}`;
 
     }
 
