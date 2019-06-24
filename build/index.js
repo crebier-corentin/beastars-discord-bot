@@ -19,5 +19,12 @@ client.on('message', async (msg) => {
         msg.channel.send(response);
     }
 });
-client.login(process.env.token);
+client.login(process.env.TOKEN);
+//Keep awake
+if (process.env.HEROKU_KEEP_AWAKE.toLowerCase() == "true") {
+    var http = require("http");
+    setInterval(function () {
+        http.get(process.env.HEROKU_URL);
+    }, 300000);
+}
 //# sourceMappingURL=index.js.map
