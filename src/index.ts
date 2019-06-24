@@ -26,3 +26,11 @@ client.on('message', async msg => {
 });
 
 client.login(process.env.token);
+
+//Keep awake
+if (process.env.HEROKU_KEEP_AWAKE.toLowerCase() == "true") {
+    var http = require("http");
+    setInterval(function () {
+        http.get(process.env.HEROKU_URL);
+    }, 300000);
+}
