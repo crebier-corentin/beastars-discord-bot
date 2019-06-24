@@ -25,7 +25,7 @@ client.on('message', async msg => {
     }
 });
 
-client.login(process.env.token);
+client.login(process.env.TOKEN);
 
 //Keep awake
 if (process.env.HEROKU_KEEP_AWAKE.toLowerCase() == "true") {
