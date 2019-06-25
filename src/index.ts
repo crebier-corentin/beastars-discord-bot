@@ -1,12 +1,13 @@
+import {ChapterBCCommand, ChapterBSCommand, HelpCommand} from "./Commands";
+
 require("dotenv").config();
 import Discord = require('discord.js');
 import Parser from "./Parser";
-import Responder from "./Responder";
-
 
 const prefix = process.env.PREFIX;
-const parser = new Parser(prefix);
-const responder = new Responder(prefix);
+
+const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand];
+const parser = new Parser(prefix, commands);
 
 //Client
 const client = new Discord.Client();
@@ -16,14 +17,17 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
-    //Is message command?
-    if (msg.content.startsWith(prefix) || msg.content.startsWith("bs!") || msg.content.startsWith("bc!")) {
 
-        console.log(`Processing command : "${msg.content}" by ${msg.author.username}`);
+    try {
+        const res = parser.parseCommand(msg.content);
 
-        const response = await responder.respond(parser.parseCommand(msg.content));
+        //Ignore non commands
+        if (!res.success) return;
 
-        msg.channel.send(response);
+        res.command.execute.call(res.command, {prefix, commands}, msg, res.args);
+
+    } catch (e) {
+        console.log(e);
     }
 });
 

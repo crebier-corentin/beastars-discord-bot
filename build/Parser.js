@@ -1,31 +1,42 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const helpers_1 = require("./helpers");
-const types_1 = require("./types");
+const Commands_1 = require("./Commands");
 class Parser {
-    constructor(prefix) {
-        this.prefix = helpers_1.escapeRegExp(prefix);
-        this.helpRegex = new RegExp(`^${this.prefix}\\s+(help|h)\\s*$`, "gi");
-        this.chapterRegex = new RegExp(`^(bs|bc)!\\s+([0-9]+)\\s*$`, 'gi');
+    constructor(prefix, commands) {
+        this.defaultPrefix = helpers_1.escapeRegExp(prefix);
+        this.commands = commands;
+        this.customPrefixes = [];
+        //Add custom customPrefixes
+        for (const command of commands) {
+            if (!command.useDefaultPrefix) {
+                this.customPrefixes.push({ prefix: helpers_1.escapeRegExp(command.name), command });
+            }
+        }
     }
-    parseCommand(command) {
-        //Reset last index
-        this.helpRegex.lastIndex = 0;
-        this.chapterRegex.lastIndex = 0;
-        let match;
-        //Help
-        if (this.helpRegex.test(command)) {
-            return { type: types_1.ActionType.Help };
+    parseCommand(str) {
+        const splitted = str.trim().split(/\s+/);
+        const prefix = splitted[0].toLowerCase();
+        //Default prefix
+        if (prefix == this.defaultPrefix) {
+            //Find command
+            const commandName = splitted[1];
+            for (const command of this.commands) {
+                //Found command
+                if (command.useDefaultPrefix && (commandName == command.name || command.aliases.includes(commandName))) {
+                    return { success: true, command, args: splitted.slice(2) };
+                }
+            }
+            //Invalid command
+            return { success: true, command: Commands_1.InvalidCommand, args: [] };
         }
-        //Chapter
-        if ((match = this.chapterRegex.exec(command)) != null) {
-            return {
-                type: types_1.ActionType.Chapter,
-                chapter: Number(match[2]),
-                manga: match[1].toLowerCase() == "bs" ? types_1.Manga.Beastars : types_1.Manga.BeastComplex
-            };
+        //Custom prefix
+        for (const custom of this.customPrefixes) {
+            if (prefix == custom.prefix) {
+                return { success: true, command: custom.command, args: splitted.slice(1) };
+            }
         }
-        return { type: types_1.ActionType.Invalid };
+        return { success: false };
     }
 }
 exports.default = Parser;

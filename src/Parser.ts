@@ -1,43 +1,56 @@
 import {escapeRegExp} from "./helpers";
-import {Action, ActionType, Manga} from "./types";
+import {Command, InvalidCommand} from "./Commands";
 
 export default class Parser {
-    prefix: string;
+    defaultPrefix: string;
+    customPrefixes: { prefix: string, command: Command }[];
 
-    helpRegex: RegExp;
-    chapterRegex: RegExp;
+    commands: Command[];
 
-    constructor(prefix: string) {
-        this.prefix = escapeRegExp(prefix);
+    constructor(prefix: string, commands: Command[]) {
+        this.defaultPrefix = escapeRegExp(prefix);
+        this.commands = commands;
 
-        this.helpRegex = new RegExp(`^${this.prefix}\\s+(help|h)\\s*$`, "gi");
-        this.chapterRegex = new RegExp(`^(bs|bc)!\\s+([0-9]+)\\s*$`, 'gi');
-
+        this.customPrefixes = [];
+        //Add custom customPrefixes
+        for (const command of commands) {
+            if (!command.useDefaultPrefix) {
+                this.customPrefixes.push({prefix: escapeRegExp(command.name), command});
+            }
+        }
     }
 
-    parseCommand(command: string): Action {
+    parseCommand(str: string): { success: boolean, command?: Command, args?: string[] } {
+        const splitted = str.trim().split(/\s+/);
 
-        //Reset last index
-        this.helpRegex.lastIndex = 0;
-        this.chapterRegex.lastIndex = 0;
+        const prefix = splitted[0].toLowerCase();
 
-        let match: RegExpExecArray;
+        //Default prefix
+        if (prefix == this.defaultPrefix) {
 
-        //Help
-        if (this.helpRegex.test(command)) {
-            return {type: ActionType.Help};
+            //Find command
+            const commandName = splitted[1];
+            for (const command of this.commands) {
+                //Found command
+                if (command.useDefaultPrefix && (commandName == command.name || command.aliases.includes(commandName))) {
+                    return {success: true, command, args: splitted.slice(2)};
+                }
+            }
+
+            //Invalid command
+            return {success: true, command: InvalidCommand, args: []};
+
         }
-
-        //Chapter
-        if ((match = this.chapterRegex.exec(command)) != null) {
-            return {
-                type: ActionType.Chapter,
-                chapter: Number(match[2]),
-                manga: match[1].toLowerCase() == "bs" ? Manga.Beastars : Manga.BeastComplex
+        //Custom prefix
+        for (const custom of this.customPrefixes) {
+            if (prefix == custom.prefix) {
+                return {success: true, command: custom.command, args: splitted.slice(1)};
             }
         }
 
-        return {type: ActionType.Invalid};
+        return {success: false};
+
+
     }
 
 }
