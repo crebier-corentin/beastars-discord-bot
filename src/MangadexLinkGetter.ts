@@ -18,6 +18,13 @@ interface MangadexChapters {
     };
 }
 
+interface ChapterPages {
+    id: string | number;
+    hash: string;
+    server: string;
+    page_array: string[];
+}
+
 export default class MangadexLinkGetter {
     private cache: Cache;
 
@@ -26,13 +33,24 @@ export default class MangadexLinkGetter {
         this.cache = new Cache(60 * 60);
     }
 
-    async getPageLink(chapterNo: number, manga: Manga): Promise<string> {
+    async getChapterLink(chapterNo: number, manga: Manga): Promise<string> {
 
         //Beast Complex 7
         if (manga == Manga.BeastComplex && chapterNo == 7) {
             return "https://www.dropbox.com/sh/2dfww0ylocfqpzn/AADJeQCEcb9YfyX5DQKZ1wY_a/Beast%20Complex%207?dl=0&subfolder_nav_tracking=1";
         }
 
+        const chapter = await this.getChapterWithRetry(chapterNo, manga);
+
+        if (chapter == null) {
+            return `Cannot find chapter Nº${chapterNo}`;
+        }
+
+        return `https://mangadex.org/chapter/${chapter.id}`;
+
+    }
+
+    private async getChapterWithRetry(chapterNo: number, manga: Manga): Promise<Chapter | null> {
         let retry = true;
 
         while (true) {
@@ -48,16 +66,15 @@ export default class MangadexLinkGetter {
                 }
                 //Return error message
                 else {
-                    return `Cannot find chapter Nº${chapterNo}`;
+                    return null;
                 }
             }
             //Chapter found
             else {
-                return `https://mangadex.org/chapter/${chapter.id}`;
+                return chapter;
             }
 
         }
-
     }
 
     private async getChapter(chapterNo: number, manga: Manga): Promise<Chapter | null> {
@@ -94,4 +111,59 @@ export default class MangadexLinkGetter {
 
         return chapters;
     }
+
+    async getChapterPageLink(chapterNo: number, pageNo: number, manga: Manga): Promise<string | { site: string, image: string; }> {
+
+        //Beast Complex 7
+        if (manga == Manga.BeastComplex && chapterNo == 7) {
+            return "Cannot post pages from Beast Complex 7\nhttps://www.dropbox.com/sh/2dfww0ylocfqpzn/AADJeQCEcb9YfyX5DQKZ1wY_a/Beast%20Complex%207?dl=0&subfolder_nav_tracking=1";
+        }
+
+        //Chapter
+        const chapter = await this.getChapterWithRetry(chapterNo, manga);
+
+        if (chapter == null) {
+            return `Cannot find chapter Nº${chapterNo}`;
+        }
+
+        //Chapter pages
+        const pages = <ChapterPages>await this.cache.get(`${chapter.id}-pages`, MangadexLinkGetter.getChapterPages.bind(null, chapter));
+
+        if (pages == null) {
+            return `Cannot find chapter Nº${chapterNo}`;
+        }
+
+        //Filename
+        const pageFilename = pages.page_array[pageNo - 1];
+
+        if (pageFilename == null) {
+            return `Cannot find page Nº${pageNo} in chapter Nº${chapterNo}`;
+        }
+
+        //Return links
+        return {
+            site: `https://mangadex.org/chapter/${chapter.id}/${pageNo}`,
+            image: `${pages.server}${pages.hash}/${pageFilename}`
+        };
+
+
+    }
+
+    private static async getChapterPages(chapter: Chapter): Promise<ChapterPages | null> {
+
+        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/chapter/${chapter.id}`).catch(() => {
+            return null;
+        });
+
+        if (result == null) return null;
+
+        return {
+            id: result.data.id.toString(),
+            hash: result.data.hash,
+            server: result.data.server,
+            page_array: result.data.page_array
+        };
+
+    }
+
 }

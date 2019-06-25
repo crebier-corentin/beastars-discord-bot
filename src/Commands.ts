@@ -64,43 +64,59 @@ export const HelpCommand: Command = {
 };
 
 const mangadex = new MangadexLinkGetter();
+const chapterCommandExecute = async function (infos, msg, args, manga: Manga) {
+
+    const chapter = Number(args[0]);
+
+    //Missing chapter number
+    if (isNaN(chapter)) {
+        msg.channel.send(`Missing chapter\n\`${this.usage}\``);
+        return;
+    }
+
+    //Is page
+    if (args.length >= 2) {
+
+        const page = Number(args[1]);
+
+        if (isNaN(page)) {
+            msg.channel.send(`Invalid page (must be a number)\n\`${this.usage}\``);
+        }
+
+        const response = await mangadex.getChapterPageLink(chapter, page, manga);
+
+        //Error message
+        if (typeof response == "string") msg.channel.send(response);
+        //Site link + Image link
+        else msg.channel.send(`<${response.site}>`, {file: response.image});
+
+        msg.channel.send();
+    } else {
+
+        //Chapter link
+        msg.channel.send(await mangadex.getChapterLink(chapter, manga));
+    }
+};
+
 
 export const ChapterBSCommand: Command = {
     name: "bs!",
-    desc: "Send link to Beastars chapter Nº[chapter]",
-    usage: "bs! [chapter]",
+    desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter]",
+    usage: "bs! [chapter] (page)",
     useDefaultPrefix: false,
     execute: async function (infos, msg, args) {
-
-        const chapter = Number(args[0]);
-
-        //Missing chapter number
-        if (isNaN(chapter)) {
-            msg.channel.send(`Missing chapter\n\`${this.usage}\``);
-            return;
-        }
-
-        msg.channel.send(await mangadex.getPageLink(chapter, Manga.Beastars));
+        chapterCommandExecute.call(this, infos, msg, args, Manga.Beastars);
     }
+
 
 };
 
 export const ChapterBCCommand: Command = {
     name: "bc!",
-    desc: "Send link to Beast Complex chapter Nº[chapter]",
-    usage: "bc! [chapter]",
+    desc: "Send link to Beast Complex chapter Nº[chapter] or post page Nº(page) from chapter [chapter]",
+    usage: "bc! [chapter] (page)",
     useDefaultPrefix: false,
     execute: async function (infos, msg, args) {
-
-        const chapter = Number(args[0]);
-
-        //Missing chapter number
-        if (isNaN(chapter)) {
-            msg.channel.send(`Missing chapter\n\`${this.usage}\``);
-            return;
-        }
-
-        msg.channel.send(await mangadex.getPageLink(chapter, Manga.BeastComplex));
+        chapterCommandExecute.call(this, infos, msg, args, Manga.BeastComplex);
     }
-
 };
