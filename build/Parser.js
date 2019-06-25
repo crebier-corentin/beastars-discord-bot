@@ -23,7 +23,7 @@ class Parser {
             const commandName = splitted[1];
             for (const command of this.commands) {
                 //Found command
-                if (command.useDefaultPrefix && (commandName == command.name || command.aliases.includes(commandName))) {
+                if (command.useDefaultPrefix && (commandName === command.name || command.aliases.includes(commandName))) {
                     return { success: true, command, args: splitted.slice(2) };
                 }
             }
@@ -32,7 +32,7 @@ class Parser {
         }
         //Custom prefix
         for (const custom of this.customPrefixes) {
-            if (prefix == custom.prefix) {
+            if (prefix === custom.prefix) {
                 return { success: true, command: custom.command, args: splitted.slice(1) };
             }
         }
