@@ -19,7 +19,7 @@ interface MangadexChapters {
 }
 
 export default class MangadexLinkGetter {
-    cache: Cache;
+    private cache: Cache;
 
     constructor() {
         //1H cache
@@ -28,18 +28,45 @@ export default class MangadexLinkGetter {
 
     async getPageLink(chapterNo: number, manga: Manga): Promise<string> {
 
+        //Beast Complex 7
+        if (manga == Manga.BeastComplex && chapterNo == 7) {
+            return "https://www.dropbox.com/sh/2dfww0ylocfqpzn/AADJeQCEcb9YfyX5DQKZ1wY_a/Beast%20Complex%207?dl=0&subfolder_nav_tracking=1";
+        }
+
+        let retry = true;
+
+        while (true) {
+            const chapter = await this.getChapter(chapterNo, manga);
+
+            //Chapter not found
+            if (chapter == null) {
+
+                //Clear cache and retry
+                if (retry) {
+                    this.cache.del(manga);
+                    retry = false;
+                }
+                //Return error message
+                else {
+                    return `Cannot find chapter Nº${chapterNo}`;
+                }
+            }
+            //Chapter found
+            else {
+                return `https://mangadex.org/chapter/${chapter.id}`;
+            }
+
+        }
+
+    }
+
+    private async getChapter(chapterNo: number, manga: Manga): Promise<Chapter | null> {
+
         const chapters = <Chapter[]>await this.cache.get(manga, MangadexLinkGetter.getChapterList.bind(null, manga));
 
         const chapter = chapters.find((el) => el.chapter == chapterNo);
 
-        //Chapter not found
-        if (chapter == undefined) {
-            return `Cannot find chapter Nº ${chapterNo}`;
-        }
-
-        //Return chapter Link
-        return `https://mangadex.org/chapter/${chapter.id}`;
-
+        return chapter == undefined ? null : chapter;
     }
 
     private static async getChapterList(mangaId: Manga): Promise<Chapter[]> {
