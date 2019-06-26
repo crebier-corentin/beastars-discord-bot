@@ -1,9 +1,12 @@
+import {Context} from "./Context";
+
 require("dotenv").config();
 import Discord = require('discord.js');
 import {executeCommand} from "./Execute";
 
 //Client
 const client = new Discord.Client();
+Context.client = client;
 
 client.on('ready', () => {
     console.log(`Bot is ready`);

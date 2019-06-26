@@ -1,7 +1,8 @@
-import {Message} from 'discord.js';
+import {Client, Message, RichEmbed} from 'discord.js';
 import {CommandError, Manga} from "./types";
 import MangadexLinkGetter from "./MangadexLinkGetter";
 import {Wikia} from "./Wikia";
+import {Context} from "./Context";
 
 export interface Command {
     name: string;
@@ -9,7 +10,7 @@ export interface Command {
     usage: string;
     example?: string;
     aliases?: string[];
-    execute: (infos: { prefix: string, commands: Command[] }, msg: Message, args: string[]) => void | Promise<void>;
+    execute: (msg: Message, args: string[]) => void | Promise<void>;
 
     useDefaultPrefix: boolean;
     customPrefix?: string;
@@ -21,8 +22,8 @@ export const InvalidCommand: Command = {
     usage: "",
     aliases: ["h"],
     useDefaultPrefix: true,
-    execute: function (infos) {
-        throw new CommandError(`Invalid command, to see the list of commands use \`${infos.prefix} help\``);
+    execute: function () {
+        throw new CommandError(`Invalid command, to see the list of commands use \`${Context.prefix} help\``);
     }
 };
 
@@ -32,17 +33,17 @@ export const HelpCommand: Command = {
     usage: "help",
     aliases: ["h"],
     useDefaultPrefix: true,
-    execute: function (infos, msg) {
+    execute: function (msg) {
 
         let helpMessage = "";
 
-        for (const command of infos.commands) {
+        for (const command of Context.commands) {
 
             helpMessage += "`";
 
             //Add default prefix
             if (command.useDefaultPrefix) {
-                helpMessage += `${infos.prefix} `;
+                helpMessage += `${Context.prefix} `;
             }
 
             helpMessage += `${command.usage}\``;
@@ -59,13 +60,41 @@ export const HelpCommand: Command = {
             helpMessage += "\n=====================================================================\n\n";
         }
 
+        const embed = new RichEmbed()
+            .setTitle("This is your title, it can hold 256 characters")
+            .setAuthor("Author Name", "https://i.imgur.com/lm8s41J.png")
+            /*
+             * Alternatively, use "#00AE86", [0, 174, 134] or an integer number.
+             */
+            .setColor(0x00AE86)
+            .setDescription("This is the main body of text, it can hold 2048 characters.")
+            .setFooter("This is the footer text, it can hold 2048 characters", "http://i.imgur.com/w1vhFSR.png")
+            .setImage("http://i.imgur.com/yVpymuV.png")
+            .setThumbnail("http://i.imgur.com/p2qNFag.png")
+            /*
+             * Takes a Date object, defaults to current date.
+             */
+            .setTimestamp()
+            .setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
+            .addField("This is a field title, it can hold 256 characters",
+                "This is a field value, it can hold 1024 characters.")
+            /*
+             * Inline fields may not display as inline if the thumbnail and/or image is too big.
+             */
+            .addField("Inline Field", "They can also be inline.", true)
+            /*
+             * Blank field, useful to create some space.
+             */
+            .addBlankField(true)
+            .addField("Inline Field 3", "You can have a maximum of 25 fields.", true);
+
         msg.channel.send(helpMessage);
 
     }
 };
 
 const mangadex = new MangadexLinkGetter();
-const chapterCommandExecute = async function (infos, msg, args, manga: Manga) {
+const chapterCommandExecute = async function (msg, args, manga: Manga) {
 
     const chapter = Number(args[0]);
 
@@ -107,8 +136,8 @@ export const ChapterBSCommand: Command = {
     desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter]",
     usage: "bs! [chapter] (page)",
     useDefaultPrefix: false,
-    execute: async function (infos, msg, args) {
-        await chapterCommandExecute.call(this, infos, msg, args, Manga.Beastars);
+    execute: async function (msg, args) {
+        await chapterCommandExecute.call(this, msg, args, Manga.Beastars);
     }
 
 
@@ -119,8 +148,8 @@ export const ChapterBCCommand: Command = {
     desc: "Send link to Beast Complex chapter Nº[chapter] or post page Nº(page) from chapter [chapter]",
     usage: "bc! [chapter] (page)",
     useDefaultPrefix: false,
-    execute: async function (infos, msg, args) {
-        await chapterCommandExecute.call(this, infos, msg, args, Manga.BeastComplex);
+    execute: async function (msg, args) {
+        await chapterCommandExecute.call(this, msg, args, Manga.BeastComplex);
     }
 };
 
@@ -130,7 +159,7 @@ export const WikiCommand: Command = {
     usage: "wiki [query]",
     aliases: ["w"],
     useDefaultPrefix: true,
-    execute: async function (infos, msg, args) {
+    execute: async function (msg, args) {
 
         //Missing query
         if (args.length == 0) {

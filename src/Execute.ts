@@ -2,11 +2,15 @@ import {Message, RichEmbed} from "discord.js";
 import {ChapterBCCommand, ChapterBSCommand, HelpCommand, WikiCommand} from "./Commands";
 import Parser from "./Parser";
 import {CommandError} from "./types";
+import {Context} from "./Context";
 
 const prefix = process.env.PREFIX;
 
 const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand];
 const parser = new Parser(prefix, commands);
+
+Context.prefix = prefix;
+Context.commands = commands;
 
 export function executeCommand(msg: Message) {
 
@@ -27,7 +31,11 @@ export function executeCommand(msg: Message) {
         //Ignore non commands
         if (!res.success) return;
 
-        res.command.execute.call(res.command, {prefix, commands}, msg, res.args).catch(exceptionHandler);
+        const promise = res.command.execute.call(res.command, msg, res.args);
+
+        if (promise instanceof Promise) {
+            promise.catch(exceptionHandler);
+        }
 
     }
     catch (e) {
