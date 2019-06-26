@@ -1,10 +1,10 @@
 import {Message} from "discord.js";
-import {ChapterBCCommand, ChapterBSCommand, HelpCommand} from "./Commands";
+import {ChapterBCCommand, ChapterBSCommand, HelpCommand, WikiCommand} from "./Commands";
 import Parser from "./Parser";
 
 const prefix = process.env.PREFIX;
 
-const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand];
+const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand];
 const parser = new Parser(prefix, commands);
 
 export function executeCommand(msg: Message) {

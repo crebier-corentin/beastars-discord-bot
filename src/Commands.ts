@@ -1,6 +1,7 @@
 import {Message} from 'discord.js';
 import {Manga} from "./types";
 import MangadexLinkGetter from "./MangadexLinkGetter";
+import {Wikia} from "./Wikia";
 
 export interface Command {
     name: string;
@@ -70,7 +71,7 @@ const chapterCommandExecute = async function (infos, msg, args, manga: Manga) {
 
     //Missing chapter number
     if (isNaN(chapter)) {
-        msg.channel.send(`Missing chapter\n\`${this.usage}\``);
+        msg.channel.send(`Missing [chapter]\n\`${this.usage}\``);
         return;
     }
 
@@ -80,7 +81,7 @@ const chapterCommandExecute = async function (infos, msg, args, manga: Manga) {
         const page = Number(args[1]);
 
         if (isNaN(page)) {
-            msg.channel.send(`Invalid page (must be a number)\n\`${this.usage}\``);
+            msg.channel.send(`Invalid [page] (must be a number)\n\`${this.usage}\``);
         }
 
         const response = await mangadex.getChapterPageLink(chapter, page, manga);
@@ -105,7 +106,7 @@ export const ChapterBSCommand: Command = {
     usage: "bs! [chapter] (page)",
     useDefaultPrefix: false,
     execute: async function (infos, msg, args) {
-        chapterCommandExecute.call(this, infos, msg, args, Manga.Beastars);
+        await chapterCommandExecute.call(this, infos, msg, args, Manga.Beastars);
     }
 
 
@@ -117,6 +118,37 @@ export const ChapterBCCommand: Command = {
     usage: "bc! [chapter] (page)",
     useDefaultPrefix: false,
     execute: async function (infos, msg, args) {
-        chapterCommandExecute.call(this, infos, msg, args, Manga.BeastComplex);
+        await chapterCommandExecute.call(this, infos, msg, args, Manga.BeastComplex);
+    }
+};
+
+export const WikiCommand: Command = {
+    name: "wiki",
+    desc: "Search on the beastars wiki",
+    usage: "wiki [query]",
+    aliases: ["w"],
+    useDefaultPrefix: true,
+    execute: async function (infos, msg, args) {
+
+        //Missing query
+        if (args.length == 0) {
+
+            msg.channel.send(`Missing [query]\n\`${this.usage}\``);
+            return;
+
+        }
+
+        const query = args.join(" ");
+
+
+        const result = await Wikia.searchFirstLink(query);
+        //Cannot find article
+        if (result == null) {
+            msg.channel.send(`Cannot find article with search query "${query}"`);
+            return;
+        }
+
+        msg.channel.send(result);
+
     }
 };
