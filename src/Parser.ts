@@ -29,7 +29,7 @@ export default class Parser {
         if (prefix == this.defaultPrefix) {
 
             //Find command
-            const commandName = splitted[1];
+            const commandName = splitted[1].toLowerCase();
             for (const command of this.commands) {
                 //Found command
                 if (command.useDefaultPrefix && (commandName === command.name || command.aliases.includes(commandName))) {
