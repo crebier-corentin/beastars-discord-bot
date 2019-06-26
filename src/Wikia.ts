@@ -1,4 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
+import {CommandError} from "./types";
 
 interface WikiaSearchResult {
     quality: number;
@@ -10,28 +11,23 @@ interface WikiaSearchResult {
 }
 
 export class Wikia {
-    static async searchFirstLink(search: string): Promise<string | null> {
+    static async searchFirstLink(query: string): Promise<string> {
 
-        const articles = await this.searchArticles(search);
-
-        //No article found
-        if (articles.length === 0) return null;
+        const articles = await this.searchArticles(query);
 
         return articles[0].url;
 
     }
 
-    private static async searchArticles(search: string): Promise<WikiaSearchResult[]> {
+    private static async searchArticles(query: string): Promise<WikiaSearchResult[]> {
 
-        const url = `https://beastars-eng.fandom.com/api/v1/Search/List?query=${encodeURIComponent(search)}`;
+        const url = `https://beastars-eng.fandom.com/api/v1/Search/List?query=${encodeURIComponent(query)}`;
 
         const result = <AxiosResponse>await axios.get(url).catch(() => {
-            return null;
+            throw new CommandError(`Cannot find article with search query \`${query}\``);
         });
 
         //Cannot find article
-        if (result == null) return [];
-
         return result.data.items;
 
     }

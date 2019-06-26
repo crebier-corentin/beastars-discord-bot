@@ -1,6 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
 import Cache from "./Cache";
-import {Manga} from "./types";
+import {CommandError, Manga} from "./types";
 
 interface Chapter {
     id: string;
@@ -42,48 +42,44 @@ export default class MangadexLinkGetter {
 
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
 
-        if (chapter == null) {
-            return `Cannot find chapter Nº${chapterNo}`;
-        }
-
         return `https://mangadex.org/chapter/${chapter.id}`;
 
     }
 
-    private async getChapterWithRetry(chapterNo: number, manga: Manga): Promise<Chapter | null> {
+    private async getChapterWithRetry(chapterNo: number, manga: Manga): Promise<Chapter> {
         let retry = true;
 
         while (true) {
-            const chapter = await this.getChapter(chapterNo, manga);
 
-            //Chapter not found
-            if (chapter == null) {
-
-                //Clear cache and retry
+            try {
+                return await this.getChapter(chapterNo, manga);
+            }
+            catch (e) {
+                //Retry
                 if (retry) {
                     this.cache.del(manga);
                     retry = false;
                 }
-                //Return error message
+                //Already retried throw error
                 else {
-                    return null;
+                    throw e;
                 }
-            }
-            //Chapter found
-            else {
-                return chapter;
             }
 
         }
     }
 
-    private async getChapter(chapterNo: number, manga: Manga): Promise<Chapter | null> {
+    private async getChapter(chapterNo: number, manga: Manga): Promise<Chapter> {
 
         const chapters = <Chapter[]>await this.cache.get(manga, MangadexLinkGetter.getChapterList.bind(null, manga));
 
         const chapter = chapters.find((el) => el.chapter == chapterNo);
 
-        return chapter == undefined ? null : chapter;
+        if (chapter == undefined) {
+            throw new CommandError(`Cannot find chapter Nº${chapterNo}`);
+        }
+
+        return chapter;
     }
 
     private static async getChapterList(mangaId: Manga): Promise<Chapter[]> {
@@ -122,22 +118,14 @@ export default class MangadexLinkGetter {
         //Chapter
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
 
-        if (chapter == null) {
-            return `Cannot find chapter Nº${chapterNo}`;
-        }
-
         //Chapter pages
         const pages = <ChapterPages>await this.cache.get(`${chapter.id}-pages`, MangadexLinkGetter.getChapterPages.bind(null, chapter));
-
-        if (pages == null) {
-            return `Cannot find chapter Nº${chapterNo}`;
-        }
 
         //Filename
         const pageFilename = pages.page_array[pageNo - 1];
 
         if (pageFilename == null) {
-            return `Cannot find page Nº${pageNo} in chapter Nº${chapterNo}`;
+            throw new CommandError(`Cannot find page Nº${pageNo} in chapter Nº${chapterNo}`);
         }
 
         //Return links
@@ -146,16 +134,13 @@ export default class MangadexLinkGetter {
             image: `${pages.server}${pages.hash}/${pageFilename}`
         };
 
-
     }
 
-    private static async getChapterPages(chapter: Chapter): Promise<ChapterPages | null> {
+    private static async getChapterPages(chapter: Chapter): Promise<ChapterPages> {
 
         const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/chapter/${chapter.id}`).catch(() => {
-            return null;
+            throw new CommandError(`Cannot find pages for chapter Nº${chapter.chapter}`);
         });
-
-        if (result == null) return null;
 
         return {
             id: result.data.id.toString(),

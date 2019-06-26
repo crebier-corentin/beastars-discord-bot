@@ -14,37 +14,34 @@ class MangadexLinkGetter {
             return "https://www.dropbox.com/sh/2dfww0ylocfqpzn/AADJeQCEcb9YfyX5DQKZ1wY_a/Beast%20Complex%207?dl=0&subfolder_nav_tracking=1";
         }
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
-        if (chapter == null) {
-            return `Cannot find chapter Nº${chapterNo}`;
-        }
         return `https://mangadex.org/chapter/${chapter.id}`;
     }
     async getChapterWithRetry(chapterNo, manga) {
         let retry = true;
         while (true) {
-            const chapter = await this.getChapter(chapterNo, manga);
-            //Chapter not found
-            if (chapter == null) {
-                //Clear cache and retry
+            try {
+                return await this.getChapter(chapterNo, manga);
+            }
+            catch (e) {
+                //Retry
                 if (retry) {
                     this.cache.del(manga);
                     retry = false;
                 }
-                //Return error message
+                //Already retried throw error
                 else {
-                    return null;
+                    throw e;
                 }
-            }
-            //Chapter found
-            else {
-                return chapter;
             }
         }
     }
     async getChapter(chapterNo, manga) {
         const chapters = await this.cache.get(manga, MangadexLinkGetter.getChapterList.bind(null, manga));
         const chapter = chapters.find((el) => el.chapter == chapterNo);
-        return chapter == undefined ? null : chapter;
+        if (chapter == undefined) {
+            throw new types_1.CommandError(`Cannot find chapter Nº${chapterNo}`);
+        }
+        return chapter;
     }
     static async getChapterList(mangaId) {
         const result = await axios_1.default.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => {
@@ -74,18 +71,12 @@ class MangadexLinkGetter {
         }
         //Chapter
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
-        if (chapter == null) {
-            return `Cannot find chapter Nº${chapterNo}`;
-        }
         //Chapter pages
         const pages = await this.cache.get(`${chapter.id}-pages`, MangadexLinkGetter.getChapterPages.bind(null, chapter));
-        if (pages == null) {
-            return `Cannot find chapter Nº${chapterNo}`;
-        }
         //Filename
         const pageFilename = pages.page_array[pageNo - 1];
         if (pageFilename == null) {
-            return `Cannot find page Nº${pageNo} in chapter Nº${chapterNo}`;
+            throw new types_1.CommandError(`Cannot find page Nº${pageNo} in chapter Nº${chapterNo}`);
         }
         //Return links
         return {
@@ -95,10 +86,8 @@ class MangadexLinkGetter {
     }
     static async getChapterPages(chapter) {
         const result = await axios_1.default.get(`https://mangadex.org/api/chapter/${chapter.id}`).catch(() => {
-            return null;
+            throw new types_1.CommandError(`Cannot find pages for chapter Nº${chapter.chapter}`);
         });
-        if (result == null)
-            return null;
         return {
             id: result.data.id.toString(),
             hash: result.data.hash,

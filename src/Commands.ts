@@ -1,5 +1,5 @@
 import {Message} from 'discord.js';
-import {Manga} from "./types";
+import {CommandError, Manga} from "./types";
 import MangadexLinkGetter from "./MangadexLinkGetter";
 import {Wikia} from "./Wikia";
 
@@ -21,8 +21,8 @@ export const InvalidCommand: Command = {
     usage: "",
     aliases: ["h"],
     useDefaultPrefix: true,
-    execute: function (infos, msg) {
-        msg.channel.send(`Invalid command, to see the list of commands use \`${infos.prefix} help\``);
+    execute: function (infos) {
+        throw new CommandError(`Invalid command, to see the list of commands use \`${infos.prefix} help\``);
     }
 };
 
@@ -71,8 +71,7 @@ const chapterCommandExecute = async function (infos, msg, args, manga: Manga) {
 
     //Missing chapter number
     if (isNaN(chapter)) {
-        msg.channel.send(`Missing [chapter]\n\`${this.usage}\``);
-        return;
+        throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
     }
 
     //Is page
@@ -81,19 +80,22 @@ const chapterCommandExecute = async function (infos, msg, args, manga: Manga) {
         const page = Number(args[1]);
 
         if (isNaN(page)) {
-            msg.channel.send(`Invalid [page] (must be a number)\n\`${this.usage}\``);
+            throw new CommandError(`Invalid [page] (must be a number)\n\`${this.usage}\``);
         }
 
         const response = await mangadex.getChapterPageLink(chapter, page, manga);
 
         //Error message
-        if (typeof response == "string") msg.channel.send(response);
+        if (typeof response == "string") {
+            throw new CommandError(response);
+        }
         //Site link + Image link
-        else msg.channel.send(`<${response.site}>`, {file: response.image});
+        else {
+            msg.channel.send(`<${response.site}>`, {file: response.image});
+        }
 
-        msg.channel.send();
-    } else {
-
+    }
+    else {
         //Chapter link
         msg.channel.send(await mangadex.getChapterLink(chapter, manga));
     }
@@ -133,22 +135,12 @@ export const WikiCommand: Command = {
         //Missing query
         if (args.length == 0) {
 
-            msg.channel.send(`Missing [query]\n\`${this.usage}\``);
-            return;
-
+            throw new CommandError(`Missing [query]\n\`${this.usage}\``);
         }
 
         const query = args.join(" ");
 
-
-        const result = await Wikia.searchFirstLink(query);
-        //Cannot find article
-        if (result == null) {
-            msg.channel.send(`Cannot find article with search query "${query}"`);
-            return;
-        }
-
-        msg.channel.send(result);
+        msg.channel.send(await Wikia.searchFirstLink(query));
 
     }
 };

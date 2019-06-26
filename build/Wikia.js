@@ -1,22 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
+const types_1 = require("./types");
 class Wikia {
-    static async searchFirstLink(search) {
-        const articles = await this.searchArticles(search);
-        //No article found
-        if (articles.length === 0)
-            return null;
+    static async searchFirstLink(query) {
+        const articles = await this.searchArticles(query);
         return articles[0].url;
     }
-    static async searchArticles(search) {
-        const url = `https://beastars-eng.fandom.com/api/v1/Search/List?query=${encodeURIComponent(search)}`;
+    static async searchArticles(query) {
+        const url = `https://beastars-eng.fandom.com/api/v1/Search/List?query=${encodeURIComponent(query)}`;
         const result = await axios_1.default.get(url).catch(() => {
-            return null;
+            throw new types_1.CommandError(`Cannot find article with search query \`${query}\``);
         });
         //Cannot find article
-        if (result == null)
-            return [];
         return result.data.items;
     }
 }

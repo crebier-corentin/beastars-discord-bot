@@ -9,8 +9,8 @@ exports.InvalidCommand = {
     usage: "",
     aliases: ["h"],
     useDefaultPrefix: true,
-    execute: function (infos, msg) {
-        msg.channel.send(`Invalid command, to see the list of commands use \`${infos.prefix} help\``);
+    execute: function (infos) {
+        throw new types_1.CommandError(`Invalid command, to see the list of commands use \`${infos.prefix} help\``);
     }
 };
 exports.HelpCommand = {
@@ -45,23 +45,23 @@ const chapterCommandExecute = async function (infos, msg, args, manga) {
     const chapter = Number(args[0]);
     //Missing chapter number
     if (isNaN(chapter)) {
-        msg.channel.send(`Missing [chapter]\n\`${this.usage}\``);
-        return;
+        throw new types_1.CommandError(`Missing [chapter]\n\`${this.usage}\``);
     }
     //Is page
     if (args.length >= 2) {
         const page = Number(args[1]);
         if (isNaN(page)) {
-            msg.channel.send(`Invalid [page] (must be a number)\n\`${this.usage}\``);
+            throw new types_1.CommandError(`Invalid [page] (must be a number)\n\`${this.usage}\``);
         }
         const response = await mangadex.getChapterPageLink(chapter, page, manga);
         //Error message
-        if (typeof response == "string")
-            msg.channel.send(response);
+        if (typeof response == "string") {
+            throw new types_1.CommandError(response);
+        }
         //Site link + Image link
-        else
+        else {
             msg.channel.send(`<${response.site}>`, { file: response.image });
-        msg.channel.send();
+        }
     }
     else {
         //Chapter link
@@ -95,17 +95,10 @@ exports.WikiCommand = {
     execute: async function (infos, msg, args) {
         //Missing query
         if (args.length == 0) {
-            msg.channel.send(`Missing [query]\n\`${this.usage}\``);
-            return;
+            throw new types_1.CommandError(`Missing [query]\n\`${this.usage}\``);
         }
         const query = args.join(" ");
-        const result = await Wikia_1.Wikia.searchFirstLink(query);
-        //Cannot find article
-        if (result == null) {
-            msg.channel.send(`Cannot find article with search query "${query}"`);
-            return;
-        }
-        msg.channel.send(result);
+        msg.channel.send(await Wikia_1.Wikia.searchFirstLink(query));
     }
 };
 //# sourceMappingURL=Commands.js.map
