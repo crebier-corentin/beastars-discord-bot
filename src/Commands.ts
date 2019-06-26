@@ -35,60 +35,52 @@ export const HelpCommand: Command = {
     useDefaultPrefix: true,
     execute: function (msg) {
 
-        let helpMessage = "";
+        const embed = new RichEmbed()
+            .setTitle("Help")
+            .setAuthor(Context.client.user.username, Context.client.user.avatar);
 
-        for (const command of Context.commands) {
+        for (let i = 0; i < Context.commands.length; i++) {
 
-            helpMessage += "`";
+            const command = Context.commands[i];
+
+            //Title
+            let title = "`";
 
             //Add default prefix
             if (command.useDefaultPrefix) {
-                helpMessage += `${Context.prefix} `;
+                title += `${Context.prefix} `;
             }
 
-            helpMessage += `${command.usage}\``;
+            title += `${command.usage}\``;
 
-            //Desc
-            helpMessage += `\n${command.desc}`;
+            //Description
+            let description = `${command.desc}`;
 
             //Example
             if (command.example != undefined) {
-                helpMessage += `\n**Example :** ${command.example}`;
+
+                let example = "`";
+                //Add default prefix
+                if (command.useDefaultPrefix) {
+                    example += `${Context.prefix} `;
+                }
+                example += `${command.example}\``;
+
+                description += `\n**Example :** \`${example}\``
             }
 
-            //Delimiter
-            helpMessage += "\n=====================================================================\n\n";
+            //Add spacing if not last
+            if (i != Context.commands.length - 1) {
+                description += `\n${"=".repeat(50)}`;
+            }
+
+            embed.addField(title, description);
+
+
         }
 
-        const embed = new RichEmbed()
-            .setTitle("This is your title, it can hold 256 characters")
-            .setAuthor("Author Name", "https://i.imgur.com/lm8s41J.png")
-            /*
-             * Alternatively, use "#00AE86", [0, 174, 134] or an integer number.
-             */
-            .setColor(0x00AE86)
-            .setDescription("This is the main body of text, it can hold 2048 characters.")
-            .setFooter("This is the footer text, it can hold 2048 characters", "http://i.imgur.com/w1vhFSR.png")
-            .setImage("http://i.imgur.com/yVpymuV.png")
-            .setThumbnail("http://i.imgur.com/p2qNFag.png")
-            /*
-             * Takes a Date object, defaults to current date.
-             */
-            .setTimestamp()
-            .setURL("https://discord.js.org/#/docs/main/indev/class/RichEmbed")
-            .addField("This is a field title, it can hold 256 characters",
-                "This is a field value, it can hold 1024 characters.")
-            /*
-             * Inline fields may not display as inline if the thumbnail and/or image is too big.
-             */
-            .addField("Inline Field", "They can also be inline.", true)
-            /*
-             * Blank field, useful to create some space.
-             */
-            .addBlankField(true)
-            .addField("Inline Field 3", "You can have a maximum of 25 fields.", true);
 
-        msg.channel.send(helpMessage);
+        msg.channel.send({embed});
 
     }
 };
@@ -135,6 +127,7 @@ export const ChapterBSCommand: Command = {
     name: "bs!",
     desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter]",
     usage: "bs! [chapter] (page)",
+    example: "bs! 10",
     useDefaultPrefix: false,
     execute: async function (msg, args) {
         await chapterCommandExecute.call(this, msg, args, Manga.Beastars);
@@ -147,6 +140,7 @@ export const ChapterBCCommand: Command = {
     name: "bc!",
     desc: "Send link to Beast Complex chapter Nº[chapter] or post page Nº(page) from chapter [chapter]",
     usage: "bc! [chapter] (page)",
+    example: "bc! 2",
     useDefaultPrefix: false,
     execute: async function (msg, args) {
         await chapterCommandExecute.call(this, msg, args, Manga.BeastComplex);
@@ -157,6 +151,7 @@ export const WikiCommand: Command = {
     name: "wiki",
     desc: "Search on the beastars wiki",
     usage: "wiki [query]",
+    example: "wiki Haru",
     aliases: ["w"],
     useDefaultPrefix: true,
     execute: async function (msg, args) {

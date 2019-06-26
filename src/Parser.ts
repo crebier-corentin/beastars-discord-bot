@@ -50,7 +50,6 @@ export default class Parser {
 
         return {success: false};
 
-
     }
 
 }
