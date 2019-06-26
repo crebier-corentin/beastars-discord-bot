@@ -5,16 +5,6 @@ const types_1 = require("./types");
 const MangadexLinkGetter_1 = require("./MangadexLinkGetter");
 const Wikia_1 = require("./Wikia");
 const Context_1 = require("./Context");
-exports.InvalidCommand = {
-    name: "",
-    desc: "",
-    usage: "",
-    aliases: ["h"],
-    useDefaultPrefix: true,
-    execute: function () {
-        throw new types_1.CommandError(`Invalid command, to see the list of commands use \`${Context_1.Context.prefix} help\``);
-    }
-};
 exports.HelpCommand = {
     name: "help",
     desc: "Show this help message",
@@ -23,8 +13,7 @@ exports.HelpCommand = {
     useDefaultPrefix: true,
     execute: function (msg) {
         const embed = new discord_js_1.RichEmbed()
-            .setTitle("Help")
-            .setAuthor(Context_1.Context.client.user.username, Context_1.Context.client.user.avatar);
+            .setTitle("Help");
         for (let i = 0; i < Context_1.Context.commands.length; i++) {
             const command = Context_1.Context.commands[i];
             //Title

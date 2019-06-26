@@ -1,5 +1,7 @@
 import {escapeRegExp} from "./helpers";
-import {Command, InvalidCommand} from "./Commands";
+import {Command} from "./Commands";
+import {CommandError} from "./types";
+import {Context} from "./Context";
 
 export default class Parser {
     defaultPrefix: string;
@@ -38,7 +40,7 @@ export default class Parser {
             }
 
             //Invalid command
-            return {success: true, command: InvalidCommand, args: []};
+            throw new CommandError(`Invalid command, to see the list of commands use \`${Context.prefix} help\``);
 
         }
         //Custom prefix

@@ -16,17 +16,6 @@ export interface Command {
     customPrefix?: string;
 }
 
-export const InvalidCommand: Command = {
-    name: "",
-    desc: "",
-    usage: "",
-    aliases: ["h"],
-    useDefaultPrefix: true,
-    execute: function () {
-        throw new CommandError(`Invalid command, to see the list of commands use \`${Context.prefix} help\``);
-    }
-};
-
 export const HelpCommand: Command = {
     name: "help",
     desc: "Show this help message",
@@ -36,8 +25,7 @@ export const HelpCommand: Command = {
     execute: function (msg) {
 
         const embed = new RichEmbed()
-            .setTitle("Help")
-            .setAuthor(Context.client.user.username, Context.client.user.avatar);
+            .setTitle("Help");
 
         for (let i = 0; i < Context.commands.length; i++) {
 

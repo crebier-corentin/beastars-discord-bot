@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const helpers_1 = require("./helpers");
-const Commands_1 = require("./Commands");
+const types_1 = require("./types");
+const Context_1 = require("./Context");
 class Parser {
     constructor(prefix, commands) {
         this.defaultPrefix = helpers_1.escapeRegExp(prefix);
@@ -28,7 +29,7 @@ class Parser {
                 }
             }
             //Invalid command
-            return { success: true, command: Commands_1.InvalidCommand, args: [] };
+            throw new types_1.CommandError(`Invalid command, to see the list of commands use \`${Context_1.Context.prefix} help\``);
         }
         //Custom prefix
         for (const custom of this.customPrefixes) {
