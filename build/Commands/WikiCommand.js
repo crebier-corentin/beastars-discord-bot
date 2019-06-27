@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
-const Wikia_1 = require("../Wikia");
+const Wikia_1 = require("../ExternalApi/Wikia");
 exports.WikiCommand = {
     name: "wiki",
     desc: "Search on the beastars wiki",

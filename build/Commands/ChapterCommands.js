@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MangadexLinkGetter_1 = require("../MangadexLinkGetter");
+const MangadexLinkGetter_1 = require("../ExternalApi/MangadexLinkGetter");
 const types_1 = require("../types");
 const mangadex = new MangadexLinkGetter_1.default();
 const chapterCommandExecute = async function (msg, args, manga) {

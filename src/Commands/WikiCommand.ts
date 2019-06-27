@@ -1,5 +1,5 @@
 import {Command, CommandError} from "../types";
-import {Wikia} from "../Wikia";
+import {Wikia} from "../ExternalApi/Wikia";
 
 export const WikiCommand: Command = {
     name: "wiki",

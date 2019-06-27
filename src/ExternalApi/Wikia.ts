@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
-import {CommandError} from "./types";
+import {CommandError} from "../types";
 
 interface WikiaSearchResult {
     quality: number;

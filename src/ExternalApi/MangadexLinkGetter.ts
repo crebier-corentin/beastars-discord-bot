@@ -1,6 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
-import Cache from "./Cache";
-import {CommandError, Manga} from "./types";
+import Cache from "../Cache";
+import {CommandError, Manga} from "../types";
 
 interface Chapter {
     id: string;

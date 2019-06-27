@@ -1,4 +1,4 @@
-import MangadexLinkGetter from "../MangadexLinkGetter";
+import MangadexLinkGetter from "../ExternalApi/MangadexLinkGetter";
 import {Command, CommandError, Manga} from "../types";
 
 const mangadex = new MangadexLinkGetter();
