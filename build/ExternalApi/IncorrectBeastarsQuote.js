@@ -16,7 +16,7 @@ class IncorrectBeastarsQuote {
         return quotes[Math.floor(Math.random() * quotes.length)];
     }
     static async getAllQuotes() {
-        const url = new url_1.URL(`https://api.tumblr.com/v2/blog/${IncorrectBeastarsQuote.identifer}/posts/text`);
+        const url = new url_1.URL(`https://api.tumblr.com/v2/blog/${IncorrectBeastarsQuote.identifer}/posts`);
         url.searchParams.append("api_key", process.env.TUMBLR_API_KEY);
         url.searchParams.append("limit", "20");
         url.searchParams.append("filter", "text");
@@ -27,15 +27,15 @@ class IncorrectBeastarsQuote {
                 throw new types_1.CommandError("Cannot access tumblr's api");
             });
             const data = res.data.response;
-            if (data.total_posts > 0) {
+            if (data.posts.length > 0) {
                 for (const quote of data.posts) {
                     //Only add quotes
-                    if (quote.tags.includes("incorrect beastars quotes")) {
+                    if ((quote.type === "text" || quote.type === "chat") && quote.tags.includes("incorrect beastars quotes")) {
                         total_quotes.push({ url: quote.post_url, text: quote.body });
                     }
                 }
-                if (data.total_posts === 20) {
-                    total_quotes.concat(await getQuotes(offset + 20));
+                if (data.posts.length === 20) {
+                    return total_quotes.concat(await getQuotes(offset + 20));
                 }
             }
             return total_quotes;

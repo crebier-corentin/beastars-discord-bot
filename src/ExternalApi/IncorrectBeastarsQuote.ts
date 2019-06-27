@@ -6,6 +6,7 @@ import Cache from "../Cache";
 interface TumblrPostsResponse {
     response: {
         posts: {
+            type: "text" | "chat" | string;
             post_url: string;
             body: string;
             tags: string[];
@@ -39,7 +40,7 @@ export class IncorrectBeastarsQuote {
 
     private static async getAllQuotes(): Promise<Quote[]> {
 
-        const url = new URL(`https://api.tumblr.com/v2/blog/${IncorrectBeastarsQuote.identifer}/posts/text`);
+        const url = new URL(`https://api.tumblr.com/v2/blog/${IncorrectBeastarsQuote.identifer}/posts`);
         url.searchParams.append("api_key", process.env.TUMBLR_API_KEY);
         url.searchParams.append("limit", "20");
         url.searchParams.append("filter", "text");
@@ -56,17 +57,17 @@ export class IncorrectBeastarsQuote {
 
             const data = res.data.response;
 
-            if (data.total_posts > 0) {
+            if (data.posts.length > 0) {
                 for (const quote of data.posts) {
 
                     //Only add quotes
-                    if(quote.tags.includes("incorrect beastars quotes")) {
-                        total_quotes.push({url: quote.post_url, text:quote.body});
+                    if ((quote.type === "text" || quote.type === "chat") && quote.tags.includes("incorrect beastars quotes")) {
+                        total_quotes.push({url: quote.post_url, text: quote.body});
                     }
                 }
 
-                if (data.total_posts === 20) {
-                    total_quotes.concat(await getQuotes(offset + 20));
+                if (data.posts.length === 20) {
+                    return total_quotes.concat(await getQuotes(offset + 20));
                 }
 
             }
