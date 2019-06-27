@@ -1,7 +1,8 @@
+require('dotenv').config();
+
 import {Context} from "./Context";
 import {executeCommand} from "./Execute";
 
-require("dotenv").config();
 import Discord = require('discord.js');
 
 //Client

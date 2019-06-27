@@ -29,6 +29,11 @@ export default class Parser {
         //Default prefix
         if (prefix == this.defaultPrefix) {
 
+            //Missing command
+            if(splitted.length === 1) {
+                throw new CommandError(`Missing command, to see the list of commands use \`${Context.prefix} help\``);
+            }
+
             //Find command
             const commandName = splitted[1].toLowerCase();
             for (const command of this.commands) {

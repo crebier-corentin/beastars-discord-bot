@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
-const Cache_1 = require("./Cache");
-const types_1 = require("./types");
+const Cache_1 = require("../Cache");
+const types_1 = require("../types");
 class MangadexLinkGetter {
     constructor() {
         //1H cache

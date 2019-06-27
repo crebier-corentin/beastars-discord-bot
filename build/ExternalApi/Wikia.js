@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = require("axios");
-const types_1 = require("./types");
+const types_1 = require("../types");
 class Wikia {
     static async searchFirstLink(query) {
         const articles = await this.searchArticles(query);
