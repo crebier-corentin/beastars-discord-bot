@@ -1,8 +1,8 @@
 import {Context} from "./Context";
+import {executeCommand} from "./Execute";
 
 require("dotenv").config();
 import Discord = require('discord.js');
-import {executeCommand} from "./Execute";
 
 //Client
 const client = new Discord.Client();

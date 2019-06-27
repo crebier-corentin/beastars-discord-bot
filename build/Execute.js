@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Commands_1 = require("./Commands");
 const Parser_1 = require("./Parser");
 const types_1 = require("./types");
 const Context_1 = require("./Context");
+const HelpCommand_1 = require("./Commands/HelpCommand");
+const ChapterCommands_1 = require("./Commands/ChapterCommands");
+const WikiCommand_1 = require("./Commands/WikiCommand");
 const prefix = process.env.PREFIX;
-const commands = [Commands_1.HelpCommand, Commands_1.ChapterBSCommand, Commands_1.ChapterBCCommand, Commands_1.WikiCommand];
+const commands = [HelpCommand_1.HelpCommand, ChapterCommands_1.ChapterBSCommand, ChapterCommands_1.ChapterBCCommand, WikiCommand_1.WikiCommand];
 const parser = new Parser_1.default(prefix, commands);
 Context_1.Context.prefix = prefix;
 Context_1.Context.commands = commands;

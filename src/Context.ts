@@ -1,5 +1,5 @@
 import {Client} from "discord.js";
-import {Command} from "./Commands";
+import {Command} from "./types";
 
 export namespace Context {
     export let prefix: string;

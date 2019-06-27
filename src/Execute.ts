@@ -1,8 +1,10 @@
-import {Message, RichEmbed} from "discord.js";
-import {ChapterBCCommand, ChapterBSCommand, HelpCommand, WikiCommand} from "./Commands";
+import {Message} from "discord.js";
 import Parser from "./Parser";
 import {CommandError} from "./types";
 import {Context} from "./Context";
+import {HelpCommand} from "./Commands/HelpCommand";
+import {ChapterBCCommand, ChapterBSCommand} from "./Commands/ChapterCommands";
+import {WikiCommand} from "./Commands/WikiCommand";
 
 const prefix = process.env.PREFIX;
 

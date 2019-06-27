@@ -1,6 +1,5 @@
 import {escapeRegExp} from "./helpers";
-import {Command} from "./Commands";
-import {CommandError} from "./types";
+import {Command, CommandError} from "./types";
 import {Context} from "./Context";
 
 export default class Parser {
