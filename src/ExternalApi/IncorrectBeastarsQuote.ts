@@ -6,10 +6,17 @@ import Cache from "../Cache";
 interface TumblrPostsResponse {
     response: {
         posts: {
+            post_url: string;
             body: string;
+            tags: string[];
         }[];
         total_posts: number;
     };
+}
+
+interface Quote {
+    url: string;
+    text: string;
 }
 
 //1 day cache
@@ -19,7 +26,7 @@ export class IncorrectBeastarsQuote {
 
     private static identifer = "incorrect-beastars";
 
-    static async getRandomQuote(): Promise<string> {
+    static async getRandomQuote(): Promise<Quote> {
         const quotes = await cache.get("quotes", this.getAllQuotes);
 
         if (quotes.length === 0) {
@@ -30,17 +37,16 @@ export class IncorrectBeastarsQuote {
         return quotes[Math.floor(Math.random() * quotes.length)];
     }
 
-    private static async getAllQuotes(): Promise<string[]> {
+    private static async getAllQuotes(): Promise<Quote[]> {
 
         const url = new URL(`https://api.tumblr.com/v2/blog/${IncorrectBeastarsQuote.identifer}/posts/text`);
         url.searchParams.append("api_key", process.env.TUMBLR_API_KEY);
-        url.searchParams.append("tag", "incorrect beastars quotes");
         url.searchParams.append("limit", "20");
         url.searchParams.append("filter", "text");
 
-        const getQuotes = async (offset: number = 0): Promise<string[]> => {
+        const getQuotes = async (offset: number = 0): Promise<Quote[]> => {
 
-            const total_quotes = [];
+            const total_quotes: Quote[] = [];
 
             url.searchParams.set("offset", offset.toString());
 
@@ -52,7 +58,11 @@ export class IncorrectBeastarsQuote {
 
             if (data.total_posts > 0) {
                 for (const quote of data.posts) {
-                    total_quotes.push(quote.body);
+
+                    //Only add quotes
+                    if(quote.tags.includes("incorrect beastars quotes")) {
+                        total_quotes.push({url: quote.post_url, text:quote.body});
+                    }
                 }
 
                 if (data.total_posts === 20) {

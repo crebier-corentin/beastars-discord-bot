@@ -8,6 +8,9 @@ export const QuoteComment: Command = {
     aliases: ["q"],
     useDefaultPrefix: true,
     execute: async function (msg) {
-        msg.channel.send({embed: {description: await IncorrectBeastarsQuote.getRandomQuote()}});
+
+        const quote = await IncorrectBeastarsQuote.getRandomQuote();
+
+        msg.channel.send(`<${quote.url}>`, {embed: {description: quote.text}});
     }
 };

@@ -8,7 +8,8 @@ exports.QuoteComment = {
     aliases: ["q"],
     useDefaultPrefix: true,
     execute: async function (msg) {
-        msg.channel.send({ embed: { description: await IncorrectBeastarsQuote_1.IncorrectBeastarsQuote.getRandomQuote() } });
+        const quote = await IncorrectBeastarsQuote_1.IncorrectBeastarsQuote.getRandomQuote();
+        msg.channel.send(`<${quote.url}>`, { embed: { description: quote.text } });
     }
 };
 //# sourceMappingURL=QuoteCommand.js.map

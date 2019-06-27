@@ -18,7 +18,6 @@ class IncorrectBeastarsQuote {
     static async getAllQuotes() {
         const url = new url_1.URL(`https://api.tumblr.com/v2/blog/${IncorrectBeastarsQuote.identifer}/posts/text`);
         url.searchParams.append("api_key", process.env.TUMBLR_API_KEY);
-        url.searchParams.append("tag", "incorrect beastars quotes");
         url.searchParams.append("limit", "20");
         url.searchParams.append("filter", "text");
         const getQuotes = async (offset = 0) => {
@@ -30,7 +29,10 @@ class IncorrectBeastarsQuote {
             const data = res.data.response;
             if (data.total_posts > 0) {
                 for (const quote of data.posts) {
-                    total_quotes.push(quote.body);
+                    //Only add quotes
+                    if (quote.tags.includes("incorrect beastars quotes")) {
+                        total_quotes.push({ url: quote.post_url, text: quote.body });
+                    }
                 }
                 if (data.total_posts === 20) {
                     total_quotes.concat(await getQuotes(offset + 20));
