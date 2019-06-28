@@ -78,6 +78,10 @@ class MangadexLinkGetter {
         if (pageFilename == null) {
             throw new types_1.CommandError(`Cannot find page Nº${pageNo} in chapter Nº${chapterNo}`);
         }
+        //Fix server url
+        if (pages.server.startsWith("/")) {
+            pages.server = `https://mangadex.org${pages.server}`;
+        }
         //Return links
         return {
             site: `https://mangadex.org/chapter/${chapter.id}/${pageNo}`,
