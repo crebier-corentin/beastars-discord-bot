@@ -7,13 +7,20 @@
   "private": true,
   "scripts": {
     "build": "tsc ",
-    "watch": "tsc  -w"
+    "watch": "tsc  -w",
+
+    "migration:run": "typeorm migration:run",
+    "migration:gen": "typeorm migration:generate -d src/db/migrations"
   },
   "dependencies": {
     "axios": "^0.19.0",
     "discord.js": "^11.5.1",
     "dotenv": "^8.0.0",
-    "node-cache": "^4.2.0"
+    "node-cache": "^4.2.0",
+    "pg": "^7.11.0",
+    "pg-connection-string": "^2.1.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.18"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",

@@ -3,12 +3,12 @@
     "module": "commonjs",
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "build"
+    "outDir": "build",
+    "rootDir": "src",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules"
-  ],
-  "files": [
-    "src/index.ts"
   ]
 }
