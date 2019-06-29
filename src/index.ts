@@ -2,7 +2,6 @@ require('dotenv').config();
 import "reflect-metadata";
 import {createConnection} from "typeorm";
 
-
 import {Context} from "./Context";
 import {executeCommand} from "./Execute";
 
