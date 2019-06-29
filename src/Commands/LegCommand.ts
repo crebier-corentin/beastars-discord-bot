@@ -58,7 +58,7 @@ const eatLeg = async (msg: Message, username: string) => {
         .addField("Predator", await getStats(predatorMember))
         .addField("Prey", await getStats(preyMember));
 
-    await msg.channel.send(`${predatorMember.displayName} has eaten ${preyMember.displayName} leg !`, {embed});
+    await msg.channel.send(`${predatorMember.displayName} has eaten ${preyMember.displayName}'s leg !`, {embed});
 
 };
 
