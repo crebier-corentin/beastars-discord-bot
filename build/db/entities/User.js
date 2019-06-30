@@ -26,33 +26,29 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
     }
     getStats(guild) {
         //Legs given
-        const toStr = () => {
+        const toStr = (() => {
+            if (this.legsGivenTo.length === 0) {
+                return "has not given any legs";
+            }
             const toNames = [];
             for (const to of this.legsGivenTo) {
                 toNames.push(to.getDiscordMember(guild).displayName);
             }
-            //Str
-            let result = "";
-            if (toNames.length > 0) {
-                result = `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
-            }
-            return result;
-        };
+            return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
+        })();
         //Legs received
-        const fromStr = () => {
+        const fromStr = (() => {
+            if (this.legsReceivedFrom.length === 0) {
+                return "has not received any legs";
+            }
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
                 fromNames.push(from.getDiscordMember(guild).displayName);
             }
-            //Str
-            let result = "";
-            if (fromNames.length > 0) {
-                result = `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
-            }
-            return result;
-        };
+            return `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
+        })();
         const member = this.getDiscordMember(guild);
-        return `${member.displayName} ${toStr()} and ${fromStr()}`;
+        return `${member.displayName} ${toStr} and ${fromStr}`;
     }
     async giveLegTo(receiver) {
         this.legsGivenTo.push(receiver);

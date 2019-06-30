@@ -49,7 +49,7 @@ export class User extends BaseEntity {
         const toStr = (() => {
 
             if (this.legsGivenTo.length === 0) {
-                return null;
+                return "has not given any legs";
             }
 
             const toNames = [];
@@ -65,16 +65,13 @@ export class User extends BaseEntity {
         const fromStr = (() => {
 
             if (this.legsReceivedFrom.length === 0) {
-                return null;
+                return "has not received any legs";
             }
 
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
                 fromNames.push(from.getDiscordMember(guild).displayName);
             }
-
-            //Str
-            let result = "";
 
 
             return `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
@@ -84,22 +81,7 @@ export class User extends BaseEntity {
 
         const member = this.getDiscordMember(guild);
 
-        let result = `${member.displayName}`;
-
-        if (toStr !== null) {
-            result += ` ${toStr}`;
-        }
-
-        //And
-        if(toStr !== null && fromStr !== null) {
-            result += " and";
-        }
-
-        if(fromStr !== null) {
-            result += ` ${fromStr}`;
-        }
-
-        return result;
+        return `${member.displayName} ${toStr} and ${fromStr}`;
 
     }
 

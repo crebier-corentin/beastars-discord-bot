@@ -6,11 +6,11 @@ import {HelpCommand} from "./Commands/HelpCommand";
 import {ChapterBCCommand, ChapterBSCommand} from "./Commands/ChapterCommands";
 import {WikiCommand} from "./Commands/WikiCommand";
 import {QuoteComment} from "./Commands/QuoteCommand";
-import {OfferLegCommand} from "./Commands/LegCommand";
+import {LegStatsCommand, OfferLegCommand} from "./Commands/LegCommand";
 
 const prefix = process.env.PREFIX;
 
-const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand, QuoteComment, OfferLegCommand];
+const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand, QuoteComment, OfferLegCommand, LegStatsCommand];
 const parser = new Parser(prefix, commands);
 
 Context.prefix = prefix;
