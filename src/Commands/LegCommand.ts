@@ -3,25 +3,6 @@ import {findMemberByUsername} from "../helpers";
 import {Message, GuildMember, RichEmbed} from "discord.js";
 import {User} from "../db/entities/User";
 
-
-const createUserIfNotExist = async (discordId: string): Promise<User> => {
-
-    let user = await User.findOne({where: {discordId}});
-    if (user == undefined) {
-        user = await User.create({discordId}).save();
-    }
-
-    return user;
-};
-
-const getStats = async (member: GuildMember): Promise<string> => {
-
-    const user = await createUserIfNotExist(member.user.id);
-
-    return `${member.displayName} has ${user.legs} leg(s) left and has eaten ${user.legsEaten} leg(s)!`;
-
-};
-
 const eatLeg = async (msg: Message, username: string) => {
 
     const preyMember = findMemberByUsername(msg.guild, username);
@@ -31,8 +12,8 @@ const eatLeg = async (msg: Message, username: string) => {
         throw new CommandError(`Unable to find user ${username}`);
     }
 
-    const prey = await createUserIfNotExist(preyMember.user.id);
-    const predator = await createUserIfNotExist(msg.author.id);
+    const prey = await User.findOrCreate(preyMember.user.id);
+    const predator = await User.findOrCreate(msg.author.id);
 
     //Check self
     if (prey.id == predator.id) {
@@ -46,17 +27,17 @@ const eatLeg = async (msg: Message, username: string) => {
 
     //Eat the leg
     prey.legs--;
-    predator.legsEaten++;
+    predator.legsOffered++;
 
     await prey.save();
     await predator.save();
 
-    const predatorMember = msg.guild.members.get(predator.discordId);
+    const predatorMember = predator.getDiscordMember(msg.guild);
 
     //Message
     const embed = new RichEmbed()
-        .addField("Predator", await getStats(predatorMember))
-        .addField("Prey", await getStats(preyMember));
+        .addField("Predator", prey.getStats(msg.guild))
+        .addField("Prey", predator.getStats(msg.guild));
 
     await msg.channel.send(`${predatorMember.displayName} has eaten ${preyMember.displayName}'s leg !`, {embed});
 
@@ -74,9 +55,9 @@ export const LegCommand: Command = {
         //Get stats
         if (args.length == 0) {
 
-            const authorMember = msg.guild.members.get(msg.author.id);
+            const author = await User.findOrCreate(msg.author.id);
 
-            await msg.channel.send(await getStats(authorMember));
+            await msg.channel.send(await author.getStats(msg.guild));
         }
         //Eat leg
         else {
