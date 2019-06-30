@@ -46,24 +46,28 @@ export class User extends BaseEntity {
     getStats(guild: Guild): string {
 
         //Legs given
-        const toStr = () => {
+        const toStr = (() => {
+
+            if (this.legsGivenTo.length === 0) {
+                return null;
+            }
+
             const toNames = [];
             for (const to of this.legsGivenTo) {
                 toNames.push(to.getDiscordMember(guild).displayName);
             }
 
-            //Str
-            let result = "";
-            if (toNames.length > 0) {
-                result = `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
-            }
+            return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
 
-            return result;
-
-        };
+        })();
 
         //Legs received
-        const fromStr = () => {
+        const fromStr = (() => {
+
+            if (this.legsReceivedFrom.length === 0) {
+                return null;
+            }
+
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
                 fromNames.push(from.getDiscordMember(guild).displayName);
@@ -71,17 +75,31 @@ export class User extends BaseEntity {
 
             //Str
             let result = "";
-            if (fromNames.length > 0) {
-                result = `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
-            }
 
-            return result;
 
-        };
+            return `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
+
+
+        })();
 
         const member = this.getDiscordMember(guild);
 
-        return `${member.displayName} ${toStr()} and ${fromStr()}`;
+        let result = `${member.displayName}`;
+
+        if (toStr !== null) {
+            result += ` ${toStr}`;
+        }
+
+        //And
+        if(toStr !== null && fromStr !== null) {
+            result += " and";
+        }
+
+        if(fromStr !== null) {
+            result += ` ${fromStr}`;
+        }
+
+        return result;
 
     }
 
