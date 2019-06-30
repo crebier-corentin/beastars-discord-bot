@@ -5,61 +5,55 @@ import {User} from "../db/entities/User";
 
 const giveLeg = async (msg: Message, username: string) => {
 
-    const giverMember = findMemberByUsername(msg.guild, username);
+    const receiverMember = findMemberByUsername(msg.guild, username);
 
     //Can't find member
-    if (giverMember == null) {
+    if (receiverMember == null) {
         throw new CommandError(`Unable to find user ${username}`);
     }
 
-    const giver = await User.findOrCreate(giverMember.user.id);
-    const receiver = await User.findOrCreate(msg.author.id);
+    const receiver = await User.findOrCreate(receiverMember.user.id);
+    const giver = await User.findOrCreate(msg.author.id);
 
     //Check self
-    if (giver.id == receiver.id) {
+    if (receiver.id == giver.id) {
         throw new CommandError(`You can't offer your leg to yourself`);
     }
 
     //Check if has legs
     if (await giver.legsGiven() === 2) {
-        throw new CommandError(`${giverMember.displayName} has no legs left`);
+        throw new CommandError(`You have no legs left`);
+    }
+
+    //Check if has already given a leg
+    if (giver.hasGivenLegTo(receiver)) {
+        throw new CommandError(`You have already given a leg to ${receiverMember.displayName}`);
     }
 
     //Eat the leg
-    await giver.save();
-    await receiver.save();
+    await giver.giveLegTo(receiver);
 
-    const receiverMember = receiver.getDiscordMember(msg.guild);
+    const giverMember = giver.getDiscordMember(msg.guild);
 
-    //Message
-    const embed = new RichEmbed()
-        .addField(receiverMember.displayName, giver.getStats(msg.guild))
-        .addField(giverMember.displayName, receiver.getStats(msg.guild));
-
-    await msg.channel.send(`${giverMember.displayName} has offered one of his legs to ${giverMember.displayName}`, {embed});
-
+    await msg.channel.send(`${giverMember.displayName} has offered one of his legs to ${receiverMember.displayName}`);
 };
 
 export const OfferLegCommand: Command = {
     name: "offer",
     desc: "Offer on of your leg to a member\nSupports partial usernames (toma for tomato50)",
-    usage: "offer (user)",
+    usage: "offer [username]",
     example: "offer yyao",
     aliases: ["o"],
     useDefaultPrefix: true,
     execute: async function (msg, args) {
 
-        //Get stats
+        //Missing username
         if (args.length == 0) {
-
-            const author = await User.findOrCreate(msg.author.id);
-
-            await msg.channel.send(await author.getStats(msg.guild));
+            throw new CommandError(`Missing [username]\n\`${this.usage}\``);
         }
-        //Eat leg
-        else {
-            await giveLeg(msg, args.join())
-        }
+
+        await giveLeg(msg, args.join())
+
 
 
     }

@@ -56,13 +56,18 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
     }
     async giveLegTo(receiver) {
         this.legsGivenTo.push(receiver);
-        this.save();
-        receiver.reload();
+        await this.save();
+        await receiver.reload();
+    }
+    hasGivenLegTo(receiver) {
+        return this.legsGivenTo.find(value => value.discordId === receiver.discordId) != undefined;
     }
     static async findOrCreate(discordId) {
         let user = await User_1.findOne({ where: { discordId }, relations: ["legsGivenTo", "legsReceivedFrom"] });
         if (user == undefined) {
             user = await User_1.create({ discordId }).save();
+            //Load relations
+            user = await User_1.findOne(user.id, { relations: ["legsGivenTo", "legsReceivedFrom"] });
         }
         return user;
     }
@@ -76,16 +81,16 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "discordId", void 0);
 __decorate([
-    typeorm_1.ManyToMany(type => User_1, user => user.legsReceivedFrom),
+    typeorm_1.ManyToMany(type => User_1, user => user.legsReceivedFrom, { cascade: true }),
     typeorm_1.JoinTable({
         name: "users_legs",
         joinColumn: {
             name: "from",
-            referencedColumnName: "discordId"
+            referencedColumnName: "id"
         },
         inverseJoinColumn: {
             name: "to",
-            referencedColumnName: "discordId"
+            referencedColumnName: "id"
         }
     }),
     __metadata("design:type", Array)

@@ -10,16 +10,16 @@ export class User extends BaseEntity {
     @Column({unique: true})
     discordId: string;
 
-    @ManyToMany(type => User, user => user.legsReceivedFrom)
+    @ManyToMany(type => User, user => user.legsReceivedFrom, {cascade: true})
     @JoinTable({
         name: "users_legs",
         joinColumn: {
             name: "from",
-            referencedColumnName: "discordId"
+            referencedColumnName: "id"
         },
         inverseJoinColumn: {
             name: "to",
-            referencedColumnName: "discordId"
+            referencedColumnName: "id"
         }
     })
     legsGivenTo: User[];
@@ -88,10 +88,14 @@ export class User extends BaseEntity {
     async giveLegTo(receiver: User): Promise<void> {
         this.legsGivenTo.push(receiver);
 
-        this.save();
+        await this.save();
 
-        receiver.reload();
+        await receiver.reload();
 
+    }
+
+    hasGivenLegTo(receiver: User): boolean {
+        return this.legsGivenTo.find(value => value.discordId === receiver.discordId) != undefined;
     }
 
     static async findOrCreate(discordId: string): Promise<User> {
@@ -99,6 +103,8 @@ export class User extends BaseEntity {
         let user = await User.findOne({where: {discordId}, relations: ["legsGivenTo", "legsReceivedFrom"]});
         if (user == undefined) {
             user = await User.create({discordId}).save();
+            //Load relations
+            user = await User.findOne(user.id, {relations: ["legsGivenTo", "legsReceivedFrom"]});
         }
 
         return user;
