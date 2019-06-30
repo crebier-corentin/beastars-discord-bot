@@ -10,6 +10,7 @@
     "watch": "tsc  -w",
 
     "migration:run": "typeorm migration:run",
+    "migration:revert": "typeorm migration:revert",
     "migration:gen": "typeorm migration:generate -d src/db/migrations"
   },
   "dependencies": {

@@ -4,61 +4,48 @@ const types_1 = require("../types");
 const helpers_1 = require("../helpers");
 const discord_js_1 = require("discord.js");
 const User_1 = require("../db/entities/User");
-const createUserIfNotExist = async (discordId) => {
-    let user = await User_1.User.findOne({ where: { discordId } });
-    if (user == undefined) {
-        user = await User_1.User.create({ discordId }).save();
-    }
-    return user;
-};
-const getStats = async (member) => {
-    const user = await createUserIfNotExist(member.user.id);
-    return `${member.displayName} has ${user.legs} leg(s) left and has eaten ${user.legsEaten} leg(s)!`;
-};
-const eatLeg = async (msg, username) => {
-    const preyMember = helpers_1.findMemberByUsername(msg.guild, username);
+const giveLeg = async (msg, username) => {
+    const giverMember = helpers_1.findMemberByUsername(msg.guild, username);
     //Can't find member
-    if (preyMember == null) {
+    if (giverMember == null) {
         throw new types_1.CommandError(`Unable to find user ${username}`);
     }
-    const prey = await createUserIfNotExist(preyMember.user.id);
-    const predator = await createUserIfNotExist(msg.author.id);
+    const giver = await User_1.User.findOrCreate(giverMember.user.id);
+    const receiver = await User_1.User.findOrCreate(msg.author.id);
     //Check self
-    if (prey.id == predator.id) {
-        throw new types_1.CommandError(`You can't eat your own leg`);
+    if (giver.id == receiver.id) {
+        throw new types_1.CommandError(`You can't offer your leg to yourself`);
     }
     //Check if has legs
-    if (prey.legs === 0) {
-        throw new types_1.CommandError(`${preyMember.displayName} has no legs left`);
+    if (await giver.legsGiven() === 2) {
+        throw new types_1.CommandError(`${giverMember.displayName} has no legs left`);
     }
     //Eat the leg
-    prey.legs--;
-    predator.legsEaten++;
-    await prey.save();
-    await predator.save();
-    const predatorMember = msg.guild.members.get(predator.discordId);
+    await giver.save();
+    await receiver.save();
+    const receiverMember = receiver.getDiscordMember(msg.guild);
     //Message
     const embed = new discord_js_1.RichEmbed()
-        .addField("Predator", await getStats(predatorMember))
-        .addField("Prey", await getStats(preyMember));
-    await msg.channel.send(`${predatorMember.displayName} has eaten ${preyMember.displayName} leg !`, { embed });
+        .addField(receiverMember.displayName, giver.getStats(msg.guild))
+        .addField(giverMember.displayName, receiver.getStats(msg.guild));
+    await msg.channel.send(`${giverMember.displayName} has offered one of his legs to ${giverMember.displayName}`, { embed });
 };
-exports.LegCommand = {
-    name: "leg",
-    desc: "Eat one of someone's leg or show self stats if no username is provided\nSupports partial usernames (toma for tomato50)",
-    usage: "leg (user)",
-    example: "leg yyao",
-    aliases: ["l"],
+exports.OfferLegCommand = {
+    name: "offer",
+    desc: "Offer on of your leg to a member\nSupports partial usernames (toma for tomato50)",
+    usage: "offer (user)",
+    example: "offer yyao",
+    aliases: ["o"],
     useDefaultPrefix: true,
     execute: async function (msg, args) {
         //Get stats
         if (args.length == 0) {
-            const authorMember = msg.guild.members.get(msg.author.id);
-            await msg.channel.send(await getStats(authorMember));
+            const author = await User_1.User.findOrCreate(msg.author.id);
+            await msg.channel.send(await author.getStats(msg.guild));
         }
         //Eat leg
         else {
-            await eatLeg(msg, args.join());
+            await giveLeg(msg, args.join());
         }
     }
 };
