@@ -24,6 +24,15 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
     getDiscordUser(guild) {
         return this.getDiscordMember(guild).user;
     }
+    getNickname(guild = null) {
+        if (guild !== null) {
+            const member = this.getDiscordMember(guild);
+            if (member != undefined)
+                return member.displayName;
+        }
+        //Last nickname
+        return this.lastNickname;
+    }
     getStats(guild) {
         //Legs given
         const toStr = (() => {
@@ -32,7 +41,7 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
             }
             const toNames = [];
             for (const to of this.legsGivenTo) {
-                toNames.push(to.getDiscordMember(guild).displayName);
+                toNames.push(to.getNickname());
             }
             return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
         })();
@@ -43,12 +52,11 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
             }
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
-                fromNames.push(from.getDiscordMember(guild).displayName);
+                fromNames.push(from.getNickname());
             }
             return `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
         })();
-        const member = this.getDiscordMember(guild);
-        return `${member.displayName} ${toStr} and ${fromStr}`;
+        return `${this.getNickname()} ${toStr} and ${fromStr}`;
     }
     async giveLegTo(receiver) {
         this.legsGivenTo.push(receiver);
@@ -95,6 +103,10 @@ __decorate([
     typeorm_1.ManyToMany(type => User_1, user => user.legsGivenTo),
     __metadata("design:type", Array)
 ], User.prototype, "legsReceivedFrom", void 0);
+__decorate([
+    typeorm_1.Column({ default: "" }),
+    __metadata("design:type", String)
+], User.prototype, "lastNickname", void 0);
 User = User_1 = __decorate([
     typeorm_1.Entity()
 ], User);

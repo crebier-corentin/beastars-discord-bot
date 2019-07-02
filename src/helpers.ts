@@ -30,3 +30,15 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember | 
     return null;
 
 }
+
+export async function asyncForEach<T>(array: T[], callback: (item: T) => Promise<any>) {
+
+    let promises: Array<(() => any)> = [];
+
+    for (let a of array) {
+        promises.push(callback.call(a, a));
+    }
+
+    await Promise.all(promises);
+
+}

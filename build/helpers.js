@@ -23,4 +23,12 @@ function findMemberByUsername(guild, name) {
     return null;
 }
 exports.findMemberByUsername = findMemberByUsername;
+async function asyncForEach(array, callback) {
+    let promises = [];
+    for (let a of array) {
+        promises.push(callback.call(a, a));
+    }
+    await Promise.all(promises);
+}
+exports.asyncForEach = asyncForEach;
 //# sourceMappingURL=helpers.js.map

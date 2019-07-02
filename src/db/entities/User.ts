@@ -27,6 +27,9 @@ export class User extends BaseEntity {
     @ManyToMany(type => User, user => user.legsGivenTo)
     legsReceivedFrom: User[];
 
+    @Column({default: ""})
+    lastNickname: string;
+
     legsGiven() {
         return this.legsGivenTo.length;
     }
@@ -35,12 +38,27 @@ export class User extends BaseEntity {
         return this.legsRecieved.length;
     }
 
-    getDiscordMember(guild: Guild): GuildMember {
+    getDiscordMember(guild: Guild): GuildMember | undefined {
         return guild.members.get(this.discordId);
     }
 
     getDiscordUser(guild: Guild): DiscordUser {
         return this.getDiscordMember(guild).user;
+    }
+
+    getNickname(guild: Guild = null): string {
+
+        if (guild !== null) {
+
+            const member = this.getDiscordMember(guild);
+
+            if (member != undefined)
+                return member.displayName;
+        }
+
+        //Last nickname
+        return this.lastNickname;
+
     }
 
     getStats(guild: Guild): string {
@@ -54,7 +72,7 @@ export class User extends BaseEntity {
 
             const toNames = [];
             for (const to of this.legsGivenTo) {
-                toNames.push(to.getDiscordMember(guild).displayName);
+                toNames.push(to.getNickname());
             }
 
             return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
@@ -70,7 +88,7 @@ export class User extends BaseEntity {
 
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
-                fromNames.push(from.getDiscordMember(guild).displayName);
+                fromNames.push(from.getNickname());
             }
 
 
@@ -79,9 +97,7 @@ export class User extends BaseEntity {
 
         })();
 
-        const member = this.getDiscordMember(guild);
-
-        return `${member.displayName} ${toStr} and ${fromStr}`;
+        return `${this.getNickname()} ${toStr} and ${fromStr}`;
 
     }
 
