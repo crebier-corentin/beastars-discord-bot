@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var User_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const Context_1 = require("../../Context");
 let User = User_1 = class User extends typeorm_1.BaseEntity {
     legsGiven() {
         return this.legsGivenTo.length;
@@ -24,39 +25,39 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
     getDiscordUser(guild) {
         return this.getDiscordMember(guild).user;
     }
-    getNickname(guild = null) {
+    async getNickname(guild = null) {
         if (guild !== null) {
             const member = this.getDiscordMember(guild);
             if (member != undefined)
                 return member.displayName;
         }
         //Last nickname
-        return this.lastNickname;
+        return (await Context_1.Context.client.fetchUser(this.discordId)).username;
     }
-    getStats(guild) {
+    async getStats(guild) {
         //Legs given
-        const toStr = (() => {
+        const toStr = await (async () => {
             if (this.legsGivenTo.length === 0) {
                 return "has not given any legs";
             }
             const toNames = [];
             for (const to of this.legsGivenTo) {
-                toNames.push(to.getNickname());
+                toNames.push(await to.getNickname(guild));
             }
             return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
         })();
         //Legs received
-        const fromStr = (() => {
+        const fromStr = await (async () => {
             if (this.legsReceivedFrom.length === 0) {
                 return "has not received any legs";
             }
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
-                fromNames.push(from.getNickname());
+                fromNames.push(await from.getNickname(guild));
             }
             return `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
         })();
-        return `${this.getNickname()} ${toStr} and ${fromStr}`;
+        return `${await this.getNickname(guild)} ${toStr} and ${fromStr}`;
     }
     async giveLegTo(receiver) {
         this.legsGivenTo.push(receiver);
@@ -103,10 +104,6 @@ __decorate([
     typeorm_1.ManyToMany(type => User_1, user => user.legsGivenTo),
     __metadata("design:type", Array)
 ], User.prototype, "legsReceivedFrom", void 0);
-__decorate([
-    typeorm_1.Column({ default: "" }),
-    __metadata("design:type", String)
-], User.prototype, "lastNickname", void 0);
 User = User_1 = __decorate([
     typeorm_1.Entity()
 ], User);

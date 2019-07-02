@@ -80,7 +80,7 @@ export const LegStatsCommand: Command = {
 
         const user = await User.findOrCreate(userId);
 
-        await msg.channel.send(user.getStats(msg.guild))
+        await msg.channel.send(await user.getStats(msg.guild));
 
 
     }

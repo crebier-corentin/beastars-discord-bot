@@ -1,5 +1,6 @@
 import {BaseEntity, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Guild, GuildMember, User as DiscordUser} from "discord.js";
+import {Context} from "../../Context";
 
 @Entity()
 export class User extends BaseEntity {
@@ -27,9 +28,6 @@ export class User extends BaseEntity {
     @ManyToMany(type => User, user => user.legsGivenTo)
     legsReceivedFrom: User[];
 
-    @Column({default: ""})
-    lastNickname: string;
-
     legsGiven() {
         return this.legsGivenTo.length;
     }
@@ -46,7 +44,7 @@ export class User extends BaseEntity {
         return this.getDiscordMember(guild).user;
     }
 
-    getNickname(guild: Guild = null): string {
+    async getNickname(guild: Guild = null): Promise<string> {
 
         if (guild !== null) {
 
@@ -57,14 +55,14 @@ export class User extends BaseEntity {
         }
 
         //Last nickname
-        return this.lastNickname;
+        return (await Context.client.fetchUser(this.discordId)).username;
 
     }
 
-    getStats(guild: Guild): string {
+    async getStats(guild: Guild): Promise<string> {
 
         //Legs given
-        const toStr = (() => {
+        const toStr = await (async () => {
 
             if (this.legsGivenTo.length === 0) {
                 return "has not given any legs";
@@ -72,7 +70,7 @@ export class User extends BaseEntity {
 
             const toNames = [];
             for (const to of this.legsGivenTo) {
-                toNames.push(to.getNickname());
+                toNames.push(await to.getNickname(guild));
             }
 
             return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
@@ -80,7 +78,7 @@ export class User extends BaseEntity {
         })();
 
         //Legs received
-        const fromStr = (() => {
+        const fromStr = await (async () => {
 
             if (this.legsReceivedFrom.length === 0) {
                 return "has not received any legs";
@@ -88,7 +86,7 @@ export class User extends BaseEntity {
 
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
-                fromNames.push(from.getNickname());
+                fromNames.push(await from.getNickname(guild));
             }
 
 
@@ -97,7 +95,7 @@ export class User extends BaseEntity {
 
         })();
 
-        return `${this.getNickname()} ${toStr} and ${fromStr}`;
+        return `${await this.getNickname(guild)} ${toStr} and ${fromStr}`;
 
     }
 
