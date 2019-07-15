@@ -57,7 +57,7 @@ exports.LegStatsCommand = {
     execute: async function (msg, args) {
         const userId = (args.length === 0 ? msg.member : findMemberByUsernameWithError(msg.guild, args.join())).user.id;
         const user = await User_1.User.findOrCreate(userId);
-        await msg.channel.send(user.getStats(msg.guild));
+        await msg.channel.send(await user.getStats(msg.guild));
     }
 };
 //# sourceMappingURL=LegCommand.js.map
