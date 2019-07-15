@@ -24,7 +24,15 @@ exports.OfferLegCommand = {
             throw new types_1.CommandError(`Missing [username]\n\`${this.usage}\``);
         }
         const giveLeg = async (msg, username) => {
-            const receiverMember = findMemberByUsernameWithError(msg.guild, username);
+            let receiverMember;
+            //Try with mention
+            if (msg.mentions.members.size === 1) {
+                receiverMember = msg.mentions.members.first();
+            }
+            //Try to match username
+            else {
+                receiverMember = findMemberByUsernameWithError(msg.guild, username);
+            }
             const receiver = await User_1.User.findOrCreate(receiverMember.user.id);
             const giver = await User_1.User.findOrCreate(msg.author.id);
             //Check self
@@ -55,7 +63,19 @@ exports.LegStatsCommand = {
     aliases: ["s", "stat"],
     useDefaultPrefix: true,
     execute: async function (msg, args) {
-        const userId = (args.length === 0 ? msg.member : findMemberByUsernameWithError(msg.guild, args.join())).user.id;
+        let userId;
+        //Self
+        if (args.length === 0) {
+            userId = msg.member.user.id;
+        }
+        //Try with mention
+        else if (msg.mentions.members.size === 1) {
+            userId = msg.mentions.members.first().user.id;
+        }
+        //Try to match username
+        else {
+            userId = findMemberByUsernameWithError(msg.guild, args.join()).user.id;
+        }
         const user = await User_1.User.findOrCreate(userId);
         await msg.channel.send(await user.getStats(msg.guild));
     }

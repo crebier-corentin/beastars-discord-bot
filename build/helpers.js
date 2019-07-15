@@ -6,6 +6,10 @@ function escapeRegExp(string) {
 exports.escapeRegExp = escapeRegExp;
 function findMemberByUsername(guild, name) {
     name = name.toLowerCase();
+    //Remove the @ if there is one
+    if (name.startsWith("@")) {
+        name = name.substring(1);
+    }
     for (const member of guild.members.array()) {
         //Exact match nickname or substr
         if (member.nickname != undefined) {

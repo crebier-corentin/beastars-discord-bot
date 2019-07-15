@@ -32,7 +32,16 @@ export const OfferLegCommand: Command = {
 
         const giveLeg = async (msg: Message, username: string) => {
 
-            const receiverMember = findMemberByUsernameWithError(msg.guild, username);
+            let receiverMember: GuildMember;
+
+            //Try with mention
+            if (msg.mentions.members.size === 1) {
+                receiverMember = msg.mentions.members.first();
+            }
+            //Try to match username
+            else {
+                receiverMember = findMemberByUsernameWithError(msg.guild, username);
+            }
 
             const receiver = await User.findOrCreate(receiverMember.user.id);
             const giver = await User.findOrCreate(msg.author.id);
@@ -76,7 +85,20 @@ export const LegStatsCommand: Command = {
     execute: async function (msg, args) {
 
 
-        const userId = (args.length === 0 ? msg.member : findMemberByUsernameWithError(msg.guild, args.join())).user.id;
+        let userId;
+
+        //Self
+        if (args.length === 0) {
+            userId = msg.member.user.id;
+        }
+        //Try with mention
+        else if (msg.mentions.members.size === 1) {
+            userId = msg.mentions.members.first().user.id;
+        }
+        //Try to match username
+        else {
+            userId = findMemberByUsernameWithError(msg.guild, args.join()).user.id;
+        }
 
         const user = await User.findOrCreate(userId);
 
