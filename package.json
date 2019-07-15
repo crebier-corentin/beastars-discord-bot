@@ -8,7 +8,6 @@
   "scripts": {
     "build": "tsc ",
     "watch": "tsc  -w",
-    "heroku-postbuild": "run-s build migration:run",
     "migration:run": "typeorm migration:run",
     "migration:revert": "typeorm migration:revert",
     "migration:gen": "typeorm migration:generate -d src/db/migrations"
