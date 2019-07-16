@@ -44,18 +44,18 @@ export class User extends BaseEntity {
         return this.getDiscordMember(guild).user;
     }
 
-    async getNickname(guild: Guild = null): Promise<string> {
+    async getNickname(guild: Guild = null, delimiters = ""): Promise<string> {
 
         if (guild !== null) {
 
             const member = this.getDiscordMember(guild);
 
             if (member != undefined)
-                return member.displayName;
+                return delimiters + member.displayName + delimiters;
         }
 
         //Last nickname
-        return (await Context.client.fetchUser(this.discordId)).username;
+        return delimiters + (await Context.client.fetchUser(this.discordId)).username + delimiters;
 
     }
 
@@ -70,7 +70,7 @@ export class User extends BaseEntity {
 
             const toNames = [];
             for (const to of this.legsGivenTo) {
-                toNames.push(await to.getNickname(guild));
+                toNames.push(await to.getNickname(guild, "**"));
             }
 
             return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
@@ -86,7 +86,7 @@ export class User extends BaseEntity {
 
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
-                fromNames.push(await from.getNickname(guild));
+                fromNames.push(await from.getNickname(guild, "**"));
             }
 
 
@@ -95,7 +95,7 @@ export class User extends BaseEntity {
 
         })();
 
-        return `${await this.getNickname(guild)} ${toStr} and ${fromStr}`;
+        return `${await this.getNickname(guild, "**")} ${toStr} and ${fromStr}`;
 
     }
 

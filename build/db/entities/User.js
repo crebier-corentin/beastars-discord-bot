@@ -25,14 +25,14 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
     getDiscordUser(guild) {
         return this.getDiscordMember(guild).user;
     }
-    async getNickname(guild = null) {
+    async getNickname(guild = null, delimiters = "") {
         if (guild !== null) {
             const member = this.getDiscordMember(guild);
             if (member != undefined)
-                return member.displayName;
+                return delimiters + member.displayName + delimiters;
         }
         //Last nickname
-        return (await Context_1.Context.client.fetchUser(this.discordId)).username;
+        return delimiters + (await Context_1.Context.client.fetchUser(this.discordId)).username + delimiters;
     }
     async getStats(guild) {
         //Legs given
@@ -42,7 +42,7 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
             }
             const toNames = [];
             for (const to of this.legsGivenTo) {
-                toNames.push(await to.getNickname(guild));
+                toNames.push(await to.getNickname(guild, "**"));
             }
             return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
         })();
@@ -53,11 +53,11 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
             }
             const fromNames = [];
             for (const from of this.legsReceivedFrom) {
-                fromNames.push(await from.getNickname(guild));
+                fromNames.push(await from.getNickname(guild, "**"));
             }
             return `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
         })();
-        return `${await this.getNickname(guild)} ${toStr} and ${fromStr}`;
+        return `${await this.getNickname(guild, "**")} ${toStr} and ${fromStr}`;
     }
     async giveLegTo(receiver) {
         this.legsGivenTo.push(receiver);
