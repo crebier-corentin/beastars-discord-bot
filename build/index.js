@@ -12,6 +12,8 @@ typeorm_1.createConnection().then(() => {
     const client = new Discord.Client();
     Context_1.Context.client = client;
     client.on('ready', async () => {
+        //Set description
+        await client.user.setPresence({ status: "online", game: { name: `Use ${Context_1.Context.prefix} help` } });
         console.log(`Bot is ready`);
     });
     client.on('message', async (msg) => {

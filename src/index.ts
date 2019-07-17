@@ -19,6 +19,10 @@ createConnection().then(() => {
     Context.client = client;
 
     client.on('ready', async () => {
+        //Set description
+        await client.user.setPresence({status: "online", game: {name: `Use ${Context.prefix} help`}});
+
+
         console.log(`Bot is ready`);
     });
 
