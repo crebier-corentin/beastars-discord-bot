@@ -61,12 +61,26 @@ export const OfferLegCommand: Command = {
                 throw new CommandError(`You have already given a leg to ${receiverMember.displayName}`);
             }
 
-            //Eat the leg
-            await giver.giveLegTo(receiver);
+            //Comfirmation
+            const confirmationMsg = await msg.channel.send("_ _") as Message;
+            await confirmationMsg.edit(`Are you sure you want to give your leg to <@${receiver.discordId}>\nReply with "yes" to confirm it.\nWill expire in 20 seconds...`);
 
-            const giverMember = msg.member;
+            let filter = filterMsg => filterMsg.author.id == msg.author.id;
+            const collected = await msg.channel.awaitMessages(filter, {max: 1, time: 20000});
 
-            await msg.channel.send(`${giverMember.displayName} has offered one of his legs to ${receiverMember.displayName}`);
+            //Delete confirmation message if possible
+            if (confirmationMsg.deletable) confirmationMsg.delete();
+
+            //Give the leg
+            if (collected.size > 0 && collected.first().content.toLowerCase() == "yes") {
+
+                await giver.giveLegTo(receiver);
+
+                const giverMember = msg.member;
+
+                await msg.channel.send(`**${giverMember.displayName}** has offered one of his legs to **${receiverMember.displayName}**`);
+            }
+
         };
 
         await giveLeg(msg, args.join())
