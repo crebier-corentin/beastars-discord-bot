@@ -49,7 +49,7 @@ exports.OfferLegCommand = {
             }
             //Comfirmation
             const confirmationMsg = await msg.channel.send("_ _");
-            await confirmationMsg.edit(`Are you sure you want to give your leg to <@${receiver.discordId}>\nReply with "yes" to confirm it.\nWill expire in 20 seconds...`);
+            await confirmationMsg.edit(`Are you sure you want to give your leg to <@${receiver.discordId}>, this action is **permanent** !\nReply with "yes" to confirm it.\nWill expire in 20 seconds...`);
             let filter = filterMsg => filterMsg.author.id == msg.author.id;
             const collected = await msg.channel.awaitMessages(filter, { max: 1, time: 20000 });
             //Delete confirmation message if possible
@@ -59,7 +59,7 @@ exports.OfferLegCommand = {
             if (collected.size > 0 && collected.first().content.toLowerCase() == "yes") {
                 await giver.giveLegTo(receiver);
                 const giverMember = msg.member;
-                await msg.channel.send(`**${giverMember.displayName}** has offered one of his legs to **${receiverMember.displayName}**`);
+                await msg.channel.send(`**${giverMember.displayName}** has offered one of their legs to **${receiverMember.displayName}**`);
             }
         };
         await giveLeg(msg, args.join());
