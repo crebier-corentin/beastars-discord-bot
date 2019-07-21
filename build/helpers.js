@@ -16,10 +16,10 @@ function getEverythingAfterMatch(pattern, str, times = 1) {
 }
 exports.getEverythingAfterMatch = getEverythingAfterMatch;
 function findMemberByUsername(guild, name) {
-    name = name.toLowerCase();
+    let lowerCaseName = name.toLowerCase();
     //Remove the @ if there is one
-    if (name.startsWith("@")) {
-        name = name.substring(1);
+    if (lowerCaseName.startsWith("@")) {
+        lowerCaseName = lowerCaseName.substring(1);
     }
     /*Priotities
     7 : Exact username#discrimator
@@ -38,31 +38,31 @@ function findMemberByUsername(guild, name) {
         //Find by nickname
         if (member.nickname != undefined) {
             const nickname = member.nickname.toLowerCase();
-            if (name === nickname) {
+            if (lowerCaseName === nickname) {
                 results.push(member);
                 continue;
             }
-            if (nickname.startsWith(name)) {
+            if (nickname.startsWith(lowerCaseName)) {
                 results.push(member);
                 continue;
             }
-            if (nickname.includes(name)) {
+            if (nickname.includes(lowerCaseName)) {
                 results.push(member);
                 continue;
             }
         }
         const username = member.user.username.toLowerCase();
         //Find by username
-        if (username.startsWith(name)) {
-            if (name === username) {
+        if (username.startsWith(lowerCaseName)) {
+            if (lowerCaseName === username) {
                 results.push(member);
                 continue;
             }
-            if (username.startsWith(name)) {
+            if (username.startsWith(lowerCaseName)) {
                 results.push(member);
                 continue;
             }
-            if (username.includes(name)) {
+            if (username.includes(lowerCaseName)) {
                 results.push(member);
                 continue;
             }

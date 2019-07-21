@@ -18,9 +18,9 @@ export function getEverythingAfterMatch(pattern: RegExp, str: string, times: num
     return "";
 }
 
-export function findMemberByUsername(guild: Guild, lowerCaseName: string): GuildMember[] {
+export function findMemberByUsername(guild: Guild, name: string): GuildMember[] {
 
-    lowerCaseName = lowerCaseName.toLowerCase();
+    let lowerCaseName = name.toLowerCase();
 
     //Remove the @ if there is one
     if (lowerCaseName.startsWith("@")) {
