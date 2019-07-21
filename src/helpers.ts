@@ -28,6 +28,7 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
     }
 
     /*Priotities
+    7 : Exact username#discrimator
     6 : Exact nickname
     5 : Starts with nickname
     4 : Substring nickname
@@ -39,11 +40,15 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
 
     for (const member of guild.members.array()) {
 
+        if(name == `${member.user.username}#${member.user.discriminator}`) {
+            return [member];
+        }
+
         //Find by nickname
         if (member.nickname != undefined) {
             const nickname = member.nickname.toLowerCase();
 
-            if (nickname === name) {
+            if (name === nickname) {
                 results.push(member);
                 continue;
             }
@@ -61,7 +66,7 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
 
         //Find by username
         if (username.startsWith(name)) {
-            if (username === name) {
+            if (name === username) {
                 results.push(member);
                 continue;
             }
