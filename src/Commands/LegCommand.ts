@@ -2,18 +2,28 @@ import {Command, CommandError} from "../types";
 import {findMemberByUsername} from "../helpers";
 import {Message, GuildMember, RichEmbed, Guild} from "discord.js";
 import {User} from "../db/entities/User";
+import {Context} from "../Context";
 
 
 const findMemberByUsernameWithError = (guild: Guild, username: string): GuildMember => {
 
-    const receiverMember = findMemberByUsername(guild, username);
+    const receiverMembers = findMemberByUsername(guild, username);
 
     //Can't find member
-    if (receiverMember == null) {
+    if (receiverMembers.length == 0) {
         throw new CommandError(`Unable to find user ${username}`);
     }
 
-    return receiverMember
+    //Ambiguous
+    if (receiverMembers.length > 0) {
+
+        //Bold
+        let names = receiverMembers.map(value => `**${value.displayName}**`);
+
+        throw new CommandError(`Ambiguous user between : \n${names.join("\n")}`);
+    }
+
+    return receiverMembers[0];
 };
 
 export const OfferLegCommand: Command = {
@@ -23,11 +33,11 @@ export const OfferLegCommand: Command = {
     example: "offer yyao",
     aliases: ["o"],
     useDefaultPrefix: true,
-    execute: async function (msg, args) {
+    execute: async function (msg, args, fullArgs) {
 
         //Missing username
         if (args.length == 0) {
-            throw new CommandError(`Missing [username]\n\`${this.usage}\``);
+            throw new CommandError(`Missing [username]\n\`${Context.prefix} ${this.usage}\``);
         }
 
         const giveLeg = async (msg: Message, username: string) => {
@@ -83,7 +93,7 @@ export const OfferLegCommand: Command = {
 
         };
 
-        await giveLeg(msg, args.join())
+        await giveLeg(msg, fullArgs)
 
 
     }
@@ -96,7 +106,7 @@ export const LegStatsCommand: Command = {
     example: "stats yyao",
     aliases: ["s", "stat"],
     useDefaultPrefix: true,
-    execute: async function (msg, args) {
+    execute: async function (msg, args, fullArgs) {
 
 
         let userId;
@@ -111,7 +121,7 @@ export const LegStatsCommand: Command = {
         }
         //Try to match username
         else {
-            userId = findMemberByUsernameWithError(msg.guild, args.join()).user.id;
+            userId = findMemberByUsernameWithError(msg.guild, fullArgs).user.id;
         }
 
         const user = await User.findOrCreate(userId);

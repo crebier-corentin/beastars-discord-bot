@@ -29,7 +29,7 @@ function executeCommand(msg) {
         //Ignore non commands
         if (!res.success)
             return;
-        const promise = res.command.execute.call(res.command, msg, res.args);
+        const promise = res.command.execute.call(res.command, msg, res.args, res.fullArgs);
         if (promise instanceof Promise) {
             promise.catch(exceptionHandler);
         }

@@ -19,7 +19,7 @@ export interface Command {
     usage: string;
     example?: string;
     aliases?: string[];
-    execute: (msg: Message, args: string[]) => void | Promise<void>;
+    execute: (msg: Message, args: string[], fullArgs: string) => void | Promise<void>;
 
     useDefaultPrefix: boolean;
     customPrefix?: string;

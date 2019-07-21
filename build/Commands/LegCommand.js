@@ -3,13 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const helpers_1 = require("../helpers");
 const User_1 = require("../db/entities/User");
+const Context_1 = require("../Context");
 const findMemberByUsernameWithError = (guild, username) => {
-    const receiverMember = helpers_1.findMemberByUsername(guild, username);
+    const receiverMembers = helpers_1.findMemberByUsername(guild, username);
     //Can't find member
-    if (receiverMember == null) {
+    if (receiverMembers.length == 0) {
         throw new types_1.CommandError(`Unable to find user ${username}`);
     }
-    return receiverMember;
+    //Ambiguous
+    if (receiverMembers.length > 0) {
+        //Bold
+        let names = receiverMembers.map(value => `**${value.displayName}**`);
+        throw new types_1.CommandError(`Ambiguous user between : \n${names.join("\n")}`);
+    }
+    return receiverMembers[0];
 };
 exports.OfferLegCommand = {
     name: "offer",
@@ -18,10 +25,10 @@ exports.OfferLegCommand = {
     example: "offer yyao",
     aliases: ["o"],
     useDefaultPrefix: true,
-    execute: async function (msg, args) {
+    execute: async function (msg, args, fullArgs) {
         //Missing username
         if (args.length == 0) {
-            throw new types_1.CommandError(`Missing [username]\n\`${this.usage}\``);
+            throw new types_1.CommandError(`Missing [username]\n\`${Context_1.Context.prefix} ${this.usage}\``);
         }
         const giveLeg = async (msg, username) => {
             let receiverMember;
@@ -62,7 +69,7 @@ exports.OfferLegCommand = {
                 await msg.channel.send(`**${giverMember.displayName}** has offered one of their legs to **${receiverMember.displayName}**`);
             }
         };
-        await giveLeg(msg, args.join());
+        await giveLeg(msg, fullArgs);
     }
 };
 exports.LegStatsCommand = {
@@ -72,7 +79,7 @@ exports.LegStatsCommand = {
     example: "stats yyao",
     aliases: ["s", "stat"],
     useDefaultPrefix: true,
-    execute: async function (msg, args) {
+    execute: async function (msg, args, fullArgs) {
         let userId;
         //Self
         if (args.length === 0) {
@@ -84,7 +91,7 @@ exports.LegStatsCommand = {
         }
         //Try to match username
         else {
-            userId = findMemberByUsernameWithError(msg.guild, args.join()).user.id;
+            userId = findMemberByUsernameWithError(msg.guild, fullArgs).user.id;
         }
         const user = await User_1.User.findOrCreate(userId);
         await msg.channel.send(await user.getStats(msg.guild));

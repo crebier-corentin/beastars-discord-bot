@@ -29,7 +29,12 @@ class Parser {
             for (const command of this.commands) {
                 //Found command
                 if (command.useDefaultPrefix && (commandName === command.name || command.aliases.includes(commandName))) {
-                    return { success: true, command, args: splitted.slice(2) };
+                    return {
+                        success: true,
+                        command,
+                        args: splitted.slice(2),
+                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2)
+                    };
                 }
             }
             //Invalid command
@@ -38,7 +43,12 @@ class Parser {
         //Custom prefix
         for (const custom of this.customPrefixes) {
             if (prefix === custom.prefix) {
-                return { success: true, command: custom.command, args: splitted.slice(1) };
+                return {
+                    success: true,
+                    command: custom.command,
+                    args: splitted.slice(1),
+                    fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 1)
+                };
             }
         }
         return { success: false };

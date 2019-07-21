@@ -1,4 +1,4 @@
-import {escapeRegExp} from "./helpers";
+import {escapeRegExp, getEverythingAfterMatch} from "./helpers";
 import {Command, CommandError} from "./types";
 import {Context} from "./Context";
 
@@ -21,7 +21,7 @@ export default class Parser {
         }
     }
 
-    parseCommand(str: string): { success: boolean, command?: Command, args?: string[] } {
+    parseCommand(str: string): { success: boolean, command?: Command, args?: string[], fullArgs?: string } {
         const splitted = str.trim().split(/\s+/);
 
         const prefix = splitted[0].toLowerCase();
@@ -30,7 +30,7 @@ export default class Parser {
         if (prefix == this.defaultPrefix) {
 
             //Missing command
-            if(splitted.length === 1) {
+            if (splitted.length === 1) {
                 throw new CommandError(`Missing command, to see the list of commands use \`${Context.prefix} help\``);
             }
 
@@ -39,7 +39,13 @@ export default class Parser {
             for (const command of this.commands) {
                 //Found command
                 if (command.useDefaultPrefix && (commandName === command.name || command.aliases.includes(commandName))) {
-                    return {success: true, command, args: splitted.slice(2)};
+
+                    return {
+                        success: true,
+                        command,
+                        args: splitted.slice(2),
+                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2)
+                    };
                 }
             }
 
@@ -50,7 +56,12 @@ export default class Parser {
         //Custom prefix
         for (const custom of this.customPrefixes) {
             if (prefix === custom.prefix) {
-                return {success: true, command: custom.command, args: splitted.slice(1)};
+                return {
+                    success: true,
+                    command: custom.command,
+                    args: splitted.slice(1),
+                    fullArgs: getEverythingAfterMatch(/\s+/g, str, 1)
+                };
             }
         }
 
