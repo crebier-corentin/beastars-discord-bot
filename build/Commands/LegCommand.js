@@ -11,9 +11,9 @@ const findMemberByUsernameWithError = (guild, username) => {
         throw new types_1.CommandError(`Unable to find user ${username}`);
     }
     //Ambiguous
-    if (receiverMembers.length > 0) {
+    if (receiverMembers.length > 1) {
         //Bold
-        let names = receiverMembers.map(value => `**${value.displayName}**`);
+        let names = receiverMembers.map(member => `**${member.displayName}** (${member.user.username}#${member.user.discriminator})`);
         throw new types_1.CommandError(`Ambiguous user between : \n${names.join("\n")}`);
     }
     return receiverMembers[0];

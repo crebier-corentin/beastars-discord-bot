@@ -18,7 +18,7 @@ const findMemberByUsernameWithError = (guild: Guild, username: string): GuildMem
     if (receiverMembers.length > 1) {
 
         //Bold
-        let names = receiverMembers.map(value => `**${value.displayName}**`);
+        let names = receiverMembers.map(member => `**${member.displayName}** (${member.user.username}#${member.user.discriminator})`);
 
         throw new CommandError(`Ambiguous user between : \n${names.join("\n")}`);
     }
