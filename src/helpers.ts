@@ -45,12 +45,15 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
 
             if (nickname === name) {
                 results.push(member);
+                continue;
             }
-            else if (nickname.startsWith(name)) {
+            if (nickname.startsWith(name)) {
                 results.push(member);
+                continue;
             }
-            else if (nickname.includes(name)) {
+            if (nickname.includes(name)) {
                 results.push(member);
+                continue;
             }
         }
 
@@ -60,12 +63,15 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
         if (username.startsWith(name)) {
             if (username === name) {
                 results.push(member);
+                continue;
             }
-            else if (username.startsWith(name)) {
+            if (username.startsWith(name)) {
                 results.push(member);
+                continue;
             }
-            else if (username.includes(name)) {
+            if (username.includes(name)) {
                 results.push(member);
+                continue;
             }
         }
 
