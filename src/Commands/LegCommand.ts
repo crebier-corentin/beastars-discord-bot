@@ -15,7 +15,7 @@ const findMemberByUsernameWithError = (guild: Guild, username: string): GuildMem
     }
 
     //Ambiguous
-    if (receiverMembers.length > 0) {
+    if (receiverMembers.length > 1) {
 
         //Bold
         let names = receiverMembers.map(value => `**${value.displayName}**`);
