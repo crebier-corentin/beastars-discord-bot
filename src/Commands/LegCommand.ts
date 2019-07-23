@@ -3,6 +3,7 @@ import {findMemberByUsername} from "../helpers";
 import {Message, GuildMember, RichEmbed, Guild} from "discord.js";
 import {User} from "../db/entities/User";
 import {Context} from "../Context";
+import * as moment from "moment";
 
 
 const findMemberByUsernameWithError = (guild: Guild, username: string): GuildMember => {
@@ -42,19 +43,33 @@ export const OfferLegCommand: Command = {
 
         const giveLeg = async (msg: Message, username: string) => {
 
-            let receiverMember: GuildMember;
+            const giverMember = msg.member;
 
-            //Try with mention
-            if (msg.mentions.members.size === 1) {
-                receiverMember = msg.mentions.members.first();
+            //24h join cooldown
+            const cooldownEnd = moment(giverMember.joinedAt).add(24, "hours");
+            const now = moment();
+            if(now < cooldownEnd) {
+
+                const diff = moment.duration(cooldownEnd.diff(now));
+
+                throw new CommandError(`You need to wait 24h after joining this server before you can offer your leg to someone (${diff.hours()} hours and ${diff.minutes()} minutes remaining).`);
             }
-            //Try to match username
-            else {
-                receiverMember = findMemberByUsernameWithError(msg.guild, username);
-            }
+
+            const receiverMember: GuildMember = (() => {
+
+                //Try with mention
+                if (msg.mentions.members.size === 1) {
+                    return msg.mentions.members.first();
+                }
+
+                //Try to match username
+                return findMemberByUsernameWithError(msg.guild, username);
+
+            })();
 
             const receiver = await User.findOrCreate(receiverMember.user.id);
             const giver = await User.findOrCreate(msg.author.id);
+
 
             //Check self
             if (receiver.id == giver.id) {
@@ -85,8 +100,6 @@ export const OfferLegCommand: Command = {
             if (collected.size > 0 && collected.first().content.toLowerCase() == "yes") {
 
                 await giver.giveLegTo(receiver);
-
-                const giverMember = msg.member;
 
                 await msg.channel.send(`**${giverMember.displayName}** has offered one of their legs to **${receiverMember.displayName}**`);
             }

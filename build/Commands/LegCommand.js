@@ -4,6 +4,7 @@ const types_1 = require("../types");
 const helpers_1 = require("../helpers");
 const User_1 = require("../db/entities/User");
 const Context_1 = require("../Context");
+const moment = require("moment");
 const findMemberByUsernameWithError = (guild, username) => {
     const receiverMembers = helpers_1.findMemberByUsername(guild, username);
     //Can't find member
@@ -31,15 +32,22 @@ exports.OfferLegCommand = {
             throw new types_1.CommandError(`Missing [username]\n\`${Context_1.Context.prefix} ${this.usage}\``);
         }
         const giveLeg = async (msg, username) => {
-            let receiverMember;
-            //Try with mention
-            if (msg.mentions.members.size === 1) {
-                receiverMember = msg.mentions.members.first();
+            const giverMember = msg.member;
+            //24h join cooldown
+            const cooldownEnd = moment(giverMember.joinedAt).add(24, "hours");
+            const now = moment();
+            if (now < cooldownEnd) {
+                const diff = moment.duration(cooldownEnd.diff(now));
+                throw new types_1.CommandError(`You need to wait 24h after joining this server before you can offer your leg to someone (${diff.hours()} hours and ${diff.minutes()} minutes remaining).`);
             }
-            //Try to match username
-            else {
-                receiverMember = findMemberByUsernameWithError(msg.guild, username);
-            }
+            const receiverMember = (() => {
+                //Try with mention
+                if (msg.mentions.members.size === 1) {
+                    return msg.mentions.members.first();
+                }
+                //Try to match username
+                return findMemberByUsernameWithError(msg.guild, username);
+            })();
             const receiver = await User_1.User.findOrCreate(receiverMember.user.id);
             const giver = await User_1.User.findOrCreate(msg.author.id);
             //Check self
@@ -65,7 +73,6 @@ exports.OfferLegCommand = {
             //Give the leg
             if (collected.size > 0 && collected.first().content.toLowerCase() == "yes") {
                 await giver.giveLegTo(receiver);
-                const giverMember = msg.member;
                 await msg.channel.send(`**${giverMember.displayName}** has offered one of their legs to **${receiverMember.displayName}**`);
             }
         };
