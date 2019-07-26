@@ -8,6 +8,7 @@ const ChapterCommands_1 = require("./Commands/ChapterCommands");
 const WikiCommand_1 = require("./Commands/WikiCommand");
 const QuoteCommand_1 = require("./Commands/QuoteCommand");
 const LegCommand_1 = require("./Commands/LegCommand");
+const helpers_1 = require("./helpers");
 const prefix = process.env.PREFIX;
 const commands = [HelpCommand_1.HelpCommand, ChapterCommands_1.ChapterBSCommand, ChapterCommands_1.ChapterBCCommand, WikiCommand_1.WikiCommand, QuoteCommand_1.QuoteComment, LegCommand_1.OfferLegCommand, LegCommand_1.LegStatsCommand];
 const parser = new Parser_1.default(prefix, commands);
@@ -26,9 +27,21 @@ function executeCommand(msg) {
     };
     try {
         const res = parser.parseCommand(msg.content);
-        //Ignore non commands
-        if (!res.success)
+        if (!res.success) {
+            //Triple cheeks sebun
+            const sebunCheeks = msg.guild.emojis.find(emoji => emoji.name == "Sebun_Cheeks");
+            const legoshiLick = msg.guild.emojis.find(emoji => emoji.name == "Legoshi_Lick");
+            //Emoji missing
+            if (sebunCheeks == null || legoshiLick == null)
+                return;
+            const cheeksRegex = new RegExp(`(${helpers_1.escapeRegExp(sebunCheeks.toString())}\\s*){3}`);
+            //React with Legoshi_Lick
+            if (cheeksRegex.test(msg.content)) {
+                msg.react(legoshiLick);
+            }
+            //Ignore non commands
             return;
+        }
         const promise = res.command.execute.call(res.command, msg, res.args, res.fullArgs);
         if (promise instanceof Promise) {
             promise.catch(exceptionHandler);

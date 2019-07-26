@@ -7,6 +7,7 @@ import {ChapterBCCommand, ChapterBSCommand} from "./Commands/ChapterCommands";
 import {WikiCommand} from "./Commands/WikiCommand";
 import {QuoteComment} from "./Commands/QuoteCommand";
 import {LegStatsCommand, OfferLegCommand} from "./Commands/LegCommand";
+import {escapeRegExp} from "./helpers";
 
 const prefix = process.env.PREFIX;
 
@@ -32,8 +33,27 @@ export function executeCommand(msg: Message) {
     try {
         const res = parser.parseCommand(msg.content);
 
-        //Ignore non commands
-        if (!res.success) return;
+
+        if (!res.success) {
+
+            //Triple cheeks sebun
+            const sebunCheeks = msg.guild.emojis.find(emoji => emoji.name == "Sebun_Cheeks");
+            const legoshiLick = msg.guild.emojis.find(emoji => emoji.name == "Legoshi_Lick");
+
+            //Emoji missing
+            if(sebunCheeks == null || legoshiLick == null) return;
+
+            const cheeksRegex = new RegExp(`(${escapeRegExp(sebunCheeks.toString())}\\s*){3}`);
+
+            //React with Legoshi_Lick
+            if (cheeksRegex.test(msg.content)) {
+
+                msg.react(legoshiLick);
+            }
+
+            //Ignore non commands
+            return;
+        }
 
         const promise = res.command.execute.call(res.command, msg, res.args, res.fullArgs);
 
@@ -41,8 +61,7 @@ export function executeCommand(msg: Message) {
             promise.catch(exceptionHandler);
         }
 
-    }
-    catch (e) {
+    } catch (e) {
         exceptionHandler(e);
     }
 }
