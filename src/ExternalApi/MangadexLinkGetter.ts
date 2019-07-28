@@ -35,11 +35,6 @@ export default class MangadexLinkGetter {
 
     async getChapterLink(chapterNo: number, manga: Manga): Promise<string> {
 
-        //Beast Complex 7
-        if (manga == Manga.BeastComplex && chapterNo == 7) {
-            return "https://www.dropbox.com/sh/2dfww0ylocfqpzn/AADJeQCEcb9YfyX5DQKZ1wY_a/Beast%20Complex%207?dl=0&subfolder_nav_tracking=1";
-        }
-
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
 
         return `https://mangadex.org/chapter/${chapter.id}`;
@@ -109,11 +104,6 @@ export default class MangadexLinkGetter {
     }
 
     async getChapterPageLink(chapterNo: number, pageNo: number, manga: Manga): Promise<string | { site: string, image: string; }> {
-
-        //Beast Complex 7
-        if (manga == Manga.BeastComplex && chapterNo == 7) {
-            return "Cannot post pages from Beast Complex 7\nhttps://www.dropbox.com/sh/2dfww0ylocfqpzn/AADJeQCEcb9YfyX5DQKZ1wY_a/Beast%20Complex%207?dl=0&subfolder_nav_tracking=1";
-        }
 
         //Chapter
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
