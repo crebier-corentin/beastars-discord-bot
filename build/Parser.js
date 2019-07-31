@@ -16,7 +16,8 @@ class Parser {
         }
     }
     parseCommand(str) {
-        const splitted = str.trim().split(/\s+/);
+        str = str.trim();
+        const splitted = str.split(/\s+/);
         const prefix = splitted[0].toLowerCase();
         //Default prefix
         if (prefix == this.defaultPrefix) {
@@ -25,10 +26,10 @@ class Parser {
                 throw new types_1.CommandError(`Missing command, to see the list of commands use \`${Context_1.Context.prefix} help\``);
             }
             //Find command
-            const commandName = splitted[1].toLowerCase();
+            const commandName = helpers_1.getEverythingAfterMatch(/\s+/g, str, 1);
             for (const command of this.commands) {
                 //Found command
-                if (command.useDefaultPrefix && (commandName === command.name || command.aliases.includes(commandName))) {
+                if (command.useDefaultPrefix && (commandName.startsWith(command.name) || helpers_1.includeStartsWith(command.aliases, commandName))) {
                     return {
                         success: true,
                         command,

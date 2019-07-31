@@ -79,4 +79,13 @@ async function asyncForEach(array, callback) {
     await Promise.all(promises);
 }
 exports.asyncForEach = asyncForEach;
+function includeStartsWith(array, search) {
+    for (const str of array) {
+        if (str.startsWith(search)) {
+            return true;
+        }
+    }
+    return false;
+}
+exports.includeStartsWith = includeStartsWith;
 //# sourceMappingURL=helpers.js.map

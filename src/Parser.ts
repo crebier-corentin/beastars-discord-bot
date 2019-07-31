@@ -1,4 +1,4 @@
-import {escapeRegExp, getEverythingAfterMatch} from "./helpers";
+import {escapeRegExp, getEverythingAfterMatch, includeStartsWith} from "./helpers";
 import {Command, CommandError} from "./types";
 import {Context} from "./Context";
 
@@ -22,7 +22,8 @@ export default class Parser {
     }
 
     parseCommand(str: string): { success: boolean, command?: Command, args?: string[], fullArgs?: string } {
-        const splitted = str.trim().split(/\s+/);
+        str = str.trim();
+        const splitted = str.split(/\s+/);
 
         const prefix = splitted[0].toLowerCase();
 
@@ -35,10 +36,10 @@ export default class Parser {
             }
 
             //Find command
-            const commandName = splitted[1].toLowerCase();
+            const commandName = getEverythingAfterMatch(/\s+/g, str, 1);
             for (const command of this.commands) {
                 //Found command
-                if (command.useDefaultPrefix && (commandName === command.name || command.aliases.includes(commandName))) {
+                if (command.useDefaultPrefix && (commandName.startsWith(command.name) || includeStartsWith(command.aliases, commandName))) {
 
                     return {
                         success: true,

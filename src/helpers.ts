@@ -40,7 +40,7 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
 
     for (const member of guild.members.array()) {
 
-        if(name == `${member.user.username}#${member.user.discriminator}`) {
+        if (name == `${member.user.username}#${member.user.discriminator}`) {
             return [member];
         }
 
@@ -95,5 +95,17 @@ export async function asyncForEach<T>(array: T[], callback: (item: T) => Promise
     }
 
     await Promise.all(promises);
+
+}
+
+export function includeStartsWith(array: string[], search: string): boolean {
+
+    for (const str of array) {
+        if (str.startsWith(search)) {
+            return true;
+        }
+    }
+
+    return false;
 
 }
