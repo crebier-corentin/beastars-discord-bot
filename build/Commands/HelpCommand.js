@@ -20,8 +20,12 @@ exports.HelpCommand = {
             if (!isAdmin && command.adminOnly) {
                 continue;
             }
+            let title = "";
             //Title
-            let title = "`";
+            if (command.adminOnly) {
+                title += "**ADMIN ONLY**\n";
+            }
+            title += "`";
             //Add default prefix
             if (command.useDefaultPrefix) {
                 title += `${Context_1.Context.prefix} `;

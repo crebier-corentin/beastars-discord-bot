@@ -26,8 +26,14 @@ export const HelpCommand: Command = {
                 continue;
             }
 
+            let title = "";
+
             //Title
-            let title = "`";
+            if(command.adminOnly) {
+                title += "**ADMIN ONLY**\n"
+            }
+
+             title += "`";
 
             //Add default prefix
             if (command.useDefaultPrefix) {
