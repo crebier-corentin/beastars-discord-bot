@@ -26,15 +26,16 @@ class Parser {
                 throw new types_1.CommandError(`Missing command, to see the list of commands use \`${Context_1.Context.prefix} help\``);
             }
             //Find command
-            const commandName = helpers_1.getEverythingAfterMatch(/\s+/g, str, 1);
+            const commandName = helpers_1.getEverythingAfterMatch(/\s+/g, str, 1).toLowerCase();
             for (const command of this.commands) {
                 //Found command
                 if (command.useDefaultPrefix && (commandName.startsWith(command.name) || helpers_1.includeStartsWith(command.aliases, commandName))) {
+                    const whitespaceInCommand = helpers_1.regexCount(/\s+/g, command.name);
                     return {
                         success: true,
                         command,
-                        args: splitted.slice(2),
-                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2)
+                        args: splitted.splice(2 + whitespaceInCommand),
+                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2 + whitespaceInCommand)
                     };
                 }
             }

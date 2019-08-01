@@ -1,4 +1,4 @@
-import {escapeRegExp, getEverythingAfterMatch, includeStartsWith} from "./helpers";
+import {escapeRegExp, getEverythingAfterMatch, includeStartsWith, regexCount} from "./helpers";
 import {Command, CommandError} from "./types";
 import {Context} from "./Context";
 
@@ -36,16 +36,18 @@ export default class Parser {
             }
 
             //Find command
-            const commandName = getEverythingAfterMatch(/\s+/g, str, 1);
+            const commandName = getEverythingAfterMatch(/\s+/g, str, 1).toLowerCase();
             for (const command of this.commands) {
                 //Found command
                 if (command.useDefaultPrefix && (commandName.startsWith(command.name) || includeStartsWith(command.aliases, commandName))) {
 
+                    const whitespaceInCommand = regexCount(/\s+/g, command.name);
+
                     return {
                         success: true,
                         command,
-                        args: splitted.slice(2),
-                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2)
+                        args: splitted.splice(2 + whitespaceInCommand),
+                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespaceInCommand)
                     };
                 }
             }

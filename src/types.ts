@@ -23,5 +23,6 @@ export interface Command {
 
     useDefaultPrefix: boolean;
     customPrefix?: string;
+    adminOnly: boolean;
 }
 

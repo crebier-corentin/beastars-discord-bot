@@ -36,6 +36,7 @@ exports.ChapterBSCommand = {
     usage: "bs! [chapter] (page)",
     example: "bs! 10",
     useDefaultPrefix: false,
+    adminOnly: false,
     execute: async function (msg, args) {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.Beastars);
     }
@@ -46,6 +47,7 @@ exports.ChapterBCCommand = {
     usage: "bc! [chapter] (page)",
     example: "bc! 2",
     useDefaultPrefix: false,
+    adminOnly: false,
     execute: async function (msg, args) {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.BeastComplex);
     }

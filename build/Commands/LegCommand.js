@@ -26,6 +26,7 @@ exports.OfferLegCommand = {
     example: "offer yyao",
     aliases: ["o"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: async function (msg, args, fullArgs) {
         //Missing username
         if (args.length == 0) {
@@ -86,6 +87,7 @@ exports.LegStatsCommand = {
     example: "stats yyao",
     aliases: ["s", "stat"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: async function (msg, args, fullArgs) {
         let userId;
         //Self

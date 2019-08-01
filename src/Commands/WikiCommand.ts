@@ -8,11 +8,11 @@ export const WikiCommand: Command = {
     example: "wiki Haru",
     aliases: ["w"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: async function (msg, args) {
 
         //Missing query
         if (args.length == 0) {
-
             throw new CommandError(`Missing [query]\n\`${this.usage}\``);
         }
 

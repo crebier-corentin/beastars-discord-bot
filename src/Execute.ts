@@ -7,11 +7,12 @@ import {ChapterBCCommand, ChapterBSCommand} from "./Commands/ChapterCommands";
 import {WikiCommand} from "./Commands/WikiCommand";
 import {QuoteComment} from "./Commands/QuoteCommand";
 import {LegStatsCommand, OfferLegCommand} from "./Commands/LegCommand";
-import {escapeRegExp} from "./helpers";
+import {escapeRegExp, isAdministrator} from "./helpers";
+import {ImageAddCommand} from "./Commands/ImageCommands";
 
 const prefix = process.env.PREFIX;
 
-const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand, QuoteComment, OfferLegCommand, LegStatsCommand];
+const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand, QuoteComment, OfferLegCommand, LegStatsCommand, ImageAddCommand];
 const parser = new Parser(prefix, commands);
 
 Context.prefix = prefix;
@@ -33,7 +34,6 @@ export function executeCommand(msg: Message) {
     try {
         const res = parser.parseCommand(msg.content);
 
-
         if (!res.success) {
 
             //Triple cheeks sebun
@@ -41,7 +41,7 @@ export function executeCommand(msg: Message) {
             const legoshiLick = msg.guild.emojis.find(emoji => emoji.name == "Legoshi_Lick");
 
             //Emoji missing
-            if(sebunCheeks == null || legoshiLick == null) return;
+            if (sebunCheeks == null || legoshiLick == null) return;
 
             const cheeksRegex = new RegExp(`(${escapeRegExp(sebunCheeks.toString())}\\s*){3}`);
 
@@ -55,13 +55,19 @@ export function executeCommand(msg: Message) {
             return;
         }
 
+        //Check admin
+        if (res.command.adminOnly && !isAdministrator(msg.member)) {
+            throw new CommandError("Only administrators can use this command");
+        }
+
         const promise = res.command.execute.call(res.command, msg, res.args, res.fullArgs);
 
         if (promise instanceof Promise) {
             promise.catch(exceptionHandler);
         }
 
-    } catch (e) {
+    }
+    catch (e) {
         exceptionHandler(e);
     }
 }

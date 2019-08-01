@@ -34,6 +34,7 @@ export const OfferLegCommand: Command = {
     example: "offer yyao",
     aliases: ["o"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: async function (msg, args, fullArgs) {
 
         //Missing username
@@ -119,6 +120,7 @@ export const LegStatsCommand: Command = {
     example: "stats yyao",
     aliases: ["s", "stat"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: async function (msg, args, fullArgs) {
 
 

@@ -2,17 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const Context_1 = require("../Context");
+const helpers_1 = require("../helpers");
 exports.HelpCommand = {
     name: "help",
     desc: "Show this help message",
     usage: "help",
     aliases: ["h"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: function (msg) {
+        const isAdmin = helpers_1.isAdministrator(msg.member);
         const embed = new discord_js_1.RichEmbed()
             .setTitle("Help");
         for (let i = 0; i < Context_1.Context.commands.length; i++) {
             const command = Context_1.Context.commands[i];
+            //Ignore adminOnly commands if non admin
+            if (!isAdmin && command.adminOnly) {
+                continue;
+            }
             //Title
             let title = "`";
             //Add default prefix

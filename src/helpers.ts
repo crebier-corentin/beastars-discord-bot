@@ -18,6 +18,12 @@ export function getEverythingAfterMatch(pattern: RegExp, str: string, times: num
     return "";
 }
 
+export function regexCount(re: RegExp, str: string): number {
+
+    return ((str || '').match(re) || []).length
+
+}
+
 export function findMemberByUsername(guild: Guild, name: string): GuildMember[] {
 
     let lowerCaseName = name.toLowerCase();
@@ -108,4 +114,8 @@ export function includeStartsWith(array: string[], search: string): boolean {
 
     return false;
 
+}
+
+export function isAdministrator(member: GuildMember): boolean {
+    return member.hasPermission("ADMINISTRATOR");
 }

@@ -8,10 +8,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var Image_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
-let Image = class Image extends typeorm_1.BaseEntity {
+let Image = Image_1 = class Image extends typeorm_1.BaseEntity {
+    info(guild) {
+        const addedbyMember = this.addedBy.getDiscordMember(guild);
+        return `${this.name} (<${this.url}>) added ${this.createdAt.toISOString()} by **${addedbyMember.displayName}** (${addedbyMember.user.username}#${addedbyMember.user.discriminator})`;
+    }
+    static findImage(name) {
+        return Image_1.createQueryBuilder("image")
+            .leftJoinAndSelect("image.addedBy", "addedBy")
+            .where("LOWER(image.name) = LOWER(:name)", { name })
+            .getOne();
+    }
+    static async nameExist(name) {
+        return await Image_1.createQueryBuilder("image")
+            .where("LOWER(image.name) = LOWER(:name)", { name })
+            .getCount() > 0;
+    }
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
@@ -31,9 +47,9 @@ __decorate([
 ], Image.prototype, "addedBy", void 0);
 __decorate([
     typeorm_1.CreateDateColumn(),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], Image.prototype, "createdAt", void 0);
-Image = __decorate([
+Image = Image_1 = __decorate([
     typeorm_1.Entity()
 ], Image);
 exports.Image = Image;

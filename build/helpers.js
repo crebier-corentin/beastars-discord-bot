@@ -15,6 +15,10 @@ function getEverythingAfterMatch(pattern, str, times = 1) {
     return "";
 }
 exports.getEverythingAfterMatch = getEverythingAfterMatch;
+function regexCount(re, str) {
+    return ((str || '').match(re) || []).length;
+}
+exports.regexCount = regexCount;
 function findMemberByUsername(guild, name) {
     let lowerCaseName = name.toLowerCase();
     //Remove the @ if there is one
@@ -88,4 +92,8 @@ function includeStartsWith(array, search) {
     return false;
 }
 exports.includeStartsWith = includeStartsWith;
+function isAdministrator(member) {
+    return member.hasPermission("ADMINISTRATOR");
+}
+exports.isAdministrator = isAdministrator;
 //# sourceMappingURL=helpers.js.map

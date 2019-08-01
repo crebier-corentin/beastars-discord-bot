@@ -1,6 +1,7 @@
 import {RichEmbed} from 'discord.js';
 import {Context} from "../Context";
 import {Command} from "../types";
+import {isAdministrator} from "../helpers";
 
 export const HelpCommand: Command = {
     name: "help",
@@ -8,7 +9,10 @@ export const HelpCommand: Command = {
     usage: "help",
     aliases: ["h"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: function (msg) {
+
+        const isAdmin = isAdministrator(msg.member);
 
         const embed = new RichEmbed()
             .setTitle("Help");
@@ -16,6 +20,11 @@ export const HelpCommand: Command = {
         for (let i = 0; i < Context.commands.length; i++) {
 
             const command = Context.commands[i];
+
+            //Ignore adminOnly commands if non admin
+            if (!isAdmin && command.adminOnly) {
+                continue;
+            }
 
             //Title
             let title = "`";

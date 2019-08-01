@@ -7,6 +7,7 @@ exports.QuoteComment = {
     usage: "quote",
     aliases: ["q"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: async function (msg) {
         const quote = await IncorrectBeastarsQuote_1.IncorrectBeastarsQuote.getRandomQuote();
         msg.channel.send(`<${quote.url}>`, { embed: { description: quote.text } });

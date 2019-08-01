@@ -7,6 +7,7 @@ export const QuoteComment: Command = {
     usage: "quote",
     aliases: ["q"],
     useDefaultPrefix: true,
+    adminOnly: false,
     execute: async function (msg) {
 
         const quote = await IncorrectBeastarsQuote.getRandomQuote();

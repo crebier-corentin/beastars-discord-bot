@@ -9,8 +9,9 @@ const WikiCommand_1 = require("./Commands/WikiCommand");
 const QuoteCommand_1 = require("./Commands/QuoteCommand");
 const LegCommand_1 = require("./Commands/LegCommand");
 const helpers_1 = require("./helpers");
+const ImageCommands_1 = require("./Commands/ImageCommands");
 const prefix = process.env.PREFIX;
-const commands = [HelpCommand_1.HelpCommand, ChapterCommands_1.ChapterBSCommand, ChapterCommands_1.ChapterBCCommand, WikiCommand_1.WikiCommand, QuoteCommand_1.QuoteComment, LegCommand_1.OfferLegCommand, LegCommand_1.LegStatsCommand];
+const commands = [HelpCommand_1.HelpCommand, ChapterCommands_1.ChapterBSCommand, ChapterCommands_1.ChapterBCCommand, WikiCommand_1.WikiCommand, QuoteCommand_1.QuoteComment, LegCommand_1.OfferLegCommand, LegCommand_1.LegStatsCommand, ImageCommands_1.ImageAddCommand];
 const parser = new Parser_1.default(prefix, commands);
 Context_1.Context.prefix = prefix;
 Context_1.Context.commands = commands;
@@ -41,6 +42,10 @@ function executeCommand(msg) {
             }
             //Ignore non commands
             return;
+        }
+        //Check admin
+        if (res.command.adminOnly && !helpers_1.isAdministrator(msg.member)) {
+            throw new types_1.CommandError("Only administrators can use this command");
         }
         const promise = res.command.execute.call(res.command, msg, res.args, res.fullArgs);
         if (promise instanceof Promise) {
