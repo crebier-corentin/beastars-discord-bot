@@ -93,7 +93,8 @@ function includeStartsWith(array, search) {
 }
 exports.includeStartsWith = includeStartsWith;
 function isAdministrator(member) {
-    return member.hasPermission("ADMINISTRATOR");
+    //TODO Chaneg to ADMINISTRATOR when yyao is promoted
+    return member.hasPermission("BAN_MEMBERS");
 }
 exports.isAdministrator = isAdministrator;
 //# sourceMappingURL=helpers.js.map

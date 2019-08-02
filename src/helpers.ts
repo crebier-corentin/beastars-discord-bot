@@ -117,5 +117,6 @@ export function includeStartsWith(array: string[], search: string): boolean {
 }
 
 export function isAdministrator(member: GuildMember): boolean {
-    return member.hasPermission("ADMINISTRATOR");
+    //TODO Chaneg to ADMINISTRATOR when yyao is promoted
+    return member.hasPermission("BAN_MEMBERS");
 }
