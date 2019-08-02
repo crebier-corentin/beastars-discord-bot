@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const Image_1 = require("../db/entities/Image");
 const User_1 = require("../db/entities/User");
+const helpers_1 = require("../helpers");
 exports.ImageAddCommand = {
     name: "image add",
     desc: "Add an image to to the image list",
@@ -22,6 +23,10 @@ exports.ImageAddCommand = {
         }
         const name = args[0];
         const url = args[1];
+        //Forbidden names
+        if (["add", "remove", "list"].includes(name.toLowerCase())) {
+            throw new types_1.CommandError(`Forbidden image names : \`add\`, \`remove\` or \`list\``);
+        }
         //Check if name already exists
         const image = await Image_1.Image.findImage(name);
         if (image != undefined) {
@@ -58,6 +63,27 @@ exports.ImageRemoveCommand = {
         //Remove from database
         await image.remove();
         await msg.channel.send(`Image \`${name}\` removed`);
+    }
+};
+exports.ImageListCommand = {
+    name: "image list",
+    desc: "Show the list of images",
+    usage: "image list",
+    aliases: ["i list"],
+    useDefaultPrefix: true,
+    adminOnly: false,
+    execute: async function (msg) {
+        const images = await Image_1.Image.find();
+        //Empty
+        if (images.length === 0) {
+            throw new types_1.CommandError(`There is currently no images in the database.\nAn admin can add images with \`${exports.ImageAddCommand.usage}\``);
+        }
+        let result = "";
+        helpers_1.asyncForEach(images, async (image) => {
+            result += await image.info(msg.guild);
+            result += "\n";
+        });
+        await msg.channel.send(result);
     }
 };
 //# sourceMappingURL=ImageCommands.js.map

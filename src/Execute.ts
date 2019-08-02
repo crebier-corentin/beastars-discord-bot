@@ -8,11 +8,11 @@ import {WikiCommand} from "./Commands/WikiCommand";
 import {QuoteComment} from "./Commands/QuoteCommand";
 import {LegStatsCommand, OfferLegCommand} from "./Commands/LegCommand";
 import {escapeRegExp, isAdministrator} from "./helpers";
-import {ImageAddCommand, ImageRemoveCommand} from "./Commands/ImageCommands";
+import {ImageAddCommand, ImageListCommand, ImageRemoveCommand} from "./Commands/ImageCommands";
 
 const prefix = process.env.PREFIX;
 
-const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand, QuoteComment, OfferLegCommand, LegStatsCommand, ImageAddCommand, ImageRemoveCommand];
+const commands = [HelpCommand, ChapterBSCommand, ChapterBCCommand, WikiCommand, QuoteComment, OfferLegCommand, LegStatsCommand, ImageAddCommand, ImageRemoveCommand, ImageListCommand];
 const parser = new Parser(prefix, commands);
 
 Context.prefix = prefix;

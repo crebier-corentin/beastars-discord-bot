@@ -1,6 +1,7 @@
 import {Command, CommandError} from "../types";
 import {Image} from "../db/entities/Image";
 import {User} from "../db/entities/User";
+import {asyncForEach} from "../helpers";
 
 export const ImageAddCommand: Command = {
     name: "image add",
@@ -24,6 +25,11 @@ export const ImageAddCommand: Command = {
 
         const name = args[0];
         const url = args[1];
+
+        //Forbidden names
+        if (["add", "remove", "list"].includes(name.toLowerCase())) {
+            throw new CommandError(`Forbidden image names : \`add\`, \`remove\` or \`list\``);
+        }
 
         //Check if name already exists
         const image = await Image.findImage(name);
@@ -73,5 +79,31 @@ export const ImageRemoveCommand: Command = {
 
         await msg.channel.send(`Image \`${name}\` removed`);
 
+    }
+};
+
+export const ImageListCommand: Command = {
+    name: "image list",
+    desc: "Show the list of images",
+    usage: "image list",
+    aliases: ["i list"],
+    useDefaultPrefix: true,
+    adminOnly: false,
+    execute: async function (msg) {
+
+        const images = await Image.find();
+
+        //Empty
+        if (images.length === 0) {
+            throw new CommandError(`There is currently no images in the database.\nAn admin can add images with \`${ImageAddCommand.usage}\``);
+        }
+
+        let result = "";
+        asyncForEach(images, async image => {
+            result += await image.info(msg.guild);
+            result += "\n";
+        });
+
+        await msg.channel.send(result);
     }
 };
