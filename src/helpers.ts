@@ -107,7 +107,7 @@ export async function asyncForEach<T>(array: T[], callback: (item: T) => Promise
 export function includeStartsWith(array: string[], search: string): boolean {
 
     for (const str of array) {
-        if (str.startsWith(search)) {
+        if (search.startsWith(str)) {
             return true;
         }
     }

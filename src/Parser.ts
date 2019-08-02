@@ -41,13 +41,13 @@ export default class Parser {
                 //Found command
                 if (command.useDefaultPrefix && (commandName.startsWith(command.name) || includeStartsWith(command.aliases, commandName))) {
 
-                    const whitespaceInCommand = regexCount(/\s+/g, command.name);
+                    const whitespacesInCommand = regexCount(/\s+/g, command.name);
 
                     return {
                         success: true,
                         command,
-                        args: splitted.splice(2 + whitespaceInCommand),
-                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespaceInCommand)
+                        args: splitted.splice(2 + whitespacesInCommand),
+                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
                     };
                 }
             }

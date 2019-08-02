@@ -30,12 +30,12 @@ class Parser {
             for (const command of this.commands) {
                 //Found command
                 if (command.useDefaultPrefix && (commandName.startsWith(command.name) || helpers_1.includeStartsWith(command.aliases, commandName))) {
-                    const whitespaceInCommand = helpers_1.regexCount(/\s+/g, command.name);
+                    const whitespacesInCommand = helpers_1.regexCount(/\s+/g, command.name);
                     return {
                         success: true,
                         command,
-                        args: splitted.splice(2 + whitespaceInCommand),
-                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2 + whitespaceInCommand)
+                        args: splitted.splice(2 + whitespacesInCommand),
+                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
                     };
                 }
             }

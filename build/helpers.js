@@ -85,7 +85,7 @@ async function asyncForEach(array, callback) {
 exports.asyncForEach = asyncForEach;
 function includeStartsWith(array, search) {
     for (const str of array) {
-        if (str.startsWith(search)) {
+        if (search.startsWith(str)) {
             return true;
         }
     }
