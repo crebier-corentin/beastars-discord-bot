@@ -35,21 +35,31 @@ export default class Parser {
                 throw new CommandError(`Missing command, to see the list of commands use \`${Context.prefix} help\``);
             }
 
+            const result = (command: Command, whitespacesInCommand: number) => {
+                return {
+                    success: true,
+                    command,
+                    args: splitted.splice(2 + whitespacesInCommand),
+                    fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
+                };
+            };
+
             //Find command
             const commandName = getEverythingAfterMatch(/\s+/g, str, 1).toLowerCase();
             for (const command of this.commands) {
                 //Found command
-                if (command.useDefaultPrefix && (commandName.startsWith(command.name) || includeStartsWith(command.aliases, commandName))) {
-
-                    const whitespacesInCommand = regexCount(/\s+/g, command.name);
-
-                    return {
-                        success: true,
-                        command,
-                        args: splitted.splice(2 + whitespacesInCommand),
-                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
-                    };
+                if (command.useDefaultPrefix && (commandName.startsWith(command.name))) {
+                    return result(command, regexCount(/\s+/g, command.name));
                 }
+
+                //Try with aliases
+                for (const alias of command.aliases || []) {
+
+                    if (commandName.startsWith(alias)) {
+                        return result(command, regexCount(/\s+/g, alias));
+                    }
+                }
+
             }
 
             //Invalid command

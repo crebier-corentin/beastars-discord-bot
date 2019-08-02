@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const Image_1 = require("../db/entities/Image");
 const User_1 = require("../db/entities/User");
-const helpers_1 = require("../helpers");
 exports.ImageAddCommand = {
     name: "image add",
     desc: "Add an image to to the image list",
@@ -79,11 +78,33 @@ exports.ImageListCommand = {
             throw new types_1.CommandError(`There is currently no images in the database.\nAn admin can add images with \`${exports.ImageAddCommand.usage}\``);
         }
         let result = "";
-        helpers_1.asyncForEach(images, async (image) => {
+        for (const image of images) {
             result += await image.info(msg.guild);
             result += "\n";
-        });
+        }
         await msg.channel.send(result);
+    }
+};
+exports.ImageCommand = {
+    name: "image post",
+    desc: "Post an image named [name]",
+    usage: "image post [name]",
+    aliases: ["i post", "image", "i"],
+    useDefaultPrefix: true,
+    adminOnly: false,
+    execute: async function (msg, args) {
+        //Missing name
+        if (args.length == 0) {
+            throw new types_1.CommandError(`Missing [name]\n\`${this.usage}\``);
+        }
+        const name = args[0];
+        //Check if it exists
+        const image = await Image_1.Image.findImage(name);
+        if (image == undefined) {
+            throw new types_1.CommandError(`Image \`${name}\` does not exist`);
+        }
+        //Send image
+        await msg.channel.send({ file: image.url });
     }
 };
 //# sourceMappingURL=ImageCommands.js.map

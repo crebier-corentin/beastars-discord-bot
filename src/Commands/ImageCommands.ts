@@ -1,7 +1,6 @@
 import {Command, CommandError} from "../types";
 import {Image} from "../db/entities/Image";
 import {User} from "../db/entities/User";
-import {asyncForEach} from "../helpers";
 
 export const ImageAddCommand: Command = {
     name: "image add",
@@ -99,11 +98,38 @@ export const ImageListCommand: Command = {
         }
 
         let result = "";
-        asyncForEach(images, async image => {
+        for (const image of images) {
             result += await image.info(msg.guild);
             result += "\n";
-        });
+        }
 
         await msg.channel.send(result);
+    }
+};
+
+export const ImageCommand: Command = {
+    name: "image post",
+    desc: "Post an image named [name]",
+    usage: "image post [name]",
+    aliases: ["i post", "image", "i"],
+    useDefaultPrefix: true,
+    adminOnly: false,
+    execute: async function (msg, args) {
+
+        //Missing name
+        if (args.length == 0) {
+            throw new CommandError(`Missing [name]\n\`${this.usage}\``);
+        }
+
+        const name = args[0];
+
+        //Check if it exists
+        const image = await Image.findImage(name);
+        if (image == undefined) {
+            throw new CommandError(`Image \`${name}\` does not exist`);
+        }
+
+        //Send image
+        await msg.channel.send({file: image.url});
     }
 };
