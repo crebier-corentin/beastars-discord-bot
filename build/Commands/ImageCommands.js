@@ -82,7 +82,11 @@ exports.ImageListCommand = {
             result += await image.info(msg.guild);
             result += "\n";
         }
-        await msg.channel.send(result);
+        //Send multiple messages if one is too long (2000 char max per message)
+        for (let i = 0; i < result.length; i += 2000) {
+            const toSend = result.substring(i, Math.min(result.length, i + 2000));
+            await msg.channel.send(toSend);
+        }
     }
 };
 exports.ImageCommand = {
