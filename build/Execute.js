@@ -10,6 +10,7 @@ const QuoteCommand_1 = require("./Commands/QuoteCommand");
 const LegCommand_1 = require("./Commands/LegCommand");
 const helpers_1 = require("./helpers");
 const ImageCommands_1 = require("./Commands/ImageCommands");
+const OOCCommand_1 = require("./Commands/OOCCommand");
 const prefix = process.env.PREFIX;
 const commands = [
     HelpCommand_1.HelpCommand,
@@ -17,6 +18,7 @@ const commands = [
     ChapterCommands_1.ChapterBCCommand,
     WikiCommand_1.WikiCommand,
     QuoteCommand_1.QuoteComment,
+    OOCCommand_1.OOCCOmannd,
     LegCommand_1.OfferLegCommand,
     LegCommand_1.LegStatsCommand,
     ImageCommands_1.ImageAddCommand,

@@ -9,6 +9,7 @@ import {QuoteComment} from "./Commands/QuoteCommand";
 import {LegStatsCommand, OfferLegCommand} from "./Commands/LegCommand";
 import {escapeRegExp, isAdministrator} from "./helpers";
 import {ImageAddCommand, ImageCommand, ImageListCommand, ImageRemoveCommand} from "./Commands/ImageCommands";
+import {OocCommand} from "./Commands/OOCCommand";
 
 const prefix = process.env.PREFIX;
 
@@ -21,6 +22,7 @@ const commands = [
     WikiCommand,
 
     QuoteComment,
+    OocCommand,
     
     OfferLegCommand,
     LegStatsCommand,
