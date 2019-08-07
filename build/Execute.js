@@ -18,7 +18,7 @@ const commands = [
     ChapterCommands_1.ChapterBCCommand,
     WikiCommand_1.WikiCommand,
     QuoteCommand_1.QuoteComment,
-    OOCCommand_1.OocCommand,
+    OOCCommand_1.OOCCOmannd,
     LegCommand_1.OfferLegCommand,
     LegCommand_1.LegStatsCommand,
     ImageCommands_1.ImageAddCommand,
