@@ -116,6 +116,19 @@ export function includeStartsWith(array: string[], search: string): boolean {
 
 }
 
+export function chunkArray<T>(arr: T[], len: number): Array<Array<T>> {
+
+    var chunks = [],
+        i = 0,
+        n = arr.length;
+
+    while (i < n) {
+        chunks.push(arr.slice(i, i += len));
+    }
+
+    return chunks;
+}
+
 export function isAdministrator(member: GuildMember): boolean {
     //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");
