@@ -105,7 +105,7 @@ exports.ImageCommand = {
         //Check if it exists
         const image = await Image_1.Image.findImage(name);
         if (image == undefined) {
-            throw new types_1.CommandError(`Image \`${name}\` does not exist`);
+            throw new types_1.CommandError(`Image \`${name}\` does not exist\n Did you mean \`${await Image_1.Image.mostSimilarName(name)}\`?`);
         }
         //Send image
         await msg.channel.send({ file: image.url });

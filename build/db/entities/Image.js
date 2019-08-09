@@ -12,6 +12,7 @@ var Image_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
+const stringSimilarity = require("string-similarity");
 let Image = Image_1 = class Image extends typeorm_1.BaseEntity {
     info(guild) {
         const addedbyMember = this.addedBy.getDiscordMember(guild);
@@ -27,6 +28,11 @@ let Image = Image_1 = class Image extends typeorm_1.BaseEntity {
         return await Image_1.createQueryBuilder("image")
             .where("LOWER(image.name) = LOWER(:name)", { name })
             .getCount() > 0;
+    }
+    static async mostSimilarName(name) {
+        const imageNames = (await Image_1.find({ select: ["name"] })).map(value => value.name);
+        const match = stringSimilarity.findBestMatch(name, imageNames).bestMatch;
+        return match.target;
     }
 };
 __decorate([

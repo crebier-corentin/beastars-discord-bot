@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import {User} from "./User";
 import {Guild} from "discord.js";
+import stringSimilarity = require('string-similarity');
 
 @Entity()
 export class Image extends BaseEntity {
@@ -44,5 +45,13 @@ export class Image extends BaseEntity {
         return await Image.createQueryBuilder("image")
             .where("LOWER(image.name) = LOWER(:name)", {name})
             .getCount() > 0;
+    }
+
+    static async mostSimilarName(name: string): Promise<string> {
+        const imageNames: string[] = (await Image.find({select: ["name"]})).map(value => value.name);
+
+        const match = stringSimilarity.findBestMatch(name, imageNames).bestMatch;
+
+        return match.target;
     }
 }
