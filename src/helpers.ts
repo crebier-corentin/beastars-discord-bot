@@ -116,6 +116,22 @@ export function includeStartsWith(array: string[], search: string): boolean {
 
 }
 
+export function arrayEqual<T>(a: Array<T>, b: Array<T>): boolean {
+
+    if (a.length !== b.length) {
+        return false;
+    }
+
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
 export function isAdministrator(member: GuildMember): boolean {
     //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");

@@ -92,6 +92,18 @@ function includeStartsWith(array, search) {
     return false;
 }
 exports.includeStartsWith = includeStartsWith;
+function arrayEqual(a, b) {
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+exports.arrayEqual = arrayEqual;
 function isAdministrator(member) {
     //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");

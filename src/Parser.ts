@@ -1,4 +1,4 @@
-import {escapeRegExp, getEverythingAfterMatch, includeStartsWith, regexCount} from "./helpers";
+import {arrayEqual, escapeRegExp, getEverythingAfterMatch, includeStartsWith, regexCount} from "./helpers";
 import {Command, CommandError} from "./types";
 import {Context} from "./Context";
 
@@ -35,28 +35,45 @@ export default class Parser {
                 throw new CommandError(`Missing command, to see the list of commands use \`${Context.prefix} help\``);
             }
 
-            const result = (command: Command, whitespacesInCommand: number) => {
+            const checkCommand = (command: Command, comandName: string) => {
+
+                const commandName = comandName.split(/\s+/g);
+                const whitespacesInCommand = commandName.length - 1;
+                const userCommandName = splitted.slice(1, 2 + whitespacesInCommand).map(value => value.toLowerCase());
+
+                //Match found
+                if (arrayEqual(commandName, userCommandName)) {
+                    return {
+                        success: true,
+                        command,
+                        args: splitted.splice(2 + whitespacesInCommand),
+                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
+                    };
+                }
+
                 return {
-                    success: true,
-                    command,
-                    args: splitted.splice(2 + whitespacesInCommand),
-                    fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
-                };
+                    success: false
+                }
+
+
             };
 
             //Find command
-            const commandName = getEverythingAfterMatch(/\s+/g, str, 1).toLowerCase();
             for (const command of this.commands) {
-                //Found command
-                if (command.useDefaultPrefix && (commandName.startsWith(command.name))) {
-                    return result(command, regexCount(/\s+/g, command.name));
+
+                //Try with command name
+                if (command.useDefaultPrefix) {
+                    const res = checkCommand(command, command.name);
+                    if (res.success) {
+                        return res;
+                    }
                 }
 
                 //Try with aliases
                 for (const alias of command.aliases || []) {
-
-                    if (commandName.startsWith(alias)) {
-                        return result(command, regexCount(/\s+/g, alias));
+                    const res = checkCommand(command, alias);
+                    if (res.success) {
+                        return res;
                     }
                 }
 

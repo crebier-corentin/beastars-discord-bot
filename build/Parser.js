@@ -25,25 +25,37 @@ class Parser {
             if (splitted.length === 1) {
                 throw new types_1.CommandError(`Missing command, to see the list of commands use \`${Context_1.Context.prefix} help\``);
             }
-            const result = (command, whitespacesInCommand) => {
+            const checkCommand = (command, comandName) => {
+                const commandName = comandName.split(/\s+/g);
+                const whitespacesInCommand = commandName.length - 1;
+                const userCommandName = splitted.slice(1, 2 + whitespacesInCommand).map(value => value.toLowerCase());
+                //Match found
+                if (helpers_1.arrayEqual(commandName, userCommandName)) {
+                    return {
+                        success: true,
+                        command,
+                        args: splitted.splice(2 + whitespacesInCommand),
+                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
+                    };
+                }
                 return {
-                    success: true,
-                    command,
-                    args: splitted.splice(2 + whitespacesInCommand),
-                    fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
+                    success: false
                 };
             };
             //Find command
-            const commandName = helpers_1.getEverythingAfterMatch(/\s+/g, str, 1).toLowerCase();
             for (const command of this.commands) {
-                //Found command
-                if (command.useDefaultPrefix && (commandName.startsWith(command.name))) {
-                    return result(command, helpers_1.regexCount(/\s+/g, command.name));
+                //Try with command name
+                if (command.useDefaultPrefix) {
+                    const res = checkCommand(command, command.name);
+                    if (res.success) {
+                        return res;
+                    }
                 }
                 //Try with aliases
                 for (const alias of command.aliases || []) {
-                    if (commandName.startsWith(alias)) {
-                        return result(command, helpers_1.regexCount(/\s+/g, alias));
+                    const res = checkCommand(command, alias);
+                    if (res.success) {
+                        return res;
                     }
                 }
             }
