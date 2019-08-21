@@ -60,7 +60,7 @@ class Parser {
                 }
             }
             //Invalid command
-            throw new types_1.CommandError(`Invalid command, to see the list of commands use \`${Context_1.Context.prefix} help\``);
+            throw new types_1.CommandError(`Invalid command, to see the list of commands use \`${Context_1.Context.prefix} help\`\nIf you want to use the image feature don't forget the command name \`${Context_1.Context.prefix} i [name]\``);
         }
         //Custom prefix
         for (const custom of this.customPrefixes) {
