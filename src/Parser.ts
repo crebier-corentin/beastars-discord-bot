@@ -80,7 +80,7 @@ export default class Parser {
             }
 
             //Invalid command
-            throw new CommandError(`Invalid command, to see the list of commands use \`${Context.prefix} help\``);
+            throw new CommandError(`Invalid command, to see the list of commands use \`${Context.prefix} help\`\nIf you want to use the image feature don't forget the command name \`${Context.prefix} i [name]\``);
 
         }
         //Custom prefix
