@@ -1,2 +1,2 @@
 release: npm run migration:run
-worker: node build/index.js
+worker: node dist/index.js
