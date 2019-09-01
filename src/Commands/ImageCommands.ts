@@ -1,6 +1,7 @@
 import {Command, CommandError} from "../types";
 import {Image} from "../db/entities/Image";
 import {User} from "../db/entities/User";
+import {chunkArray} from "../helpers";
 
 export const ImageAddCommand: Command = {
     name: "image add",
@@ -90,6 +91,15 @@ export const ImageListCommand: Command = {
     adminOnly: false,
     execute: async function (msg) {
 
+        const formatImages = (images: Image[]): string => {
+            let result = "";
+            for (const image of images) {
+                result += `${image.name} <${image.url}>\n`;
+            }
+
+            return result;
+        };
+
         const images = await Image.find();
 
         //Empty
@@ -97,16 +107,10 @@ export const ImageListCommand: Command = {
             throw new CommandError(`There is currently no images in the database.\nAn admin can add images with \`${ImageAddCommand.usage}\``);
         }
 
-        let result = "";
-        for (const image of images) {
-            result += await image.info(msg.guild);
-            result += "\n";
-        }
+        const imagesChunks = chunkArray(images, 10);
 
-        //Send multiple messages if one is too long (2000 char max per message)
-        for (let i = 0; i < result.length; i += 2000) {
-            const toSend = result.substring(i, Math.min(result.length, i + 2000));
-            await msg.channel.send(toSend);
+        for (const imageChunk of imagesChunks) {
+            await msg.channel.send(formatImages(imageChunk));
         }
 
     }

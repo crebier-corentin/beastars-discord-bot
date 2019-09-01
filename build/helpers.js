@@ -104,6 +104,14 @@ function arrayEqual(a, b) {
     return true;
 }
 exports.arrayEqual = arrayEqual;
+function chunkArray(arr, len) {
+    var chunks = [], i = 0, n = arr.length;
+    while (i < n) {
+        chunks.push(arr.slice(i, i += len));
+    }
+    return chunks;
+}
+exports.chunkArray = chunkArray;
 function isAdministrator(member) {
     //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");

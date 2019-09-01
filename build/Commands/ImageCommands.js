@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const Image_1 = require("../db/entities/Image");
 const User_1 = require("../db/entities/User");
+const helpers_1 = require("../helpers");
 exports.ImageAddCommand = {
     name: "image add",
     desc: "Add an image to to the image list",
@@ -72,20 +73,21 @@ exports.ImageListCommand = {
     useDefaultPrefix: true,
     adminOnly: false,
     execute: async function (msg) {
+        const formatImages = (images) => {
+            let result = "";
+            for (const image of images) {
+                result += `${image.name} <${image.url}>\n`;
+            }
+            return result;
+        };
         const images = await Image_1.Image.find();
         //Empty
         if (images.length === 0) {
             throw new types_1.CommandError(`There is currently no images in the database.\nAn admin can add images with \`${exports.ImageAddCommand.usage}\``);
         }
-        let result = "";
-        for (const image of images) {
-            result += await image.info(msg.guild);
-            result += "\n";
-        }
-        //Send multiple messages if one is too long (2000 char max per message)
-        for (let i = 0; i < result.length; i += 2000) {
-            const toSend = result.substring(i, Math.min(result.length, i + 2000));
-            await msg.channel.send(toSend);
+        const imagesChunks = helpers_1.chunkArray(images, 10);
+        for (const imageChunk of imagesChunks) {
+            await msg.channel.send(formatImages(imageChunk));
         }
     }
 };
