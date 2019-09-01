@@ -1,0 +1,120 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+exports.escapeRegExp = escapeRegExp;
+function getEverythingAfterMatch(pattern, str, times = 1) {
+    let count = 0;
+    while (pattern.exec(str) !== null) {
+        if (++count === times) {
+            return str.slice(pattern.lastIndex);
+        }
+    }
+    //No match
+    return "";
+}
+exports.getEverythingAfterMatch = getEverythingAfterMatch;
+function regexCount(re, str) {
+    return ((str || '').match(re) || []).length;
+}
+exports.regexCount = regexCount;
+function findMemberByUsername(guild, name) {
+    let lowerCaseName = name.toLowerCase();
+    //Remove the @ if there is one
+    if (lowerCaseName.startsWith("@")) {
+        lowerCaseName = lowerCaseName.substring(1);
+    }
+    /*Priotities
+    7 : Exact username#discrimator
+    6 : Exact nickname
+    5 : Starts with nickname
+    4 : Substring nickname
+    3 : Exact username
+    2 : Starts with username
+    1 : Substring nickname
+     */
+    const results = [];
+    for (const member of guild.members.array()) {
+        if (name == `${member.user.username}#${member.user.discriminator}`) {
+            return [member];
+        }
+        //Find by nickname
+        if (member.nickname != undefined) {
+            const nickname = member.nickname.toLowerCase();
+            if (lowerCaseName === nickname) {
+                results.push(member);
+                continue;
+            }
+            if (nickname.startsWith(lowerCaseName)) {
+                results.push(member);
+                continue;
+            }
+            if (nickname.includes(lowerCaseName)) {
+                results.push(member);
+                continue;
+            }
+        }
+        const username = member.user.username.toLowerCase();
+        //Find by username
+        if (username.startsWith(lowerCaseName)) {
+            if (lowerCaseName === username) {
+                results.push(member);
+                continue;
+            }
+            if (username.startsWith(lowerCaseName)) {
+                results.push(member);
+                continue;
+            }
+            if (username.includes(lowerCaseName)) {
+                results.push(member);
+                continue;
+            }
+        }
+    }
+    return results;
+}
+exports.findMemberByUsername = findMemberByUsername;
+async function asyncForEach(array, callback) {
+    let promises = [];
+    for (let a of array) {
+        promises.push(callback.call(a, a));
+    }
+    await Promise.all(promises);
+}
+exports.asyncForEach = asyncForEach;
+function includeStartsWith(array, search) {
+    for (const str of array) {
+        if (search.startsWith(str)) {
+            return true;
+        }
+    }
+    return false;
+}
+exports.includeStartsWith = includeStartsWith;
+function arrayEqual(a, b) {
+    if (a.length !== b.length) {
+        return false;
+    }
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+exports.arrayEqual = arrayEqual;
+function chunkArray(arr, len) {
+    var chunks = [], i = 0, n = arr.length;
+    while (i < n) {
+        chunks.push(arr.slice(i, i += len));
+    }
+    return chunks;
+}
+exports.chunkArray = chunkArray;
+function isAdministrator(member) {
+    //TODO Chaneg to ADMINISTRATOR when yyao is promoted
+    return member.hasPermission("BAN_MEMBERS");
+}
+exports.isAdministrator = isAdministrator;
+//# sourceMappingURL=helpers.js.map
