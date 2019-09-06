@@ -145,6 +145,25 @@ export function chunkArray<T>(arr: T[], len: number): Array<Array<T>> {
     return chunks;
 }
 
+export function maxArray<T>(arr: T[], func: (t: T) => number): T {
+
+    let maxVal = func(arr[0]);
+    let max = arr[0];
+
+    for (let i = 1; i < arr.length; i++) {
+        const val = func(arr[0]);
+
+        //New maximum
+        if (val > maxVal) {
+            maxVal = val;
+            max = arr[0];
+        }
+    }
+
+    return max;
+
+}
+
 export function isAdministrator(member: GuildMember): boolean {
     //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");

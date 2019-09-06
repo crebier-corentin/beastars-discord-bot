@@ -1,7 +1,7 @@
 import {Command, CommandError} from "../types";
 import {Image} from "../db/entities/Image";
 import {User} from "../db/entities/User";
-import {chunkArray} from "../helpers";
+import {chunkArray, maxArray} from "../helpers";
 
 export const ImageAddCommand: Command = {
     name: "image add",
@@ -92,9 +92,13 @@ export const ImageListCommand: Command = {
     execute: async function (msg) {
 
         const formatImages = (images: Image[]): string => {
+
+            const nameMax = images.map(value => value.name.length).reduce((a, b) => Math.max(a, b));
+            const urlMax = images.map(value => value.url.length).reduce((a, b) => Math.max(a, b));
+
             let result = "";
             for (const image of images) {
-                result += `${image.name} <${image.url}>\n`;
+                result += `${image.name.padEnd(nameMax)} <${image.url.padStart(urlMax)}>\n`;
             }
 
             return result;

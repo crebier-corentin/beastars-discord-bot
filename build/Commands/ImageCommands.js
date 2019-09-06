@@ -74,9 +74,11 @@ exports.ImageListCommand = {
     adminOnly: false,
     execute: async function (msg) {
         const formatImages = (images) => {
+            const nameMax = images.map(value => value.name.length).reduce((a, b) => Math.max(a, b));
+            const urlMax = images.map(value => value.url.length).reduce((a, b) => Math.max(a, b));
             let result = "";
             for (const image of images) {
-                result += `${image.name} <${image.url}>\n`;
+                result += `${image.name.padEnd(nameMax)} <${image.url.padStart(urlMax)}>\n`;
             }
             return result;
         };
