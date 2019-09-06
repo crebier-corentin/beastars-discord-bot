@@ -93,11 +93,12 @@ export const ImageListCommand: Command = {
 
         const formatImages = (images: Image[]): string => {
 
-            const nameMax = images.map(value => value.name.length).reduce((a, b) => Math.max(a, b));
+            const namesLength = images.map(value => value.name.length);
+            const nameMax = Math.max(...namesLength);
 
             let result = "";
             for (const image of images) {
-                result += `${image.name.padEnd(nameMax)} <${image.url}>\n`;
+                result += `\`${image.name.padEnd(nameMax)}\` <${image.url}>\n`;
             }
 
             return result;
