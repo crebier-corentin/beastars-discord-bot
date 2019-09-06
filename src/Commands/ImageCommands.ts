@@ -91,10 +91,17 @@ export const ImageListCommand: Command = {
     adminOnly: false,
     execute: async function (msg) {
 
-        const formatImages = (images: Image[]): string => {
+        const images = await Image.find();
 
-            const namesLength = images.map(value => value.name.length);
-            const nameMax = Math.max(...namesLength);
+        //Empty
+        if (images.length === 0) {
+            throw new CommandError(`There is currently no images in the database.\nAn admin can add images with \`${ImageAddCommand.usage}\``);
+        }
+
+        const namesLength = images.map(value => value.name.length);
+        const nameMax = Math.max(...namesLength);
+
+        const formatImages = (images: Image[]): string => {
 
             let result = "";
             for (const image of images) {
@@ -103,13 +110,6 @@ export const ImageListCommand: Command = {
 
             return result;
         };
-
-        const images = await Image.find();
-
-        //Empty
-        if (images.length === 0) {
-            throw new CommandError(`There is currently no images in the database.\nAn admin can add images with \`${ImageAddCommand.usage}\``);
-        }
 
         const imagesChunks = chunkArray(images, 10);
 
