@@ -73,20 +73,20 @@ exports.ImageListCommand = {
     useDefaultPrefix: true,
     adminOnly: false,
     execute: async function (msg) {
+        const images = await Image_1.Image.find();
+        //Empty
+        if (images.length === 0) {
+            throw new types_1.CommandError(`There is currently no images in the database.\nAn admin can add images with \`${exports.ImageAddCommand.usage}\``);
+        }
+        const namesLength = images.map(value => value.name.length);
+        const nameMax = Math.max(...namesLength);
         const formatImages = (images) => {
-            const namesLength = images.map(value => value.name.length);
-            const nameMax = Math.max(...namesLength);
             let result = "";
             for (const image of images) {
                 result += `\`${image.name.padEnd(nameMax)}\` <${image.url}>\n`;
             }
             return result;
         };
-        const images = await Image_1.Image.find();
-        //Empty
-        if (images.length === 0) {
-            throw new types_1.CommandError(`There is currently no images in the database.\nAn admin can add images with \`${exports.ImageAddCommand.usage}\``);
-        }
         const imagesChunks = helpers_1.chunkArray(images, 10);
         for (const imageChunk of imagesChunks) {
             await msg.channel.send(formatImages(imageChunk));
