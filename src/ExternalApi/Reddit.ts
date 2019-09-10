@@ -1,54 +1,47 @@
-import * as events from "events";
-import {RedditUser, Submission} from "snoowrap";
-import snoowrap = require("snoowrap");
+import axios, {AxiosResponse} from "axios";
 
-const r = new snoowrap({
-    userAgent: "Beastars Discord Bot",
-    clientId: process.env.REDDIT_CLIENT_ID,
-    clientSecret: process.env.REDDIT_SECRET,
-    username: process.env.REDDIT_USERNAME,
-    password: process.env.REDDIT_PASSWORD
-});
-
-export declare interface RedditPostWatcher {
-    on(event: 'new', listener: (submission: Submission) => void): this;
+export interface RedditSubmission {
+    id: string;
+    permalink: string;
+    subreddit_name_prefixed: string;
+    title: string;
+    [key: string]: any;
 }
 
-export class RedditPostWatcher extends events.EventEmitter {
-    private user: RedditUser;
-    private filter: ((submission: Submission) => boolean) | undefined;
+
+interface RedditUserSubmmitedResponse {
+    data: {
+        children: {
+            data: RedditSubmission;
+        }[];
+    };
+}
+
+export class RedditUserWatcher {
+    private user: string;
+    private filter: ((submission: RedditSubmission) => boolean) | undefined;
 
     private previousSubmissionsId: Set<string>;
 
-    private constructor(user: RedditUser, previousSubmissionsId: Set<string>, filter: ((submission: Submission) => boolean) | undefined) {
-        super();
+    private constructor(user: string, filter: ((submission: RedditSubmission) => boolean) | undefined) {
         this.user = user;
-        this.previousSubmissionsId = previousSubmissionsId;
         this.filter = filter;
-
-        //Launch interval
-        setInterval(this.getSubmissions.bind(this), 1000 * 10);
-
     }
 
-    public static async create(user: string, filter?: ((submission: Submission) => boolean)): Promise<RedditPostWatcher> {
+    public static async create(user: string, filter?: ((submission: RedditSubmission) => boolean)): Promise<RedditUserWatcher> {
 
-        const redditUser = r.getUser(user);
+        const watcher = new RedditUserWatcher(user, filter);
 
-        const submissions = await redditUser.getSubmissions({sort: "new"});
-        const defaultPrevious = new Set<string>(submissions.map(sub => sub.id));
+        const previousSubmissions = await watcher.getSubmissionsFiltered();
 
-        return new RedditPostWatcher(redditUser, defaultPrevious, filter);
+        watcher.previousSubmissionsId = new Set<string>(previousSubmissions.map(sub => sub.id));
+
+        return watcher;
     }
 
-    private async getSubmissions() {
-        const latestSubmissions = await this.user.getSubmissions({sort: "new"});
+    public async getNewSubmissions(): Promise<RedditSubmission[]> {
 
-        //Filter
-        let filteredSubmissions: Submission[];
-        if (this.filter != undefined) {
-            filteredSubmissions = latestSubmissions.filter(this.filter);
-        }
+        const filteredSubmissions = await this.getSubmissionsFiltered();
 
         //Remove already known posts
         const newSubmissions = filteredSubmissions.filter(submission => !this.previousSubmissionsId.has(submission.id));
@@ -56,10 +49,16 @@ export class RedditPostWatcher extends events.EventEmitter {
         //Update previous submissions
         this.previousSubmissionsId = new Set<string>(filteredSubmissions.map(submission => submission.id));
 
-        //Send events
-        for (const submission of newSubmissions) {
-            this.emit("new", submission);
-        }
+        return newSubmissions;
+    }
+
+    private async getSubmissionsFiltered(): Promise<RedditSubmission[]> {
+        const response = <AxiosResponse<RedditUserSubmmitedResponse>>await axios.get(`https://www.reddit.com/user/${this.user}/submitted.json?sort=new`);
+
+        const latestSubmissions: RedditSubmission[] = response.data.data.children.map(value => value.data);
+
+        //Filter
+        return this.filter != undefined ? latestSubmissions.filter(this.filter) : latestSubmissions;
 
     }
 

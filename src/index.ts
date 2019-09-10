@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-import {RedditPostWatcher} from "./ExternalApi/Reddit";
+import {RedditUserWatcher} from "./ExternalApi/Reddit";
 import "reflect-metadata";
 import {createConnection, In} from "typeorm";
 
@@ -25,7 +25,7 @@ createConnection().then(() => {
         const leaksRegex = /(informations?|raws?|leaks?)/i;
 
         //Start leaks watcher
-        const redditWatcher = await RedditPostWatcher.create(process.env.LEAKS_REDDIT_USERNAME, (submission => {
+        const redditWatcher = await RedditUserWatcher.create(process.env.LEAKS_REDDIT_USERNAME, (submission => {
             //Check subreddit
             if (submission.subreddit_name_prefixed.toLocaleLowerCase() !== process.env.LEAKS_REDDIT_SUB.toLocaleLowerCase()) {
                 return false;
@@ -38,9 +38,13 @@ createConnection().then(() => {
 
         const leaksChannel = <TextChannel>client.channels.find(channel => channel.id === process.env.LEAKS_CHANNEL_ID);
 
-        redditWatcher.on("new", async submission => {
-            await leaksChannel.send(`New leak from u/${process.env.LEAKS_REDDIT_USERNAME}\nhttps://www.reddit.com${submission.permalink}`);
-        });
+        //Leaks watcher interval
+        setInterval(async () => {
+            const submissions = await redditWatcher.getNewSubmissions();
+            for (const submission of submissions) {
+                await leaksChannel.send(`New leak from u/${process.env.LEAKS_REDDIT_USERNAME}\nhttps://www.reddit.com${submission.permalink}`);
+            }
+        }, 1000 * 30);
 
         console.log(`Bot is ready`);
     });
