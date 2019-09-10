@@ -9,7 +9,7 @@ export interface RedditSubmission {
 }
 
 
-interface RedditUserSubmmitedResponse {
+export interface RedditUserSubmittedResponse {
     data: {
         children: {
             data: RedditSubmission;
@@ -53,7 +53,7 @@ export class RedditUserWatcher {
     }
 
     private async getSubmissionsFiltered(): Promise<RedditSubmission[]> {
-        const response = <AxiosResponse<RedditUserSubmmitedResponse>>await axios.get(`https://www.reddit.com/user/${this.user}/submitted.json?sort=new`);
+        const response = <AxiosResponse<RedditUserSubmittedResponse>>await axios.get(`https://www.reddit.com/user/${this.user}/submitted.json?sort=new`);
 
         const latestSubmissions: RedditSubmission[] = response.data.data.children.map(value => value.data);
 
