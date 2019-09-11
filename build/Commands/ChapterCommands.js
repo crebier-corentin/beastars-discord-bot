@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MangadexLinkGetter_1 = require("../ExternalApi/MangadexLinkGetter");
+const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
-const mangadex = new MangadexLinkGetter_1.default();
+const mangadex = new Mangadex_1.MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga) {
     const chapter = Number(args[0]);
     //Missing chapter number
