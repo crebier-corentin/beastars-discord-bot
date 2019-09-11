@@ -25,10 +25,56 @@ interface ChapterPages {
     page_array: string[];
 }
 
-export default class MangadexLinkGetter {
+export class Mangadex {
+
+    protected static async getChapterList(mangaId: Manga): Promise<Chapter[]> {
+        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => {
+            return [];
+        });
+
+        const chapters: Chapter[] = [];
+        const mangadexChapters: MangadexChapters = result.data["chapter"];
+
+        for (const mangadexChapterName in mangadexChapters) {
+            const mangadexChapter = mangadexChapters[mangadexChapterName];
+
+            //Ignore non english chapters
+            if (mangadexChapter.lang_code != "gb") continue;
+
+            //Add new chapter
+            chapters.push({
+                id: mangadexChapterName,
+                title: mangadexChapter.title,
+                chapter: mangadexChapter.chapter,
+                volume: mangadexChapter.volume
+            });
+        }
+
+        return chapters;
+    }
+
+    protected static async getChapterPages(chapter: Chapter): Promise<ChapterPages> {
+
+        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/chapter/${chapter.id}`).catch(() => {
+            throw new CommandError(`Cannot find pages for chapter Nº${chapter.chapter}`);
+        });
+
+        return {
+            id: result.data.id.toString(),
+            hash: result.data.hash,
+            server: result.data.server,
+            page_array: result.data.page_array
+        };
+
+    }
+}
+
+export class MangadexWithCache extends Mangadex {
     private cache: Cache;
 
     constructor() {
+        super();
+
         //1H cache
         this.cache = new Cache(60 * 60);
     }
@@ -66,7 +112,7 @@ export default class MangadexLinkGetter {
 
     private async getChapter(chapterNo: number, manga: Manga): Promise<Chapter> {
 
-        const chapters = <Chapter[]>await this.cache.get(manga, MangadexLinkGetter.getChapterList.bind(null, manga));
+        const chapters = <Chapter[]>await this.cache.get(manga, Mangadex.getChapterList.bind(null, manga));
 
         const chapter = chapters.find((el) => el.chapter == chapterNo);
 
@@ -77,39 +123,13 @@ export default class MangadexLinkGetter {
         return chapter;
     }
 
-    private static async getChapterList(mangaId: Manga): Promise<Chapter[]> {
-        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => {
-            return [];
-        });
-
-        const chapters: Chapter[] = [];
-        const mangadexChapters: MangadexChapters = result.data["chapter"];
-
-        for (const mangadexChapterName in mangadexChapters) {
-            const mangadexChapter = mangadexChapters[mangadexChapterName];
-
-            //Ignore non english chapters
-            if (mangadexChapter.lang_code != "gb") continue;
-
-            //Add new chapter
-            chapters.push({
-                id: mangadexChapterName,
-                title: mangadexChapter.title,
-                chapter: mangadexChapter.chapter,
-                volume: mangadexChapter.volume
-            });
-        }
-
-        return chapters;
-    }
-
     async getChapterPageLink(chapterNo: number, pageNo: number, manga: Manga): Promise<string | { site: string, image: string; }> {
 
         //Chapter
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
 
         //Chapter pages
-        const pages = <ChapterPages>await this.cache.get(`${chapter.id}-pages`, MangadexLinkGetter.getChapterPages.bind(null, chapter));
+        const pages = <ChapterPages>await this.cache.get(`${chapter.id}-pages`, Mangadex.getChapterPages.bind(null, chapter));
 
         //Filename
         const pageFilename = pages.page_array[pageNo - 1];
@@ -119,7 +139,7 @@ export default class MangadexLinkGetter {
         }
 
         //Fix server url
-        if(pages.server.startsWith("/")) {
+        if (pages.server.startsWith("/")) {
             pages.server = `https://mangadex.org${pages.server}`;
         }
 
@@ -131,19 +151,12 @@ export default class MangadexLinkGetter {
 
     }
 
-    private static async getChapterPages(chapter: Chapter): Promise<ChapterPages> {
 
-        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/chapter/${chapter.id}`).catch(() => {
-            throw new CommandError(`Cannot find pages for chapter Nº${chapter.chapter}`);
-        });
+}
 
-        return {
-            id: result.data.id.toString(),
-            hash: result.data.hash,
-            server: result.data.server,
-            page_array: result.data.page_array
-        };
+export class MangadexWatcher extends Mangadex {
 
-    }
+    private previousMangaIds: Set<string>;
+
 
 }

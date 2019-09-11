@@ -1,7 +1,7 @@
-import MangadexLinkGetter from "../ExternalApi/MangadexLinkGetter";
+import {MangadexWithCache} from "../ExternalApi/Mangadex";
 import {Command, CommandError, Manga} from "../types";
 
-const mangadex = new MangadexLinkGetter();
+const mangadex = new MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga: Manga) {
 
     const chapter = Number(args[0]);
