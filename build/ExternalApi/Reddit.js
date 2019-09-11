@@ -16,8 +16,10 @@ class RedditUserWatcher {
         const filteredSubmissions = await this.getSubmissionsFiltered();
         //Remove already known posts
         const newSubmissions = filteredSubmissions.filter(submission => !this.previousSubmissionsId.has(submission.id));
-        //Update previous submissions
-        this.previousSubmissionsId = new Set(filteredSubmissions.map(submission => submission.id));
+        //Update previous submissions if needed
+        if (newSubmissions.length > 0) {
+            this.previousSubmissionsId = new Set(filteredSubmissions.map(submission => submission.id));
+        }
         return newSubmissions;
     }
     async getSubmissionsFiltered() {

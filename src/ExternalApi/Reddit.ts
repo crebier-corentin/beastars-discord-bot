@@ -5,6 +5,7 @@ export interface RedditSubmission {
     permalink: string;
     subreddit_name_prefixed: string;
     title: string;
+
     [key: string]: any;
 }
 
@@ -46,8 +47,10 @@ export class RedditUserWatcher {
         //Remove already known posts
         const newSubmissions = filteredSubmissions.filter(submission => !this.previousSubmissionsId.has(submission.id));
 
-        //Update previous submissions
-        this.previousSubmissionsId = new Set<string>(filteredSubmissions.map(submission => submission.id));
+        //Update previous submissions if needed
+        if (newSubmissions.length > 0) {
+            this.previousSubmissionsId = new Set<string>(filteredSubmissions.map(submission => submission.id));
+        }
 
         return newSubmissions;
     }

@@ -27,7 +27,7 @@ interface ChapterPages {
 
 export class Mangadex {
 
-    protected static async getChapterList(mangaId: Manga): Promise<Chapter[]> {
+    protected static async getChapterList(mangaId: Manga | string): Promise<Chapter[]> {
         const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => {
             return [];
         });
@@ -156,7 +156,36 @@ export class MangadexWithCache extends Mangadex {
 
 export class MangadexWatcher extends Mangadex {
 
-    private previousMangaIds: Set<string>;
+    private previousChaptersId: Set<string>;
+    private mangaId: Manga | string;
+
+    private constructor(mangaId: Manga | string, previousChaptersId: Set<string>) {
+        super();
+        this.mangaId = mangaId;
+        this.previousChaptersId = previousChaptersId;
+    }
+
+    public static async create(mangaId: Manga | string): Promise<MangadexWatcher> {
+        const chapters = await Mangadex.getChapterList(mangaId);
+
+        return new MangadexWatcher(mangaId, new Set<string>(chapters.map(chapter => chapter.id)));
+
+    }
+
+    public async getNewChapters(): Promise<Chapter[]> {
+        const lastestChapters = await Mangadex.getChapterList(this.mangaId);
+
+        //Remove already known chapters
+        const newChapters = lastestChapters.filter(chapter => !this.previousChaptersId.has(chapter.id));
+
+        //Update previousChaptersId if needed
+        if (newChapters.length > 0) {
+            this.previousChaptersId = new Set<string>(lastestChapters.map(chapter => chapter.id));
+        }
+
+        return newChapters;
+
+    }
 
 
 }

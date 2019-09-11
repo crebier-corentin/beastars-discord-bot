@@ -98,6 +98,25 @@ class MangadexWithCache extends Mangadex {
 }
 exports.MangadexWithCache = MangadexWithCache;
 class MangadexWatcher extends Mangadex {
+    constructor(mangaId, previousChaptersId) {
+        super();
+        this.mangaId = mangaId;
+        this.previousChaptersId = previousChaptersId;
+    }
+    static async create(mangaId) {
+        const chapters = await Mangadex.getChapterList(mangaId);
+        return new MangadexWatcher(mangaId, new Set(chapters.map(chapter => chapter.id)));
+    }
+    async getNewChapters() {
+        const lastestChapters = await Mangadex.getChapterList(this.mangaId);
+        //Remove already known chapters
+        const newChapters = lastestChapters.filter(chapter => !this.previousChaptersId.has(chapter.id));
+        //Update previousChaptersId if needed
+        if (newChapters.length > 0) {
+            this.previousChaptersId = new Set(lastestChapters.map(chapter => chapter.id));
+        }
+        return newChapters;
+    }
 }
 exports.MangadexWatcher = MangadexWatcher;
 //# sourceMappingURL=Mangadex.js.map
