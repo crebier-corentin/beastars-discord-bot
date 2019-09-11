@@ -1,4 +1,4 @@
-import {arrayEqual, escapeRegExp, getEverythingAfterMatch, includeStartsWith, regexCount} from "./helpers";
+import {arrayEqual, escapeRegExp, getEverythingAfterMatch} from "./helpers";
 import {Command, CommandError} from "./types";
 import {Context} from "./Context";
 

@@ -1,6 +1,6 @@
 import {Command, CommandError} from "../types";
 import {findMemberByUsername} from "../helpers";
-import {Message, GuildMember, RichEmbed, Guild} from "discord.js";
+import {Guild, GuildMember, Message} from "discord.js";
 import {User} from "../db/entities/User";
 import {Context} from "../Context";
 import * as moment from "moment";

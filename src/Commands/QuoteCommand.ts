@@ -1,4 +1,4 @@
-import {Command, CommandError} from "../types";
+import {Command} from "../types";
 import {IncorrectBeastarsQuote} from "../ExternalApi/IncorrectBeastarsQuote";
 
 export const QuoteComment: Command = {

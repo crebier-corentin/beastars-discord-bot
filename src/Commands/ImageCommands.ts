@@ -1,7 +1,7 @@
 import {Command, CommandError} from "../types";
 import {Image} from "../db/entities/Image";
 import {User} from "../db/entities/User";
-import {chunkArray, maxArray} from "../helpers";
+import {chunkArray} from "../helpers";
 
 export const ImageAddCommand: Command = {
     name: "image add",

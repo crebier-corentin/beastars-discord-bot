@@ -1,4 +1,4 @@
-import {Command, CommandError} from "../types";
+import {Command} from "../types";
 import {Imgur} from "../ExternalApi/Imgur";
 
 export const OocCommand: Command = {

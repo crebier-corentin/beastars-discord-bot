@@ -8,7 +8,6 @@ import {Context} from "./Context";
 import {executeCommand} from "./Execute";
 import {TextChannel} from "discord.js";
 import {Manga} from "./types";
-
 import Discord = require('discord.js');
 
 //Database
