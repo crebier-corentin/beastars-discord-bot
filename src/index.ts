@@ -1,15 +1,15 @@
 require('dotenv').config();
-
+import {MangadexWatcher} from "./ExternalApi/Mangadex";
 import {RedditUserWatcher} from "./ExternalApi/Reddit";
 import "reflect-metadata";
-import {createConnection, In} from "typeorm";
+import {createConnection} from "typeorm";
 
 import {Context} from "./Context";
 import {executeCommand} from "./Execute";
+import {TextChannel} from "discord.js";
+import {Manga} from "./types";
 
 import Discord = require('discord.js');
-import {TextChannel} from "discord.js";
-
 
 //Database
 createConnection().then(() => {
@@ -22,11 +22,11 @@ createConnection().then(() => {
         //Set description
         await client.user.setPresence({status: "online", game: {name: `Use ${Context.prefix} help`}});
 
-        //Reddit leaks watcher
-        (async function redditLeaksWatcher() {
+        //Reddit leaks and mangadex watchers
+        (async function watchers() {
             const leaksRegex = /(informations?|raws?|leaks?)/i;
 
-            //Start leaks watcher
+            //Reddit leaks watcher
             const redditWatcher = await RedditUserWatcher.create(process.env.LEAKS_REDDIT_USERNAME, (submission => {
                 //Check subreddit
                 if (submission.subreddit_name_prefixed.toLocaleLowerCase() !== process.env.LEAKS_REDDIT_SUB.toLocaleLowerCase()) {
@@ -37,15 +37,27 @@ createConnection().then(() => {
                 return leaksRegex.test(submission.title);
 
             }));
+            const redditLeaksChannel = <TextChannel>client.channels.find(channel => channel.id === process.env.LEAKS_CHANNEL_ID);
 
-            const leaksChannel = <TextChannel>client.channels.find(channel => channel.id === process.env.LEAKS_CHANNEL_ID);
+            //Mangadex watcher
+            const mangadexWatcher = await MangadexWatcher.create(Manga.Beastars);
+            const newChapterChannel = <TextChannel>client.channels.find(channel => channel.id === process.env.NEW_CHAPTER_CHANNEL);
 
-            //Leaks watcher interval
+
+            //Watchers interval
             setInterval(async () => {
+                //Reddit Leaks
                 const submissions = await redditWatcher.getNewSubmissions();
                 for (const submission of submissions) {
-                    await leaksChannel.send(`New leak from u/${process.env.LEAKS_REDDIT_USERNAME}\nhttps://www.reddit.com${submission.permalink}`);
+                    await redditLeaksChannel.send(`New leak from u/${process.env.LEAKS_REDDIT_USERNAME}\nhttps://www.reddit.com${submission.permalink}`);
                 }
+
+                //Mangadex leaks
+                const chapters = await mangadexWatcher.getNewChapters();
+                for (const chapter of chapters) {
+                    await newChapterChannel.send(`New Beastars chapter !\nhttps://mangadex.org/chapter/${chapter.id}`);
+                }
+
             }, 1000 * 30);
         })();
 
