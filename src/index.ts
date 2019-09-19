@@ -23,7 +23,7 @@ createConnection().then(() => {
 
         //Reddit leaks and mangadex watchers
         (async function watchers() {
-            const leaksRegex = /(informations?|raws?|leaks?)/i;
+            const leaksRegex = /(informations?|infos?|raws?|leaks?)/i;
 
             //Reddit leaks watcher
             const redditWatcher = await RedditUserWatcher.create(process.env.LEAKS_REDDIT_USERNAME, (submission => {
