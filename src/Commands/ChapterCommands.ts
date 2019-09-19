@@ -1,5 +1,10 @@
 import {MangadexWithCache} from "../ExternalApi/Mangadex";
 import {Command, CommandError, Manga} from "../types";
+import {GoogleDriveWithCache} from "../ExternalApi/GoogleDrive";
+import axios, {AxiosResponse} from "axios";
+import * as fs from "fs";
+import {mimetypeToExtension, tmpFilename} from "../helpers";
+import {Stream} from "stream";
 
 const mangadex = new MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga: Manga) {
@@ -38,7 +43,6 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
     }
 };
 
-
 export const ChapterBSCommand: Command = {
     name: "bs!",
     desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter]",
@@ -62,5 +66,48 @@ export const ChapterBCCommand: Command = {
     adminOnly: false,
     execute: async function (msg, args) {
         await chapterCommandExecute.call(this, msg, args, Manga.BeastComplex);
+    }
+};
+
+//Raw
+const drive = new GoogleDriveWithCache();
+export const ChapterBSRCommand: Command = {
+    name: "bsr!",
+    desc: "Post page Nº(page) from chapter (chapter)",
+    usage: "bsr! (chapter) (page)",
+    example: "bsr! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    execute: async function (msg, args) {
+
+        const chapter = Number(args[0]);
+        const page = Number(args[1]);
+
+        //Missing chapter
+        if (isNaN(chapter)) {
+            throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
+        }
+
+        //Missing page
+        if (isNaN(page)) {
+            throw new CommandError(`Missing [page]\n\`${this.usage}\``);
+        }
+
+        const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
+
+        //Download file
+        const res: AxiosResponse<Stream> = await axios.get(link, {
+            responseType: "stream"
+        });
+
+        const tmpFile = tmpFilename(`bsr-${chapter}-${page}${mimetypeToExtension(res.headers["content-type"])}`);
+        const fileStream = fs.createWriteStream(tmpFile);
+
+        fileStream.on("finish", async () => {
+            await msg.channel.send({file: tmpFile});
+        });
+
+        res.data.pipe(fileStream);
+
     }
 };

@@ -1,5 +1,8 @@
 import {Guild, GuildMember} from "discord.js";
 
+const os = require('os');
+const path = require('path');
+
 export function escapeRegExp(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -167,4 +170,22 @@ export function maxArray<T>(arr: T[], func: (t: T) => number): T {
 export function isAdministrator(member: GuildMember): boolean {
     //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");
+}
+
+export function tmpFilename(name: string): string {
+
+    return path.join(os.tmpdir(), `${Date.now()}-${name}`);
+
+}
+
+export function mimetypeToExtension(mimetype: string): string {
+
+    const ext = mimetype.split("/")[1];
+
+    if (ext === "svg+xml") {
+        return ".svg";
+    }
+
+    return `.${ext}`;
+
 }

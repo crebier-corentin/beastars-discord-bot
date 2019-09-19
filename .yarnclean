@@ -43,3 +43,4 @@ wercker.yml
 
 # misc
 *.md
+!googleapis/build/src/apis/docs

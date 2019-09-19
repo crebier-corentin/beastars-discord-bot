@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const os = require('os');
+const path = require('path');
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
@@ -131,4 +133,16 @@ function isAdministrator(member) {
     return member.hasPermission("BAN_MEMBERS");
 }
 exports.isAdministrator = isAdministrator;
+function tmpFilename(name) {
+    return path.join(os.tmpdir(), `${Date.now()}-${name}`);
+}
+exports.tmpFilename = tmpFilename;
+function mimetypeToExtension(mimetype) {
+    const ext = mimetype.split("/")[1];
+    if (ext === "svg+xml") {
+        return ".svg";
+    }
+    return `.${ext}`;
+}
+exports.mimetypeToExtension = mimetypeToExtension;
 //# sourceMappingURL=helpers.js.map

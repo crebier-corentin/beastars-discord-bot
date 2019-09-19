@@ -2,6 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
+const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
+const axios_1 = require("axios");
+const fs = require("fs");
+const helpers_1 = require("../helpers");
 const mangadex = new Mangadex_1.MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga) {
     const chapter = Number(args[0]);
@@ -50,6 +54,39 @@ exports.ChapterBCCommand = {
     adminOnly: false,
     execute: async function (msg, args) {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.BeastComplex);
+    }
+};
+//Raw
+const drive = new GoogleDrive_1.GoogleDriveWithCache();
+exports.ChapterBSRCommand = {
+    name: "bsr!",
+    desc: "Post page Nº(page) from chapter (chapter)",
+    usage: "bsr! (chapter) (page)",
+    example: "bsr! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    execute: async function (msg, args) {
+        const chapter = Number(args[0]);
+        const page = Number(args[1]);
+        //Missing chapter
+        if (isNaN(chapter)) {
+            throw new types_1.CommandError(`Missing [chapter]\n\`${this.usage}\``);
+        }
+        //Missing page
+        if (isNaN(page)) {
+            throw new types_1.CommandError(`Missing [page]\n\`${this.usage}\``);
+        }
+        const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
+        //Download file
+        const res = await axios_1.default.get(link, {
+            responseType: "stream"
+        });
+        const tmpFile = helpers_1.tmpFilename(`bsr-${chapter}-${page}${helpers_1.mimetypeToExtension(res.headers["content-type"])}`);
+        const fileStream = fs.createWriteStream(tmpFile);
+        fileStream.on("finish", async () => {
+            await msg.channel.send({ file: tmpFile });
+        });
+        res.data.pipe(fileStream);
     }
 };
 //# sourceMappingURL=ChapterCommands.js.map
