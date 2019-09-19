@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../types");
 const Image_1 = require("../db/entities/Image");
 const User_1 = require("../db/entities/User");
-const helpers_1 = require("../helpers");
 exports.ImageAddCommand = {
     name: "image add",
     desc: "Add an image to to the image list",
@@ -78,18 +77,25 @@ exports.ImageListCommand = {
         if (images.length === 0) {
             throw new types_1.CommandError(`There is currently no images in the database.\nAn admin can add images with \`${exports.ImageAddCommand.usage}\``);
         }
-        const namesLength = images.map(value => value.name.length);
-        const nameMax = Math.max(...namesLength);
-        const formatImages = (images) => {
-            let result = "";
-            for (const image of images) {
-                result += `\`${image.name.padEnd(nameMax)}\` <${image.url}>\n`;
+        const namesChunks = [];
+        let currentChunk = "";
+        let charTotal = 0;
+        //Split images into chunk, discord max message size is 2000 characters
+        for (const image of images) {
+            const nameLenght = image.name.length + 1; //+ 1 is \n
+            //Flush currentChunk into namesChunks
+            if (charTotal + nameLenght > 2000) {
+                charTotal = 0;
+                namesChunks.push(currentChunk);
+                currentChunk = "";
             }
-            return result;
-        };
-        const imagesChunks = helpers_1.chunkArray(images, 10);
-        for (const imageChunk of imagesChunks) {
-            await msg.channel.send(formatImages(imageChunk));
+            charTotal += nameLenght;
+            currentChunk += `${image.name}\n`;
+        }
+        //Flush currentChunk into namesChunks
+        namesChunks.push(currentChunk);
+        for (const chunk of namesChunks) {
+            await msg.channel.send(chunk);
         }
     }
 };

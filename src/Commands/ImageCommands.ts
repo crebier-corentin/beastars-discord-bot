@@ -98,23 +98,30 @@ export const ImageListCommand: Command = {
             throw new CommandError(`There is currently no images in the database.\nAn admin can add images with \`${ImageAddCommand.usage}\``);
         }
 
-        const namesLength = images.map(value => value.name.length);
-        const nameMax = Math.max(...namesLength);
+        const namesChunks: string[] = [];
+        let currentChunk: string = "";
+        let charTotal: number = 0;
 
-        const formatImages = (images: Image[]): string => {
+        //Split images into chunk, discord max message size is 2000 characters
+        for (const image of images) {
+            const nameLenght = image.name.length + 1; //+ 1 is \n
 
-            let result = "";
-            for (const image of images) {
-                result += `\`${image.name.padEnd(nameMax)}\` <${image.url}>\n`;
+            //Flush currentChunk into namesChunks
+            if (charTotal + nameLenght > 2000) {
+                charTotal = 0;
+                namesChunks.push(currentChunk);
+                currentChunk = "";
             }
 
-            return result;
-        };
+            charTotal += nameLenght;
+            currentChunk += `${image.name}\n`;
+        }
 
-        const imagesChunks = chunkArray(images, 10);
+        //Flush currentChunk into namesChunks
+        namesChunks.push(currentChunk);
 
-        for (const imageChunk of imagesChunks) {
-            await msg.channel.send(formatImages(imageChunk));
+        for (const chunk of namesChunks) {
+            await msg.channel.send(chunk);
         }
 
     }

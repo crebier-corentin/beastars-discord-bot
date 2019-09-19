@@ -19,7 +19,7 @@ typeorm_1.createConnection().then(() => {
         await client.user.setPresence({ status: "online", game: { name: `Use ${Context_1.Context.prefix} help` } });
         //Reddit leaks and mangadex watchers
         (async function watchers() {
-            const leaksRegex = /(informations?|raws?|leaks?)/i;
+            const leaksRegex = /(informations?|infos?|raws?|leaks?)/i;
             //Reddit leaks watcher
             const redditWatcher = await Reddit_1.RedditUserWatcher.create(process.env.LEAKS_REDDIT_USERNAME, (submission => {
                 //Check subreddit
