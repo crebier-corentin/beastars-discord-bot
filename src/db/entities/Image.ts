@@ -17,7 +17,7 @@ export class Image extends BaseEntity {
     @Column()
     url: string;
 
-    @ManyToOne((type) => User, {eager: true})
+    @ManyToOne(() => User, {eager: true})
     addedBy: User;
 
     @CreateDateColumn()

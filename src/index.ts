@@ -1,19 +1,14 @@
-/* eslint-disable import/first */
 require("dotenv").config();
 
 import {MangadexWatcher} from "./ExternalApi/Mangadex";
 import {RedditUserWatcher} from "./ExternalApi/Reddit";
 import "reflect-metadata";
 import {createConnection} from "typeorm";
-
 import {Context} from "./Context";
 import {executeCommand} from "./Execute";
 import {TextChannel} from "discord.js";
 import {Manga} from "./types";
-
-
 import Discord = require("discord.js");
-/* eslint-enable import/first */
 
 //Database
 createConnection().then(() => {

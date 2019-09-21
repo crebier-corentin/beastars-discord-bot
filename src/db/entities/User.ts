@@ -12,7 +12,7 @@ export class User extends BaseEntity {
     @Column({unique: true})
     discordId: string;
 
-    @ManyToMany((type) => User, (user) => user.legsReceivedFrom, {cascade: true})
+    @ManyToMany(() => User, (user) => user.legsReceivedFrom, {cascade: true})
     @JoinTable({
         name: "users_legs",
         joinColumn: {
@@ -26,7 +26,7 @@ export class User extends BaseEntity {
     })
     legsGivenTo: User[];
 
-    @ManyToMany((type) => User, (user) => user.legsGivenTo)
+    @ManyToMany(() => User, (user) => user.legsGivenTo)
     legsReceivedFrom: User[];
 
     legsGiven() {

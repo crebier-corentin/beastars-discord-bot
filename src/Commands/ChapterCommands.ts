@@ -11,7 +11,7 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
     const chapter = Number(args[0]);
 
     //Missing chapter number
-    if (isNaN(chapter)) {
+    if (Number.isNaN(chapter)) {
         throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
     }
 
@@ -19,7 +19,7 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
     if (args.length >= 2) {
         const page = Number(args[1]);
 
-        if (isNaN(page)) {
+        if (Number.isNaN(page)) {
             throw new CommandError(`Invalid [page] (must be a number)\n\`${this.usage}\``);
         }
 
@@ -79,12 +79,12 @@ export const ChapterBSRCommand: Command = {
         const page = Number(args[1]);
 
         //Missing chapter
-        if (isNaN(chapter)) {
+        if (Number.isNaN(chapter)) {
             throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
         }
 
         //Missing page
-        if (isNaN(page)) {
+        if (Number.isNaN(page)) {
             throw new CommandError(`Missing [page]\n\`${this.usage}\``);
         }
 
