@@ -11,9 +11,8 @@ export const ImageAddCommand: Command = {
     aliases: ["i add"],
     useDefaultPrefix: true,
     adminOnly: true,
-    execute: async function (msg, args) {
-
-        //Missing name
+    async execute(msg, args) {
+    //Missing name
         if (args.length == 0) {
             throw new CommandError(`Missing [name]\n\`${this.usage}\``);
         }
@@ -28,7 +27,7 @@ export const ImageAddCommand: Command = {
 
         //Forbidden names
         if (["add", "remove", "list"].includes(name.toLowerCase())) {
-            throw new CommandError(`Forbidden image names : \`add\`, \`remove\` or \`list\``);
+            throw new CommandError("Forbidden image names : `add`, `remove` or `list`");
         }
 
         //Check if name already exists
@@ -47,8 +46,7 @@ export const ImageAddCommand: Command = {
         await newImage.save();
 
         await msg.channel.send(`Image \`${name}\` (<${url}>) added to list`);
-
-    }
+    },
 };
 
 export const ImageRemoveCommand: Command = {
@@ -59,9 +57,8 @@ export const ImageRemoveCommand: Command = {
     aliases: ["i remove"],
     useDefaultPrefix: true,
     adminOnly: true,
-    execute: async function (msg, args) {
-
-        //Missing name
+    async execute(msg, args) {
+    //Missing name
         if (args.length == 0) {
             throw new CommandError(`Missing [name]\n\`${this.usage}\``);
         }
@@ -78,8 +75,7 @@ export const ImageRemoveCommand: Command = {
         await image.remove();
 
         await msg.channel.send(`Image \`${name}\` removed`);
-
-    }
+    },
 };
 
 export const ImageListCommand: Command = {
@@ -89,8 +85,7 @@ export const ImageListCommand: Command = {
     aliases: ["i list"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg) {
-
+    async execute(msg) {
         const images = await Image.find();
 
         //Empty
@@ -123,8 +118,7 @@ export const ImageListCommand: Command = {
         for (const chunk of namesChunks) {
             await msg.channel.send(chunk);
         }
-
-    }
+    },
 };
 
 export const ImageCommand: Command = {
@@ -134,9 +128,8 @@ export const ImageCommand: Command = {
     aliases: ["i post", "image", "i"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args) {
-
-        //Missing name
+    async execute(msg, args) {
+    //Missing name
         if (args.length == 0) {
             throw new CommandError(`Missing [name]\n\`${this.usage}\``);
         }
@@ -146,11 +139,10 @@ export const ImageCommand: Command = {
         //Check if it exists
         const image = await Image.findImage(name);
         if (image == undefined) {
-
             throw new CommandError(`Image \`${name}\` does not exist\n Did you mean \`${await Image.mostSimilarName(name)}\`?`);
         }
 
         //Send image
         await msg.channel.send({file: image.url});
-    }
+    },
 };

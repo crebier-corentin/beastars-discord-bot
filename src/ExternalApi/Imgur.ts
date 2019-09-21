@@ -12,7 +12,6 @@ interface ImgurAlbumImages {
 const cache = new Cache(60 * 60 * 24);
 
 export class Imgur {
-
     static async getRandomImageInAlbum(albumId: string): Promise<string> {
         const images = await cache.get(albumId, this.getAllImagesInAlbum.bind(this, albumId));
 
@@ -25,10 +24,9 @@ export class Imgur {
     }
 
     private static async getAllImagesInAlbum(albumId: string): Promise<string[]> {
-
         const url = `https://api.imgur.com/3/album/${albumId}/images`;
 
-        const res = <AxiosResponse<ImgurAlbumImages>>await axios.get(url, {headers: {Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`}}).catch(() => {
+        const res = <AxiosResponse<ImgurAlbumImages>> await axios.get(url, {headers: {Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`}}).catch(() => {
             throw new CommandError("Cannot access imgur's api");
         });
 

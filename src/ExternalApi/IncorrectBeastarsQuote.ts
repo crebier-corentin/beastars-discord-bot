@@ -24,7 +24,6 @@ interface Quote {
 const cache = new Cache(60 * 60 * 24);
 
 export class IncorrectBeastarsQuote {
-
     private static identifer = "incorrect-beastars";
 
     static async getRandomQuote(): Promise<Quote> {
@@ -39,19 +38,17 @@ export class IncorrectBeastarsQuote {
     }
 
     private static async getAllQuotes(): Promise<Quote[]> {
-
         const url = new URL(`https://api.tumblr.com/v2/blog/${IncorrectBeastarsQuote.identifer}/posts`);
         url.searchParams.append("api_key", process.env.TUMBLR_API_KEY);
         url.searchParams.append("limit", "20");
         url.searchParams.append("filter", "text");
 
         const getQuotes = async (offset: number = 0): Promise<Quote[]> => {
-
             const total_quotes: Quote[] = [];
 
             url.searchParams.set("offset", offset.toString());
 
-            const res = <AxiosResponse<TumblrPostsResponse>>await axios.get(url.toString()).catch(() => {
+            const res = <AxiosResponse<TumblrPostsResponse>> await axios.get(url.toString()).catch(() => {
                 throw new CommandError("Cannot access tumblr's api");
             });
 
@@ -59,7 +56,6 @@ export class IncorrectBeastarsQuote {
 
             if (data.posts.length > 0) {
                 for (const quote of data.posts) {
-
                     //Only add quotes
                     if ((quote.type === "text" || quote.type === "chat") && quote.tags.includes("incorrect beastars quotes")) {
                         total_quotes.push({url: quote.post_url, text: quote.body});
@@ -69,15 +65,11 @@ export class IncorrectBeastarsQuote {
                 if (data.posts.length === 20) {
                     return total_quotes.concat(await getQuotes(offset + 20));
                 }
-
             }
 
             return total_quotes;
-
         };
 
         return await getQuotes();
     }
-
 }
-

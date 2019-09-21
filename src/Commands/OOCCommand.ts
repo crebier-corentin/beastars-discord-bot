@@ -7,10 +7,9 @@ export const OocCommand: Command = {
     usage: "ooc",
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg) {
-
+    async execute(msg) {
         const image = await Imgur.getRandomImageInAlbum("tCDHjVx");
 
         msg.channel.send({file: image});
-    }
+    },
 };

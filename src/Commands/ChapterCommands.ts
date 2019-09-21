@@ -1,14 +1,13 @@
+import axios, {AxiosResponse} from "axios";
+import * as fs from "fs";
+import {Stream} from "stream";
 import {MangadexWithCache} from "../ExternalApi/Mangadex";
 import {Command, CommandError, Manga} from "../types";
 import {GoogleDriveWithCache} from "../ExternalApi/GoogleDrive";
-import axios, {AxiosResponse} from "axios";
-import * as fs from "fs";
 import {mimetypeToExtension, tmpFilename} from "../helpers";
-import {Stream} from "stream";
 
 const mangadex = new MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga: Manga) {
-
     const chapter = Number(args[0]);
 
     //Missing chapter number
@@ -18,7 +17,6 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
 
     //Is page
     if (args.length >= 2) {
-
         const page = Number(args[1]);
 
         if (isNaN(page)) {
@@ -28,17 +26,15 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
         const response = await mangadex.getChapterPageLink(chapter, page, manga);
 
         //Error message
-        if (typeof response == "string") {
+        if (typeof response === "string") {
             throw new CommandError(response);
         }
         //Site link + Image link
         else {
             msg.channel.send(`<${response.site}>`, {file: response.image});
         }
-
-    }
-    else {
-        //Chapter link
+    } else {
+    //Chapter link
         msg.channel.send(await mangadex.getChapterLink(chapter, manga));
     }
 };
@@ -50,9 +46,9 @@ export const ChapterBSCommand: Command = {
     example: "bs! 10",
     useDefaultPrefix: false,
     adminOnly: false,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         await chapterCommandExecute.call(this, msg, args, Manga.Beastars);
-    }
+    },
 
 
 };
@@ -64,9 +60,9 @@ export const ChapterBCCommand: Command = {
     example: "bc! 2",
     useDefaultPrefix: false,
     adminOnly: false,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         await chapterCommandExecute.call(this, msg, args, Manga.BeastComplex);
-    }
+    },
 };
 
 //Raw
@@ -78,8 +74,7 @@ export const ChapterBSRCommand: Command = {
     example: "bsr! 1 10",
     useDefaultPrefix: false,
     adminOnly: false,
-    execute: async function (msg, args) {
-
+    async execute(msg, args) {
         const chapter = Number(args[0]);
         const page = Number(args[1]);
 
@@ -97,7 +92,7 @@ export const ChapterBSRCommand: Command = {
 
         //Download file
         const res: AxiosResponse<Stream> = await axios.get(link, {
-            responseType: "stream"
+            responseType: "stream",
         });
 
         const tmpFile = tmpFilename(`bsr-${chapter}-${page}${mimetypeToExtension(res.headers["content-type"])}`);
@@ -108,6 +103,5 @@ export const ChapterBSRCommand: Command = {
         });
 
         res.data.pipe(fileStream);
-
-    }
+    },
 };

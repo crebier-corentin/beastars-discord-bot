@@ -25,7 +25,7 @@ const commands = [
     ImageCommands_1.ImageAddCommand,
     ImageCommands_1.ImageRemoveCommand,
     ImageCommands_1.ImageListCommand,
-    ImageCommands_1.ImageCommand
+    ImageCommands_1.ImageCommand,
 ];
 const parser = new Parser_1.default(prefix, commands);
 Context_1.Context.prefix = prefix;
@@ -45,8 +45,8 @@ function executeCommand(msg) {
         const res = parser.parseCommand(msg.content);
         if (!res.success) {
             //Triple cheeks sebun
-            const sebunCheeks = msg.guild.emojis.find(emoji => emoji.name == "Sebun_Cheeks");
-            const legoshiLick = msg.guild.emojis.find(emoji => emoji.name == "Legoshi_Lick");
+            const sebunCheeks = msg.guild.emojis.find((emoji) => emoji.name == "Sebun_Cheeks");
+            const legoshiLick = msg.guild.emojis.find((emoji) => emoji.name == "Legoshi_Lick");
             //Emoji missing
             if (sebunCheeks == null || legoshiLick == null)
                 return;

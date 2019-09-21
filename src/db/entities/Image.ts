@@ -1,11 +1,13 @@
-import {BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {User} from "./User";
+import {
+    BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn,
+} from "typeorm";
 import {Guild} from "discord.js";
-import stringSimilarity = require('string-similarity');
+import {User} from "./User";
+
+import stringSimilarity = require("string-similarity");
 
 @Entity()
 export class Image extends BaseEntity {
-
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -15,7 +17,7 @@ export class Image extends BaseEntity {
     @Column()
     url: string;
 
-    @ManyToOne(type => User, {eager: true})
+    @ManyToOne((type) => User, {eager: true})
     addedBy: User;
 
     @CreateDateColumn()
@@ -41,7 +43,7 @@ export class Image extends BaseEntity {
     }
 
     static async mostSimilarName(name: string): Promise<string> {
-        const imageNames: string[] = (await Image.find({select: ["name"]})).map(value => value.name);
+        const imageNames: string[] = (await Image.find({select: ["name"]})).map((value) => value.name);
 
         const match = stringSimilarity.findBestMatch(name, imageNames).bestMatch;
 

@@ -1,19 +1,18 @@
 import {Guild, GuildMember} from "discord.js";
 
-const os = require('os');
-const path = require('path');
+const os = require("os");
+const path = require("path");
 
 export function escapeRegExp(string: string): string {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
 export function getEverythingAfterMatch(pattern: RegExp, str: string, times: number = 1): string {
-
     let count = 0;
 
     while (pattern.exec(str) !== null) {
         if (++count === times) {
-            return str.slice(pattern.lastIndex)
+            return str.slice(pattern.lastIndex);
         }
     }
 
@@ -22,13 +21,10 @@ export function getEverythingAfterMatch(pattern: RegExp, str: string, times: num
 }
 
 export function regexCount(re: RegExp, str: string): number {
-
-    return ((str || '').match(re) || []).length
-
+    return ((str || "").match(re) || []).length;
 }
 
 export function findMemberByUsername(guild: Guild, name: string): GuildMember[] {
-
     let lowerCaseName = name.toLowerCase();
 
     //Remove the @ if there is one
@@ -48,7 +44,6 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
     const results: GuildMember[] = [];
 
     for (const member of guild.members.array()) {
-
         if (name == `${member.user.username}#${member.user.discriminator}`) {
             return [member];
         }
@@ -88,27 +83,22 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
                 continue;
             }
         }
-
     }
 
     return results;
-
 }
 
 export async function asyncForEach<T>(array: T[], callback: (item: T) => Promise<any>) {
+    const promises: Array<(() => any)> = [];
 
-    let promises: Array<(() => any)> = [];
-
-    for (let a of array) {
+    for (const a of array) {
         promises.push(callback.call(a, a));
     }
 
     await Promise.all(promises);
-
 }
 
 export function includeStartsWith(array: string[], search: string): boolean {
-
     for (const str of array) {
         if (search.startsWith(str)) {
             return true;
@@ -116,11 +106,9 @@ export function includeStartsWith(array: string[], search: string): boolean {
     }
 
     return false;
-
 }
 
 export function arrayEqual<T>(a: Array<T>, b: Array<T>): boolean {
-
     if (a.length !== b.length) {
         return false;
     }
@@ -132,14 +120,12 @@ export function arrayEqual<T>(a: Array<T>, b: Array<T>): boolean {
     }
 
     return true;
-
 }
 
 export function chunkArray<T>(arr: T[], len: number): Array<Array<T>> {
-
-    var chunks = [],
-        i = 0,
-        n = arr.length;
+    const chunks = [];
+    let i = 0;
+    const n = arr.length;
 
     while (i < n) {
         chunks.push(arr.slice(i, i += len));
@@ -149,7 +135,6 @@ export function chunkArray<T>(arr: T[], len: number): Array<Array<T>> {
 }
 
 export function maxArray<T>(arr: T[], func: (t: T) => number): T {
-
     let maxVal = func(arr[0]);
     let max = arr[0];
 
@@ -164,7 +149,6 @@ export function maxArray<T>(arr: T[], func: (t: T) => number): T {
     }
 
     return max;
-
 }
 
 export function isAdministrator(member: GuildMember): boolean {
@@ -173,13 +157,10 @@ export function isAdministrator(member: GuildMember): boolean {
 }
 
 export function tmpFilename(name: string): string {
-
     return path.join(os.tmpdir(), `${Date.now()}-${name}`);
-
 }
 
 export function mimetypeToExtension(mimetype: string): string {
-
     const ext = mimetype.split("/")[1];
 
     if (ext === "svg+xml") {
@@ -187,5 +168,4 @@ export function mimetypeToExtension(mimetype: string): string {
     }
 
     return `.${ext}`;
-
 }

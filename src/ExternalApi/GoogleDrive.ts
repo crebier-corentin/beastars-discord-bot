@@ -5,9 +5,7 @@ import {CommandError} from "../types";
 const drive = new drive_v3.Drive({auth: process.env.GOOGLE_API_KEY});
 
 export class GoogleDrive {
-
     protected static async getChapterFolderId(driveFolderId: string, chapterNo: number): Promise<string> {
-
         const folder = await drive.files.list({q: `'${driveFolderId}' in parents and name contains 'Ch. ${chapterNo.toString().padStart(3, "0")}'`});
 
         if (folder.data.files.length === 0) {
@@ -18,17 +16,15 @@ export class GoogleDrive {
     }
 
     protected static async getPagesLinks(driveFolderId: string, chapterNo: number): Promise<string[]> {
-
         const folderId = await this.getChapterFolderId(driveFolderId, chapterNo);
 
         const pages = await drive.files.list({
             q: `'${folderId}' in parents`,
             orderBy: "name",
-            fields: "files(webContentLink)"
+            fields: "files(webContentLink)",
         });
 
-        return pages.data.files.map(page => page.webContentLink);
-
+        return pages.data.files.map((page) => page.webContentLink);
     }
 }
 
@@ -50,11 +46,9 @@ export class GoogleDriveWithCache extends GoogleDrive {
         let retry = true;
 
         while (true) {
-
             try {
                 return await this.getPagesLinksWithCache(driveFolderId, chapterNo);
-            }
-            catch (e) {
+            } catch (e) {
                 //Retry
                 if (retry) {
                     this.cache.del(`${driveFolderId}-${chapterNo}`);
@@ -65,12 +59,10 @@ export class GoogleDriveWithCache extends GoogleDrive {
                     throw e;
                 }
             }
-
         }
     }
 
     async getPageLink(driveFolderId: string, chapterNo: number, pageNo: number): Promise<string> {
-
         const pageIndex = pageNo - 1;
 
         const pages = await this.getPagesLinksWithRetry(driveFolderId, chapterNo);
@@ -81,8 +73,5 @@ export class GoogleDriveWithCache extends GoogleDrive {
         }
 
         return pages[pageNo - 1];
-
     }
-
-
 }

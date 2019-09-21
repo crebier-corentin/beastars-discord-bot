@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const axios_1 = require("axios");
+const fs = require("fs");
 const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
 const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
-const axios_1 = require("axios");
-const fs = require("fs");
 const helpers_1 = require("../helpers");
 const mangadex = new Mangadex_1.MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga) {
@@ -21,7 +21,7 @@ const chapterCommandExecute = async function (msg, args, manga) {
         }
         const response = await mangadex.getChapterPageLink(chapter, page, manga);
         //Error message
-        if (typeof response == "string") {
+        if (typeof response === "string") {
             throw new types_1.CommandError(response);
         }
         //Site link + Image link
@@ -41,9 +41,9 @@ exports.ChapterBSCommand = {
     example: "bs! 10",
     useDefaultPrefix: false,
     adminOnly: false,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.Beastars);
-    }
+    },
 };
 exports.ChapterBCCommand = {
     name: "bc!",
@@ -52,9 +52,9 @@ exports.ChapterBCCommand = {
     example: "bc! 2",
     useDefaultPrefix: false,
     adminOnly: false,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.BeastComplex);
-    }
+    },
 };
 //Raw
 const drive = new GoogleDrive_1.GoogleDriveWithCache();
@@ -65,7 +65,7 @@ exports.ChapterBSRCommand = {
     example: "bsr! 1 10",
     useDefaultPrefix: false,
     adminOnly: false,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         const chapter = Number(args[0]);
         const page = Number(args[1]);
         //Missing chapter
@@ -79,7 +79,7 @@ exports.ChapterBSRCommand = {
         const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
         //Download file
         const res = await axios_1.default.get(link, {
-            responseType: "stream"
+            responseType: "stream",
         });
         const tmpFile = helpers_1.tmpFilename(`bsr-${chapter}-${page}${helpers_1.mimetypeToExtension(res.headers["content-type"])}`);
         const fileStream = fs.createWriteStream(tmpFile);
@@ -87,6 +87,6 @@ exports.ChapterBSRCommand = {
             await msg.channel.send({ file: tmpFile });
         });
         res.data.pipe(fileStream);
-    }
+    },
 };
 //# sourceMappingURL=ChapterCommands.js.map

@@ -9,9 +9,8 @@ export const WikiCommand: Command = {
     aliases: ["w"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args) {
-
-        //Missing query
+    async execute(msg, args) {
+    //Missing query
         if (args.length == 0) {
             throw new CommandError(`Missing [query]\n\`${this.usage}\``);
         }
@@ -19,6 +18,5 @@ export const WikiCommand: Command = {
         const query = args.join(" ");
 
         msg.channel.send(await Wikia.searchFirstLink(query));
-
-    }
+    },
 };

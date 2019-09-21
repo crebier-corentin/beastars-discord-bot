@@ -1,31 +1,32 @@
-import {BaseEntity, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {
+    BaseEntity, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn,
+} from "typeorm";
 import {Guild, GuildMember, User as DiscordUser} from "discord.js";
 import {Context} from "../../Context";
 
 @Entity()
 export class User extends BaseEntity {
-
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({unique: true})
     discordId: string;
 
-    @ManyToMany(type => User, user => user.legsReceivedFrom, {cascade: true})
+    @ManyToMany((type) => User, (user) => user.legsReceivedFrom, {cascade: true})
     @JoinTable({
         name: "users_legs",
         joinColumn: {
             name: "from",
-            referencedColumnName: "id"
+            referencedColumnName: "id",
         },
         inverseJoinColumn: {
             name: "to",
-            referencedColumnName: "id"
-        }
+            referencedColumnName: "id",
+        },
     })
     legsGivenTo: User[];
 
-    @ManyToMany(type => User, user => user.legsGivenTo)
+    @ManyToMany((type) => User, (user) => user.legsGivenTo)
     legsReceivedFrom: User[];
 
     legsGiven() {
@@ -45,25 +46,19 @@ export class User extends BaseEntity {
     }
 
     async getNickname(guild: Guild = null, delimiters = ""): Promise<string> {
-
         if (guild !== null) {
-
             const member = this.getDiscordMember(guild);
 
-            if (member != undefined)
-                return delimiters + member.displayName + delimiters;
+            if (member != undefined) { return delimiters + member.displayName + delimiters; }
         }
 
         //Last nickname
         return delimiters + (await Context.client.fetchUser(this.discordId)).username + delimiters;
-
     }
 
     async getStats(guild: Guild): Promise<string> {
-
         //Legs given
         const toStr = await (async () => {
-
             if (this.legsGivenTo.length === 0) {
                 return "has not given any legs";
             }
@@ -74,12 +69,10 @@ export class User extends BaseEntity {
             }
 
             return `has given ${toNames.length} leg${toNames.length === 1 ? "" : "s"} to (${toNames.join(", ")})`;
-
         })();
 
         //Legs received
         const fromStr = await (async () => {
-
             if (this.legsReceivedFrom.length === 0) {
                 return "has not received any legs";
             }
@@ -91,12 +84,9 @@ export class User extends BaseEntity {
 
 
             return `has received ${fromNames.length} leg${fromNames.length === 1 ? "" : "s"} from (${fromNames.join(", ")})`;
-
-
         })();
 
         return `${await this.getNickname(guild, "**")} ${toStr} and ${fromStr}`;
-
     }
 
     async giveLegTo(receiver: User): Promise<void> {
@@ -105,15 +95,13 @@ export class User extends BaseEntity {
         await this.save();
 
         await receiver.reload();
-
     }
 
     hasGivenLegTo(receiver: User): boolean {
-        return this.legsGivenTo.find(value => value.discordId === receiver.discordId) != undefined;
+        return this.legsGivenTo.find((value) => value.discordId === receiver.discordId) != undefined;
     }
 
     static async findOrCreate(discordId: string): Promise<User> {
-
         let user = await User.findOne({where: {discordId}, relations: ["legsGivenTo", "legsReceivedFrom"]});
         if (user == undefined) {
             user = await User.create({discordId}).save();
@@ -123,6 +111,4 @@ export class User extends BaseEntity {
 
         return user;
     }
-
-
 }

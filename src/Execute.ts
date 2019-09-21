@@ -8,7 +8,9 @@ import {WikiCommand} from "./Commands/WikiCommand";
 import {QuoteComment} from "./Commands/QuoteCommand";
 import {LegStatsCommand, OfferLegCommand} from "./Commands/LegCommand";
 import {escapeRegExp, isAdministrator} from "./helpers";
-import {ImageAddCommand, ImageCommand, ImageListCommand, ImageRemoveCommand} from "./Commands/ImageCommands";
+import {
+    ImageAddCommand, ImageCommand, ImageListCommand, ImageRemoveCommand,
+} from "./Commands/ImageCommands";
 import {OocCommand} from "./Commands/OOCCommand";
 
 const prefix = process.env.PREFIX;
@@ -24,14 +26,14 @@ const commands = [
 
     QuoteComment,
     OocCommand,
-    
+
     OfferLegCommand,
     LegStatsCommand,
 
     ImageAddCommand,
     ImageRemoveCommand,
     ImageListCommand,
-    ImageCommand
+    ImageCommand,
 ];
 const parser = new Parser(prefix, commands);
 
@@ -39,9 +41,8 @@ Context.prefix = prefix;
 Context.commands = commands;
 
 export function executeCommand(msg: Message) {
-
     const exceptionHandler = (e) => {
-        //Respond with error message
+    //Respond with error message
         if (e instanceof CommandError) {
             msg.channel.send(`:x: ${e.message}`);
         }
@@ -55,10 +56,9 @@ export function executeCommand(msg: Message) {
         const res = parser.parseCommand(msg.content);
 
         if (!res.success) {
-
             //Triple cheeks sebun
-            const sebunCheeks = msg.guild.emojis.find(emoji => emoji.name == "Sebun_Cheeks");
-            const legoshiLick = msg.guild.emojis.find(emoji => emoji.name == "Legoshi_Lick");
+            const sebunCheeks = msg.guild.emojis.find((emoji) => emoji.name == "Sebun_Cheeks");
+            const legoshiLick = msg.guild.emojis.find((emoji) => emoji.name == "Legoshi_Lick");
 
             //Emoji missing
             if (sebunCheeks == null || legoshiLick == null) return;
@@ -67,7 +67,6 @@ export function executeCommand(msg: Message) {
 
             //React with Legoshi_Lick
             if (cheeksRegex.test(msg.content)) {
-
                 msg.react(legoshiLick);
             }
 
@@ -85,9 +84,7 @@ export function executeCommand(msg: Message) {
         if (promise instanceof Promise) {
             promise.catch(exceptionHandler);
         }
-
-    }
-    catch (e) {
+    } catch (e) {
         exceptionHandler(e);
     }
 }

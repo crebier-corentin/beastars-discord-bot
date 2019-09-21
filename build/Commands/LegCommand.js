@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const moment = require("moment");
 const types_1 = require("../types");
 const helpers_1 = require("../helpers");
 const User_1 = require("../db/entities/User");
 const Context_1 = require("../Context");
-const moment = require("moment");
 const findMemberByUsernameWithError = (guild, username) => {
     const receiverMembers = helpers_1.findMemberByUsername(guild, username);
     //Can't find member
@@ -14,7 +14,7 @@ const findMemberByUsernameWithError = (guild, username) => {
     //Ambiguous
     if (receiverMembers.length > 1) {
         //Bold
-        let names = receiverMembers.map(member => `**${member.displayName}** (${member.user.username}#${member.user.discriminator})`);
+        const names = receiverMembers.map((member) => `**${member.displayName}** (${member.user.username}#${member.user.discriminator})`);
         throw new types_1.CommandError(`Ambiguous user between : \n${names.join("\n")}`);
     }
     return receiverMembers[0];
@@ -27,7 +27,7 @@ exports.OfferLegCommand = {
     aliases: ["o"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args, fullArgs) {
+    async execute(msg, args, fullArgs) {
         //Missing username
         if (args.length == 0) {
             throw new types_1.CommandError(`Missing [username]\n\`${Context_1.Context.prefix} ${this.usage}\``);
@@ -53,11 +53,11 @@ exports.OfferLegCommand = {
             const giver = await User_1.User.findOrCreate(msg.author.id);
             //Check self
             if (receiver.id == giver.id) {
-                throw new types_1.CommandError(`You can't offer your leg to yourself`);
+                throw new types_1.CommandError("You can't offer your leg to yourself");
             }
             //Check if has legs
             if (await giver.legsGiven() === 2) {
-                throw new types_1.CommandError(`You have no legs left`);
+                throw new types_1.CommandError("You have no legs left");
             }
             //Check if has already given a leg
             if (giver.hasGivenLegTo(receiver)) {
@@ -66,7 +66,7 @@ exports.OfferLegCommand = {
             //Comfirmation
             const confirmationMsg = await msg.channel.send("_ _");
             await confirmationMsg.edit(`Are you sure you want to give your leg to <@${receiver.discordId}>, this action is **permanent** !\nReply with "yes" to confirm it.\nWill expire in 20 seconds...`);
-            let filter = filterMsg => filterMsg.author.id == msg.author.id;
+            const filter = (filterMsg) => filterMsg.author.id == msg.author.id;
             const collected = await msg.channel.awaitMessages(filter, { max: 1, time: 20000 });
             //Delete confirmation message if possible
             if (confirmationMsg.deletable)
@@ -78,7 +78,7 @@ exports.OfferLegCommand = {
             }
         };
         await giveLeg(msg, fullArgs);
-    }
+    },
 };
 exports.LegStatsCommand = {
     name: "stats",
@@ -88,7 +88,7 @@ exports.LegStatsCommand = {
     aliases: ["s", "stat"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args, fullArgs) {
+    async execute(msg, args, fullArgs) {
         let userId;
         //Self
         if (args.length === 0) {
@@ -104,6 +104,6 @@ exports.LegStatsCommand = {
         }
         const user = await User_1.User.findOrCreate(userId);
         await msg.channel.send(await user.getStats(msg.guild));
-    }
+    },
 };
 //# sourceMappingURL=LegCommand.js.map

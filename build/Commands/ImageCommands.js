@@ -11,7 +11,7 @@ exports.ImageAddCommand = {
     aliases: ["i add"],
     useDefaultPrefix: true,
     adminOnly: true,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         //Missing name
         if (args.length == 0) {
             throw new types_1.CommandError(`Missing [name]\n\`${this.usage}\``);
@@ -24,7 +24,7 @@ exports.ImageAddCommand = {
         const url = args[1];
         //Forbidden names
         if (["add", "remove", "list"].includes(name.toLowerCase())) {
-            throw new types_1.CommandError(`Forbidden image names : \`add\`, \`remove\` or \`list\``);
+            throw new types_1.CommandError("Forbidden image names : `add`, `remove` or `list`");
         }
         //Check if name already exists
         const image = await Image_1.Image.findImage(name);
@@ -38,7 +38,7 @@ exports.ImageAddCommand = {
         newImage.addedBy = await User_1.User.findOne({ where: { discordId: msg.member.user.id } });
         await newImage.save();
         await msg.channel.send(`Image \`${name}\` (<${url}>) added to list`);
-    }
+    },
 };
 exports.ImageRemoveCommand = {
     name: "image remove",
@@ -48,7 +48,7 @@ exports.ImageRemoveCommand = {
     aliases: ["i remove"],
     useDefaultPrefix: true,
     adminOnly: true,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         //Missing name
         if (args.length == 0) {
             throw new types_1.CommandError(`Missing [name]\n\`${this.usage}\``);
@@ -62,7 +62,7 @@ exports.ImageRemoveCommand = {
         //Remove from database
         await image.remove();
         await msg.channel.send(`Image \`${name}\` removed`);
-    }
+    },
 };
 exports.ImageListCommand = {
     name: "image list",
@@ -71,7 +71,7 @@ exports.ImageListCommand = {
     aliases: ["i list"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg) {
+    async execute(msg) {
         const images = await Image_1.Image.find();
         //Empty
         if (images.length === 0) {
@@ -97,7 +97,7 @@ exports.ImageListCommand = {
         for (const chunk of namesChunks) {
             await msg.channel.send(chunk);
         }
-    }
+    },
 };
 exports.ImageCommand = {
     name: "image post",
@@ -106,7 +106,7 @@ exports.ImageCommand = {
     aliases: ["i post", "image", "i"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         //Missing name
         if (args.length == 0) {
             throw new types_1.CommandError(`Missing [name]\n\`${this.usage}\``);
@@ -119,6 +119,6 @@ exports.ImageCommand = {
         }
         //Send image
         await msg.channel.send({ file: image.url });
-    }
+    },
 };
 //# sourceMappingURL=ImageCommands.js.map

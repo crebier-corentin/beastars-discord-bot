@@ -4,6 +4,7 @@ import {Context} from "./Context";
 
 export default class Parser {
     defaultPrefix: string;
+
     customPrefixes: { prefix: string, command: Command }[];
 
     commands: Command[];
@@ -29,17 +30,15 @@ export default class Parser {
 
         //Default prefix
         if (prefix == this.defaultPrefix) {
-
             //Missing command
             if (splitted.length === 1) {
                 throw new CommandError(`Missing command, to see the list of commands use \`${Context.prefix} help\``);
             }
 
             const checkCommand = (command: Command, comandName: string) => {
-
                 const commandName = comandName.split(/\s+/g);
                 const whitespacesInCommand = commandName.length - 1;
-                const userCommandName = splitted.slice(1, 2 + whitespacesInCommand).map(value => value.toLowerCase());
+                const userCommandName = splitted.slice(1, 2 + whitespacesInCommand).map((value) => value.toLowerCase());
 
                 //Match found
                 if (arrayEqual(commandName, userCommandName)) {
@@ -47,20 +46,17 @@ export default class Parser {
                         success: true,
                         command,
                         args: splitted.splice(2 + whitespacesInCommand),
-                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
+                        fullArgs: getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand),
                     };
                 }
 
                 return {
-                    success: false
-                }
-
-
+                    success: false,
+                };
             };
 
             //Find command
             for (const command of this.commands) {
-
                 //Try with command name
                 if (command.useDefaultPrefix) {
                     const res = checkCommand(command, command.name);
@@ -76,12 +72,10 @@ export default class Parser {
                         return res;
                     }
                 }
-
             }
 
             //Invalid command
             throw new CommandError(`Invalid command, to see the list of commands use \`${Context.prefix} help\`\nIf you want to use the image feature don't forget the command name \`${Context.prefix} i [name]\``);
-
         }
         //Custom prefix
         for (const custom of this.customPrefixes) {
@@ -90,13 +84,11 @@ export default class Parser {
                     success: true,
                     command: custom.command,
                     args: splitted.slice(1),
-                    fullArgs: getEverythingAfterMatch(/\s+/g, str, 1)
+                    fullArgs: getEverythingAfterMatch(/\s+/g, str, 1),
                 };
             }
         }
 
         return {success: false};
-
     }
-
 }

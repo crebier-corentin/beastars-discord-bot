@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const os = require('os');
-const path = require('path');
+const os = require("os");
+const path = require("path");
 function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 exports.escapeRegExp = escapeRegExp;
 function getEverythingAfterMatch(pattern, str, times = 1) {
@@ -18,7 +18,7 @@ function getEverythingAfterMatch(pattern, str, times = 1) {
 }
 exports.getEverythingAfterMatch = getEverythingAfterMatch;
 function regexCount(re, str) {
-    return ((str || '').match(re) || []).length;
+    return ((str || "").match(re) || []).length;
 }
 exports.regexCount = regexCount;
 function findMemberByUsername(guild, name) {
@@ -78,8 +78,8 @@ function findMemberByUsername(guild, name) {
 }
 exports.findMemberByUsername = findMemberByUsername;
 async function asyncForEach(array, callback) {
-    let promises = [];
-    for (let a of array) {
+    const promises = [];
+    for (const a of array) {
         promises.push(callback.call(a, a));
     }
     await Promise.all(promises);
@@ -107,7 +107,9 @@ function arrayEqual(a, b) {
 }
 exports.arrayEqual = arrayEqual;
 function chunkArray(arr, len) {
-    var chunks = [], i = 0, n = arr.length;
+    const chunks = [];
+    let i = 0;
+    const n = arr.length;
     while (i < n) {
         chunks.push(arr.slice(i, i += len));
     }

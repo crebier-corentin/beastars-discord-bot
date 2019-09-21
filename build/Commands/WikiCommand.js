@@ -10,13 +10,13 @@ exports.WikiCommand = {
     aliases: ["w"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args) {
+    async execute(msg, args) {
         //Missing query
         if (args.length == 0) {
             throw new types_1.CommandError(`Missing [query]\n\`${this.usage}\``);
         }
         const query = args.join(" ");
         msg.channel.send(await Wikia_1.Wikia.searchFirstLink(query));
-    }
+    },
 };
 //# sourceMappingURL=WikiCommand.js.map

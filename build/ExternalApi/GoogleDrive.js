@@ -17,9 +17,9 @@ class GoogleDrive {
         const pages = await drive.files.list({
             q: `'${folderId}' in parents`,
             orderBy: "name",
-            fields: "files(webContentLink)"
+            fields: "files(webContentLink)",
         });
-        return pages.data.files.map(page => page.webContentLink);
+        return pages.data.files.map((page) => page.webContentLink);
     }
 }
 exports.GoogleDrive = GoogleDrive;

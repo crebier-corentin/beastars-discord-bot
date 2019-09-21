@@ -1,4 +1,4 @@
-import {RichEmbed} from 'discord.js';
+import {RichEmbed} from "discord.js";
 import {Context} from "../Context";
 import {Command} from "../types";
 import {isAdministrator} from "../helpers";
@@ -10,15 +10,13 @@ export const HelpCommand: Command = {
     aliases: ["h"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: function (msg) {
-
+    execute(msg) {
         const isAdmin = isAdministrator(msg.member);
 
         const embed = new RichEmbed()
             .setTitle("Help");
 
         for (let i = 0; i < Context.commands.length; i++) {
-
             const command = Context.commands[i];
 
             //Ignore adminOnly commands if non admin
@@ -29,11 +27,11 @@ export const HelpCommand: Command = {
             let title = "";
 
             //Title
-            if(command.adminOnly) {
-                title += "**ADMIN ONLY**\n"
+            if (command.adminOnly) {
+                title += "**ADMIN ONLY**\n";
             }
 
-             title += "`";
+            title += "`";
 
             //Add default prefix
             if (command.useDefaultPrefix) {
@@ -47,7 +45,6 @@ export const HelpCommand: Command = {
 
             //Example
             if (command.example != undefined) {
-
                 let example = "`";
                 //Add default prefix
                 if (command.useDefaultPrefix) {
@@ -55,7 +52,7 @@ export const HelpCommand: Command = {
                 }
                 example += `${command.example}\``;
 
-                description += `\n**Example :** \`${example}\``
+                description += `\n**Example :** \`${example}\``;
             }
 
             //Add spacing if not last
@@ -64,12 +61,9 @@ export const HelpCommand: Command = {
             }
 
             embed.addField(title, description);
-
-
         }
 
 
         msg.channel.send({embed});
-
-    }
+    },
 };

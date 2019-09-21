@@ -1,8 +1,7 @@
 //Taken from https://medium.com/@danielsternlicht/caching-like-a-boss-in-nodejs-9bccbbc71b9b
-import NodeCache = require('node-cache');
+import NodeCache = require("node-cache");
 
 class Cache {
-
     cache: NodeCache;
 
     constructor(ttlSeconds) {
@@ -25,7 +24,7 @@ class Cache {
         this.cache.del(keys);
     }
 
-    delStartWith(startStr = '') {
+    delStartWith(startStr = "") {
         if (!startStr) {
             return;
         }

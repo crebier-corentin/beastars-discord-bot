@@ -28,18 +28,18 @@ class Parser {
             const checkCommand = (command, comandName) => {
                 const commandName = comandName.split(/\s+/g);
                 const whitespacesInCommand = commandName.length - 1;
-                const userCommandName = splitted.slice(1, 2 + whitespacesInCommand).map(value => value.toLowerCase());
+                const userCommandName = splitted.slice(1, 2 + whitespacesInCommand).map((value) => value.toLowerCase());
                 //Match found
                 if (helpers_1.arrayEqual(commandName, userCommandName)) {
                     return {
                         success: true,
                         command,
                         args: splitted.splice(2 + whitespacesInCommand),
-                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand)
+                        fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 2 + whitespacesInCommand),
                     };
                 }
                 return {
-                    success: false
+                    success: false,
                 };
             };
             //Find command
@@ -69,7 +69,7 @@ class Parser {
                     success: true,
                     command: custom.command,
                     args: splitted.slice(1),
-                    fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 1)
+                    fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 1),
                 };
             }
         }

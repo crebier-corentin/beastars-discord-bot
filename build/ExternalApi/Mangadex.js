@@ -5,11 +5,9 @@ const Cache_1 = require("../Cache");
 const types_1 = require("../types");
 class Mangadex {
     static async getChapterList(mangaId) {
-        const result = await axios_1.default.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => {
-            return [];
-        });
+        const result = await axios_1.default.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => []);
         const chapters = [];
-        const mangadexChapters = result.data["chapter"];
+        const mangadexChapters = result.data.chapter;
         for (const mangadexChapterName in mangadexChapters) {
             const mangadexChapter = mangadexChapters[mangadexChapterName];
             //Ignore non english chapters
@@ -20,7 +18,7 @@ class Mangadex {
                 id: mangadexChapterName,
                 title: mangadexChapter.title,
                 chapter: mangadexChapter.chapter,
-                volume: mangadexChapter.volume
+                volume: mangadexChapter.volume,
             });
         }
         return chapters;
@@ -33,7 +31,7 @@ class Mangadex {
             id: result.data.id.toString(),
             hash: result.data.hash,
             server: result.data.server,
-            page_array: result.data.page_array
+            page_array: result.data.page_array,
         };
     }
 }
@@ -92,7 +90,7 @@ class MangadexWithCache extends Mangadex {
         //Return links
         return {
             site: `https://mangadex.org/chapter/${chapter.id}/${pageNo}`,
-            image: `${pages.server}${pages.hash}/${pageFilename}`
+            image: `${pages.server}${pages.hash}/${pageFilename}`,
         };
     }
 }
@@ -105,15 +103,15 @@ class MangadexWatcher extends Mangadex {
     }
     static async create(mangaId) {
         const chapters = await Mangadex.getChapterList(mangaId);
-        return new MangadexWatcher(mangaId, new Set(chapters.map(chapter => chapter.id)));
+        return new MangadexWatcher(mangaId, new Set(chapters.map((chapter) => chapter.id)));
     }
     async getNewChapters() {
         const lastestChapters = await Mangadex.getChapterList(this.mangaId);
         //Remove already known chapters
-        const newChapters = lastestChapters.filter(chapter => !this.previousChaptersId.has(chapter.id));
+        const newChapters = lastestChapters.filter((chapter) => !this.previousChaptersId.has(chapter.id));
         //Update previousChaptersId if needed
         if (newChapters.length > 0) {
-            this.previousChaptersId = new Set(lastestChapters.map(chapter => chapter.id));
+            this.previousChaptersId = new Set(lastestChapters.map((chapter) => chapter.id));
         }
         return newChapters;
     }

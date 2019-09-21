@@ -19,7 +19,7 @@ class Cache {
     del(keys) {
         this.cache.del(keys);
     }
-    delStartWith(startStr = '') {
+    delStartWith(startStr = "") {
         if (!startStr) {
             return;
         }

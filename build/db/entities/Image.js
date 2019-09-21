@@ -30,7 +30,7 @@ let Image = Image_1 = class Image extends typeorm_1.BaseEntity {
             .getCount() > 0;
     }
     static async mostSimilarName(name) {
-        const imageNames = (await Image_1.find({ select: ["name"] })).map(value => value.name);
+        const imageNames = (await Image_1.find({ select: ["name"] })).map((value) => value.name);
         const match = stringSimilarity.findBestMatch(name, imageNames).bestMatch;
         return match.target;
     }
@@ -48,7 +48,7 @@ __decorate([
     __metadata("design:type", String)
 ], Image.prototype, "url", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => User_1.User, { eager: true }),
+    typeorm_1.ManyToOne((type) => User_1.User, { eager: true }),
     __metadata("design:type", User_1.User)
 ], Image.prototype, "addedBy", void 0);
 __decorate([

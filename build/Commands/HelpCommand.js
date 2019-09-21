@@ -10,7 +10,7 @@ exports.HelpCommand = {
     aliases: ["h"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: function (msg) {
+    execute(msg) {
         const isAdmin = helpers_1.isAdministrator(msg.member);
         const embed = new discord_js_1.RichEmbed()
             .setTitle("Help");
@@ -50,6 +50,6 @@ exports.HelpCommand = {
             embed.addField(title, description);
         }
         msg.channel.send({ embed });
-    }
+    },
 };
 //# sourceMappingURL=HelpCommand.js.map

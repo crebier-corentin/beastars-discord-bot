@@ -7,9 +7,9 @@ exports.OocCommand = {
     usage: "ooc",
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg) {
+    async execute(msg) {
         const image = await Imgur_1.Imgur.getRandomImageInAlbum("tCDHjVx");
         msg.channel.send({ file: image });
-    }
+    },
 };
 //# sourceMappingURL=OOCCommand.js.map

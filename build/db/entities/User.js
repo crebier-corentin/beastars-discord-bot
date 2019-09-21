@@ -28,8 +28,9 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
     async getNickname(guild = null, delimiters = "") {
         if (guild !== null) {
             const member = this.getDiscordMember(guild);
-            if (member != undefined)
+            if (member != undefined) {
                 return delimiters + member.displayName + delimiters;
+            }
         }
         //Last nickname
         return delimiters + (await Context_1.Context.client.fetchUser(this.discordId)).username + delimiters;
@@ -65,7 +66,7 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
         await receiver.reload();
     }
     hasGivenLegTo(receiver) {
-        return this.legsGivenTo.find(value => value.discordId === receiver.discordId) != undefined;
+        return this.legsGivenTo.find((value) => value.discordId === receiver.discordId) != undefined;
     }
     static async findOrCreate(discordId) {
         let user = await User_1.findOne({ where: { discordId }, relations: ["legsGivenTo", "legsReceivedFrom"] });
@@ -86,22 +87,22 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "discordId", void 0);
 __decorate([
-    typeorm_1.ManyToMany(type => User_1, user => user.legsReceivedFrom, { cascade: true }),
+    typeorm_1.ManyToMany((type) => User_1, (user) => user.legsReceivedFrom, { cascade: true }),
     typeorm_1.JoinTable({
         name: "users_legs",
         joinColumn: {
             name: "from",
-            referencedColumnName: "id"
+            referencedColumnName: "id",
         },
         inverseJoinColumn: {
             name: "to",
-            referencedColumnName: "id"
-        }
+            referencedColumnName: "id",
+        },
     }),
     __metadata("design:type", Array)
 ], User.prototype, "legsGivenTo", void 0);
 __decorate([
-    typeorm_1.ManyToMany(type => User_1, user => user.legsGivenTo),
+    typeorm_1.ManyToMany((type) => User_1, (user) => user.legsGivenTo),
     __metadata("design:type", Array)
 ], User.prototype, "legsReceivedFrom", void 0);
 User = User_1 = __decorate([

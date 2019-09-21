@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require('dotenv').config();
+/* eslint-disable import/first */
+require("dotenv").config();
 const Mangadex_1 = require("./ExternalApi/Mangadex");
 const Reddit_1 = require("./ExternalApi/Reddit");
 require("reflect-metadata");
@@ -9,19 +10,20 @@ const Context_1 = require("./Context");
 const Execute_1 = require("./Execute");
 const types_1 = require("./types");
 const Discord = require("discord.js");
+/* eslint-enable import/first */
 //Database
 typeorm_1.createConnection().then(() => {
     //Client
     const client = new Discord.Client();
     Context_1.Context.client = client;
-    client.on('ready', async () => {
+    client.on("ready", async () => {
         //Set description
         await client.user.setPresence({ status: "online", game: { name: `Use ${Context_1.Context.prefix} help` } });
         //Reddit leaks and mangadex watchers
         (async function watchers() {
             const leaksRegex = /(informations?|infos?|raws?|leaks?)/i;
             //Reddit leaks watcher
-            const redditWatcher = await Reddit_1.RedditUserWatcher.create(process.env.LEAKS_REDDIT_USERNAME, (submission => {
+            const redditWatcher = await Reddit_1.RedditUserWatcher.create(process.env.LEAKS_REDDIT_USERNAME, ((submission) => {
                 //Check subreddit
                 if (submission.subreddit_name_prefixed.toLocaleLowerCase() !== process.env.LEAKS_REDDIT_SUB.toLocaleLowerCase()) {
                     return false;
@@ -29,10 +31,10 @@ typeorm_1.createConnection().then(() => {
                 //Check words
                 return leaksRegex.test(submission.title);
             }));
-            const redditLeaksChannel = client.channels.find(channel => channel.id === process.env.LEAKS_CHANNEL_ID);
+            const redditLeaksChannel = client.channels.find((channel) => channel.id === process.env.LEAKS_CHANNEL_ID);
             //Mangadex watcher
             const mangadexWatcher = await Mangadex_1.MangadexWatcher.create(types_1.Manga.Beastars);
-            const newChapterChannel = client.channels.find(channel => channel.id === process.env.NEW_CHAPTER_CHANNEL);
+            const newChapterChannel = client.channels.find((channel) => channel.id === process.env.NEW_CHAPTER_CHANNEL);
             //Watchers interval
             setInterval(async () => {
                 //Reddit Leaks
@@ -46,10 +48,10 @@ typeorm_1.createConnection().then(() => {
                     await newChapterChannel.send(`New Beastars chapter !\nhttps://mangadex.org/chapter/${chapter.id}`);
                 }
             }, 1000 * 30);
-        })();
-        console.log(`Bot is ready`);
+        }());
+        console.log("Bot is ready");
     });
-    client.on('message', async (msg) => {
+    client.on("message", async (msg) => {
         Execute_1.executeCommand(msg);
     });
     client.login(process.env.TOKEN);

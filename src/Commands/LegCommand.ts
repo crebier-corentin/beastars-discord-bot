@@ -1,13 +1,12 @@
+import {Guild, GuildMember, Message} from "discord.js";
+import * as moment from "moment";
 import {Command, CommandError} from "../types";
 import {findMemberByUsername} from "../helpers";
-import {Guild, GuildMember, Message} from "discord.js";
 import {User} from "../db/entities/User";
 import {Context} from "../Context";
-import * as moment from "moment";
 
 
 const findMemberByUsernameWithError = (guild: Guild, username: string): GuildMember => {
-
     const receiverMembers = findMemberByUsername(guild, username);
 
     //Can't find member
@@ -17,9 +16,8 @@ const findMemberByUsernameWithError = (guild: Guild, username: string): GuildMem
 
     //Ambiguous
     if (receiverMembers.length > 1) {
-
-        //Bold
-        let names = receiverMembers.map(member => `**${member.displayName}** (${member.user.username}#${member.user.discriminator})`);
+    //Bold
+        const names = receiverMembers.map((member) => `**${member.displayName}** (${member.user.username}#${member.user.discriminator})`);
 
         throw new CommandError(`Ambiguous user between : \n${names.join("\n")}`);
     }
@@ -35,29 +33,25 @@ export const OfferLegCommand: Command = {
     aliases: ["o"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args, fullArgs) {
-
-        //Missing username
+    async execute(msg, args, fullArgs) {
+    //Missing username
         if (args.length == 0) {
             throw new CommandError(`Missing [username]\n\`${Context.prefix} ${this.usage}\``);
         }
 
         const giveLeg = async (msg: Message, username: string) => {
-
             const giverMember = msg.member;
 
             //24h join cooldown
             const cooldownEnd = moment(giverMember.joinedAt).add(24, "hours");
             const now = moment();
-            if(now < cooldownEnd) {
-
+            if (now < cooldownEnd) {
                 const diff = moment.duration(cooldownEnd.diff(now));
 
                 throw new CommandError(`You need to wait 24h after joining this server before you can offer your leg to someone (${diff.hours()} hours and ${diff.minutes()} minutes remaining).`);
             }
 
             const receiverMember: GuildMember = (() => {
-
                 //Try with mention
                 if (msg.mentions.members.size === 1) {
                     return msg.mentions.members.first();
@@ -65,7 +59,6 @@ export const OfferLegCommand: Command = {
 
                 //Try to match username
                 return findMemberByUsernameWithError(msg.guild, username);
-
             })();
 
             const receiver = await User.findOrCreate(receiverMember.user.id);
@@ -74,12 +67,12 @@ export const OfferLegCommand: Command = {
 
             //Check self
             if (receiver.id == giver.id) {
-                throw new CommandError(`You can't offer your leg to yourself`);
+                throw new CommandError("You can't offer your leg to yourself");
             }
 
             //Check if has legs
             if (await giver.legsGiven() === 2) {
-                throw new CommandError(`You have no legs left`);
+                throw new CommandError("You have no legs left");
             }
 
             //Check if has already given a leg
@@ -91,7 +84,7 @@ export const OfferLegCommand: Command = {
             const confirmationMsg = await msg.channel.send("_ _") as Message;
             await confirmationMsg.edit(`Are you sure you want to give your leg to <@${receiver.discordId}>, this action is **permanent** !\nReply with "yes" to confirm it.\nWill expire in 20 seconds...`);
 
-            let filter = filterMsg => filterMsg.author.id == msg.author.id;
+            const filter = (filterMsg) => filterMsg.author.id == msg.author.id;
             const collected = await msg.channel.awaitMessages(filter, {max: 1, time: 20000});
 
             //Delete confirmation message if possible
@@ -99,18 +92,14 @@ export const OfferLegCommand: Command = {
 
             //Give the leg
             if (collected.size > 0 && collected.first().content.toLowerCase() == "yes") {
-
                 await giver.giveLegTo(receiver);
 
                 await msg.channel.send(`**${giverMember.displayName}** has offered one of their legs to **${receiverMember.displayName}**`);
             }
-
         };
 
-        await giveLeg(msg, fullArgs)
-
-
-    }
+        await giveLeg(msg, fullArgs);
+    },
 };
 
 export const LegStatsCommand: Command = {
@@ -121,9 +110,7 @@ export const LegStatsCommand: Command = {
     aliases: ["s", "stat"],
     useDefaultPrefix: true,
     adminOnly: false,
-    execute: async function (msg, args, fullArgs) {
-
-
+    async execute(msg, args, fullArgs) {
         let userId;
 
         //Self
@@ -142,7 +129,5 @@ export const LegStatsCommand: Command = {
         const user = await User.findOrCreate(userId);
 
         await msg.channel.send(await user.getStats(msg.guild));
-
-
-    }
+    },
 };
