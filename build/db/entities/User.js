@@ -87,7 +87,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "discordId", void 0);
 __decorate([
-    typeorm_1.ManyToMany((type) => User_1, (user) => user.legsReceivedFrom, { cascade: true }),
+    typeorm_1.ManyToMany(() => User_1, (user) => user.legsReceivedFrom, { cascade: true }),
     typeorm_1.JoinTable({
         name: "users_legs",
         joinColumn: {
@@ -102,7 +102,7 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "legsGivenTo", void 0);
 __decorate([
-    typeorm_1.ManyToMany((type) => User_1, (user) => user.legsGivenTo),
+    typeorm_1.ManyToMany(() => User_1, (user) => user.legsGivenTo),
     __metadata("design:type", Array)
 ], User.prototype, "legsReceivedFrom", void 0);
 User = User_1 = __decorate([

@@ -48,7 +48,7 @@ __decorate([
     __metadata("design:type", String)
 ], Image.prototype, "url", void 0);
 __decorate([
-    typeorm_1.ManyToOne((type) => User_1.User, { eager: true }),
+    typeorm_1.ManyToOne(() => User_1.User, { eager: true }),
     __metadata("design:type", User_1.User)
 ], Image.prototype, "addedBy", void 0);
 __decorate([

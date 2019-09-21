@@ -1,25 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const googleapis_1 = require("googleapis");
+const axios_1 = require("axios");
 const Cache_1 = require("../Cache");
 const types_1 = require("../types");
-const drive = new googleapis_1.drive_v3.Drive({ auth: process.env.GOOGLE_API_KEY });
 class GoogleDrive {
     static async getChapterFolderId(driveFolderId, chapterNo) {
-        const folder = await drive.files.list({ q: `'${driveFolderId}' in parents and name contains 'Ch. ${chapterNo.toString().padStart(3, "0")}'` });
-        if (folder.data.files.length === 0) {
+        const res = await axios_1.default.get("https://www.googleapis.com/drive/v3/files", {
+            params: {
+                q: `'${driveFolderId}' in parents and name contains 'Ch. ${chapterNo.toString().padStart(3, "0")}'`,
+                key: process.env.GOOGLE_API_KEY
+            }
+        });
+        const files = res.data.files;
+        if (files.length === 0) {
             throw new types_1.CommandError(`Cannot find chapter N°${chapterNo}`);
         }
-        return folder.data.files[0].id;
+        return files[0].id;
     }
     static async getPagesLinks(driveFolderId, chapterNo) {
         const folderId = await this.getChapterFolderId(driveFolderId, chapterNo);
-        const pages = await drive.files.list({
-            q: `'${folderId}' in parents`,
-            orderBy: "name",
-            fields: "files(webContentLink)",
+        const res = await axios_1.default.get("https://www.googleapis.com/drive/v3/files", {
+            params: {
+                q: `'${folderId}' in parents`,
+                orderBy: "name",
+                fields: "files(webContentLink)",
+                key: process.env.GOOGLE_API_KEY
+            }
         });
-        return pages.data.files.map((page) => page.webContentLink);
+        return res.data.files.map((page) => page.webContentLink);
     }
 }
 exports.GoogleDrive = GoogleDrive;

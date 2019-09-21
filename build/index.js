@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/* eslint-disable import/first */
 require("dotenv").config();
 const Mangadex_1 = require("./ExternalApi/Mangadex");
 const Reddit_1 = require("./ExternalApi/Reddit");
@@ -10,7 +9,6 @@ const Context_1 = require("./Context");
 const Execute_1 = require("./Execute");
 const types_1 = require("./types");
 const Discord = require("discord.js");
-/* eslint-enable import/first */
 //Database
 typeorm_1.createConnection().then(() => {
     //Client

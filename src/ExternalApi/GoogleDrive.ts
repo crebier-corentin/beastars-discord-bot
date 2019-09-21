@@ -1,30 +1,44 @@
-import {drive_v3} from "googleapis";
+import axios, {AxiosResponse} from "axios";
 import Cache from "../Cache";
 import {CommandError} from "../types";
 
-const drive = new drive_v3.Drive({auth: process.env.GOOGLE_API_KEY});
+interface GoogleDriveFilesListResponse {
+    files: {
+        id?: string;
+        webContentLink?: string;
+    }[];
+}
 
 export class GoogleDrive {
     protected static async getChapterFolderId(driveFolderId: string, chapterNo: number): Promise<string> {
-        const folder = await drive.files.list({q: `'${driveFolderId}' in parents and name contains 'Ch. ${chapterNo.toString().padStart(3, "0")}'`});
+        const res = <AxiosResponse<GoogleDriveFilesListResponse>>await axios.get("https://www.googleapis.com/drive/v3/files", {
+            params: {
+                q: `'${driveFolderId}' in parents and name contains 'Ch. ${chapterNo.toString().padStart(3, "0")}'`,
+                key: process.env.GOOGLE_API_KEY
+            }
+        });
 
-        if (folder.data.files.length === 0) {
+        const files = res.data.files;
+        if (files.length === 0) {
             throw new CommandError(`Cannot find chapter N°${chapterNo}`);
         }
 
-        return folder.data.files[0].id;
+        return files[0].id;
     }
 
     protected static async getPagesLinks(driveFolderId: string, chapterNo: number): Promise<string[]> {
         const folderId = await this.getChapterFolderId(driveFolderId, chapterNo);
 
-        const pages = await drive.files.list({
-            q: `'${folderId}' in parents`,
-            orderBy: "name",
-            fields: "files(webContentLink)",
+        const res = <AxiosResponse<GoogleDriveFilesListResponse>>await axios.get("https://www.googleapis.com/drive/v3/files", {
+            params: {
+                q: `'${folderId}' in parents`,
+                orderBy: "name",
+                fields: "files(webContentLink)",
+                key: process.env.GOOGLE_API_KEY
+            }
         });
 
-        return pages.data.files.map((page) => page.webContentLink);
+        return res.data.files.map((page) => page.webContentLink);
     }
 }
 
@@ -48,7 +62,8 @@ export class GoogleDriveWithCache extends GoogleDrive {
         while (true) {
             try {
                 return await this.getPagesLinksWithCache(driveFolderId, chapterNo);
-            } catch (e) {
+            }
+            catch (e) {
                 //Retry
                 if (retry) {
                     this.cache.del(`${driveFolderId}-${chapterNo}`);
