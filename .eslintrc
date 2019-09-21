@@ -1,13 +1,19 @@
 {
   "extends": [
-    "airbnb"
+    "eslint:recommended"
   ],
   "plugins": [
     "@typescript-eslint"
   ],
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2019
+  },
+  "env": {
+    "node": true
+  },
   "rules": {
-    "import/no-unresolved": 0,
     "quotes": [
       "warn",
       "double",
@@ -16,7 +22,15 @@
       }
     ],
     "spaced-comment": "off",
-    "object-curly-spacing": ["warn", "never"],
-    "indent": ["warn", 4]
+    "object-curly-spacing": [
+      "warn",
+      "never"
+    ],
+    "indent": [
+      "warn",
+      4
+    ],
+    "no-console": "off",
+    "max-len": "off"
   }
 }
