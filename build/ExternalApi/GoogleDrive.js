@@ -21,7 +21,7 @@ class GoogleDrive {
         const folderId = await this.getChapterFolderId(driveFolderId, chapterNo);
         const res = await axios_1.default.get("https://www.googleapis.com/drive/v3/files", {
             params: {
-                q: `'${folderId}' in parents`,
+                q: `'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder'`,
                 orderBy: "name",
                 fields: "files(webContentLink)",
                 key: process.env.GOOGLE_API_KEY
