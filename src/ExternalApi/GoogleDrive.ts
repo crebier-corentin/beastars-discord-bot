@@ -31,7 +31,7 @@ export class GoogleDrive {
 
         const res = <AxiosResponse<GoogleDriveFilesListResponse>>await axios.get("https://www.googleapis.com/drive/v3/files", {
             params: {
-                q: `'${folderId}' in parents`,
+                q: `'${folderId}' in parents and mimeType != 'application/vnd.google-apps.folder'`,
                 orderBy: "name",
                 fields: "files(webContentLink)",
                 key: process.env.GOOGLE_API_KEY
