@@ -30,7 +30,7 @@ async function getPagesFolders(pageToken?: string): Promise<string[]> {
 
     //Handle page token via recursion
     if (res.data.nextPageToken !== "" && res.data.nextPageToken !== undefined) {
-        ids = [...ids, ...(await getPagesFolders(res.data.nextPageToken))];
+        ids = ids.concat(await getPagesFolders(res.data.nextPageToken));
     }
 
     return ids;
@@ -60,10 +60,12 @@ async function getPagesIdsAndNames(q: string, pageToken?: string): Promise<{ [id
         params
     });
 
-    let files: { [id: string]: string } = res.data.files.reduce((obj, value) => {
-        obj[value.id] = value.name;
-        return obj;
-    }, {});
+    let files: { [id: string]: string } = res.data.files
+        .filter(value => value.name.split(".")[0].length === 1) //Filter out two characters page names (11, 24, 57...)
+        .reduce((obj, value) => {
+            obj[value.id] = value.name;
+            return obj;
+        }, {});
 
     //Handle page token via recursion
     if (res.data.nextPageToken !== "" && res.data.nextPageToken !== undefined) {
@@ -81,14 +83,16 @@ function padFileName(currentName: string): string {
 }
 
 async function updateFileName(id: string, name: string) {
-    await axios.patch(`https://www.googleapis.com/drive/v3/files/${id}`, {
+    return axios.patch(`https://www.googleapis.com/drive/v3/files/${id}`, {
         name
     });
 }
 
 (async () => {
 
-    const q = buildQ((await getPagesFolders()).slice(100));
+    const folders = await getPagesFolders();
+
+    const q = buildQ(folders);
 
     const files = await getPagesIdsAndNames(q);
     const total = Object.keys(files).length;
@@ -96,11 +100,11 @@ async function updateFileName(id: string, name: string) {
 
     let counter = 0;
     for (const [id, name] of Object.entries(files)) {
-        await updateFileName(id, padFileName(name)).catch((reason: AxiosError) => {
+        const res = <AxiosResponse<unknown>>await updateFileName(id, padFileName(name)).catch((reason: AxiosError) => {
             console.error(reason.message);
         });
 
-        console.log(`${++counter}/${total}`);
+        console.log(`${res.status}(${res.statusText}) - ${++counter}/${total}`);
     }
 
     console.log("Done");
