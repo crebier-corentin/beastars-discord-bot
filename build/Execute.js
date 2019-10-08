@@ -11,9 +11,11 @@ const LegCommand_1 = require("./Commands/LegCommand");
 const helpers_1 = require("./helpers");
 const ImageCommands_1 = require("./Commands/ImageCommands");
 const OOCCommand_1 = require("./Commands/OOCCommand");
+const MarkdownCommand_1 = require("./Commands/MarkdownCommand");
 const prefix = process.env.PREFIX;
 const commands = [
     HelpCommand_1.HelpCommand,
+    MarkdownCommand_1.MarkdownCommand,
     ChapterCommands_1.ChapterBSCommand,
     ChapterCommands_1.ChapterBCCommand,
     ChapterCommands_1.ChapterBSRCommand,

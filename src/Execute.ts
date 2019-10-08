@@ -12,11 +12,13 @@ import {
     ImageAddCommand, ImageCommand, ImageListCommand, ImageRemoveCommand,
 } from "./Commands/ImageCommands";
 import {OocCommand} from "./Commands/OOCCommand";
+import {MarkdownCommand} from "./Commands/MarkdownCommand";
 
 const prefix = process.env.PREFIX;
 
 const commands = [
     HelpCommand,
+    MarkdownCommand,
 
     ChapterBSCommand,
     ChapterBCCommand,
@@ -42,7 +44,7 @@ Context.commands = commands;
 
 export function executeCommand(msg: Message) {
     const exceptionHandler = (e) => {
-    //Respond with error message
+        //Respond with error message
         if (e instanceof CommandError) {
             msg.channel.send(`:x: ${e.message}`);
         }
@@ -84,7 +86,8 @@ export function executeCommand(msg: Message) {
         if (promise instanceof Promise) {
             promise.catch(exceptionHandler);
         }
-    } catch (e) {
+    }
+    catch (e) {
         exceptionHandler(e);
     }
 }
