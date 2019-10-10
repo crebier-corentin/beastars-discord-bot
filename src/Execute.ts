@@ -12,13 +12,14 @@ import {
     ImageAddCommand, ImageCommand, ImageListCommand, ImageRemoveCommand,
 } from "./Commands/ImageCommands";
 import {OocCommand} from "./Commands/OOCCommand";
-import {MarkdownCommand} from "./Commands/MarkdownCommand";
+import {MarkdownCommand, MobileSpoilerCommand} from "./Commands/MarkdownCommand";
 
 const prefix = process.env.PREFIX;
 
 const commands = [
     HelpCommand,
     MarkdownCommand,
+    MobileSpoilerCommand,
 
     ChapterBSCommand,
     ChapterBCCommand,
