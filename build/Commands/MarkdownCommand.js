@@ -11,8 +11,19 @@ exports.MarkdownCommand = {
         await msg.channel.send("https://support.discordapp.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-");
     },
 };
+exports.SpoilerCommand = {
+    name: "spoiler",
+    desc: "Link to the discord spoiler help page",
+    usage: "spoiler",
+    aliases: ["spoilers", "mspoiler"],
+    useDefaultPrefix: true,
+    adminOnly: false,
+    async execute(msg) {
+        await msg.channel.send("https://support.discordapp.com/hc/en-us/articles/360022320632-Spoiler-Tags-");
+    },
+};
 exports.MobileSpoilerCommand = {
-    name: "markdown",
+    name: "mobilespoiler",
     desc: "Information on how to send an spoiler image on mobile",
     usage: "mobilespoiler",
     aliases: ["mobile", "mspoiler"],

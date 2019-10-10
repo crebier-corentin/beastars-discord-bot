@@ -12,8 +12,20 @@ export const MarkdownCommand: Command = {
     },
 };
 
+export const SpoilerCommand: Command = {
+    name: "spoiler",
+    desc: "Link to the discord spoiler help page",
+    usage: "spoiler",
+    aliases: ["spoilers", "mspoiler"],
+    useDefaultPrefix: true,
+    adminOnly: false,
+    async execute(msg) {
+        await msg.channel.send("https://support.discordapp.com/hc/en-us/articles/360022320632-Spoiler-Tags-");
+    },
+};
+
 export const MobileSpoilerCommand: Command = {
-    name: "markdown",
+    name: "mobilespoiler",
     desc: "Information on how to send an spoiler image on mobile",
     usage: "mobilespoiler",
     aliases: ["mobile", "mspoiler"],

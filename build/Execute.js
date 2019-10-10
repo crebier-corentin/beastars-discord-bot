@@ -16,6 +16,7 @@ const prefix = process.env.PREFIX;
 const commands = [
     HelpCommand_1.HelpCommand,
     MarkdownCommand_1.MarkdownCommand,
+    MarkdownCommand_1.SpoilerCommand,
     MarkdownCommand_1.MobileSpoilerCommand,
     ChapterCommands_1.ChapterBSCommand,
     ChapterCommands_1.ChapterBCCommand,
