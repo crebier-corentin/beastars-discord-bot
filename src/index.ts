@@ -52,7 +52,7 @@ createConnection().then(() => {
                 //Mangadex leaks
                 const chapters = await mangadexWatcher.getNewChapters();
                 for (const chapter of chapters) {
-                    await newChapterChannel.send(`<@&{process.env.NEW_CHAPTER_ROLE}>\nNew Beastars chapter !\nhttps://mangadex.org/chapter/${chapter.id}`);
+                    await newChapterChannel.send(`<@&${process.env.NEW_CHAPTER_ROLE}>\nNew Beastars chapter !\nhttps://mangadex.org/chapter/${chapter.id}`);
                 }
             }, 1000 * 30);
         }());
