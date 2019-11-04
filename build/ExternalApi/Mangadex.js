@@ -4,7 +4,7 @@ const axios_1 = require("axios");
 const Cache_1 = require("../Cache");
 const types_1 = require("../types");
 class Mangadex {
-    static async getChapterList(mangaId) {
+    static async getChapterList(mangaId, HCSOnly = false) {
         const result = await axios_1.default.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => []);
         const chapters = [];
         const mangadexChapters = result.data.chapter;
@@ -12,6 +12,9 @@ class Mangadex {
             const mangadexChapter = mangadexChapters[mangadexChapterName];
             //Ignore non english chapters
             if (mangadexChapter.lang_code != "gb")
+                continue;
+            //Ignore non HCS
+            if (HCSOnly && mangadexChapter.group_name != "Hot Chocolate Scans")
                 continue;
             //Add new chapter
             chapters.push({
@@ -66,7 +69,7 @@ class MangadexWithCache extends Mangadex {
         }
     }
     async getChapter(chapterNo, manga) {
-        const chapters = await this.cache.get(manga, Mangadex.getChapterList.bind(null, manga));
+        const chapters = await this.cache.get(manga, Mangadex.getChapterList.bind(null, manga, true));
         const chapter = chapters.find((el) => el.chapter == chapterNo);
         if (chapter == undefined) {
             throw new types_1.CommandError(`Cannot find chapter Nº${chapterNo}`);
