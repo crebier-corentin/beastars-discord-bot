@@ -32,11 +32,11 @@ export const MobileSpoilerCommand: Command = {
     useDefaultPrefix: true,
     adminOnly: false,
     async execute(msg) {
-        await msg.channel.send(`\`\`\`Adding Spoiler tag on images on mobile
+        await msg.channel.send(`Adding Spoiler tag on images on mobile
 - Rename the file \`\`SPOILER_\`\`
 -- rename, not add notes or caption 
 -- SPOILER need needs to all caps
-- EX: \`\`SPOILER_test\`\` \`\`\`
+- EX: \`\`SPOILER_test\`\`
 https://support.discordapp.com/hc/en-us/community/posts/360040470332-Image-spoiler-for-mobile`);
     },
 };
