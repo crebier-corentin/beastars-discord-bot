@@ -49,7 +49,7 @@ export const InterviewCommand: Command = {
     useDefaultPrefix: true,
     adminOnly: false,
     async execute(msg) {
-        await msg.channel.send(`September Interview with Paru
+        await msg.channel.send(`September 2019 interview with Paru
 https://twitter.com/RamenParaDos/status/1171544074622558209?s=19
 
 https://docs.google.com/document/d/1OFtZ5NSSlIVvovq5zOqM6DSs0cbBL7wcCIftMZ8YgWg/edit?usp=drivesdk
@@ -58,14 +58,12 @@ A volume typically has 9 chapters
 Vol 1 has 7 due to chapter 1
 Vol 14: 124
 
-Estimation
-Vol 15: 133
+Estimation 
+\`\`\`Vol 15: 133
 Vol 16: 142
 Vol 17: 151
 Vol 18: 160
 Vol 19: 169
-Vol 20: 178 +/- 1 for long last chapter 
-
-After this week chapter of 144, there may be 34 chapters left.... `);
+Vol 20: 178 +/- 1 for long last chapter\`\`\``);
     },
 };
