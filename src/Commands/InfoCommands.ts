@@ -50,9 +50,9 @@ export const InterviewCommand: Command = {
     adminOnly: false,
     async execute(msg) {
         await msg.channel.send(`September 2019 interview with Paru
-https://twitter.com/RamenParaDos/status/1171544074622558209?s=19
+<https://twitter.com/RamenParaDos/status/1171544074622558209?s=19>
 
-https://docs.google.com/document/d/1OFtZ5NSSlIVvovq5zOqM6DSs0cbBL7wcCIftMZ8YgWg/edit?usp=drivesdk
+<https://docs.google.com/document/d/1OFtZ5NSSlIVvovq5zOqM6DSs0cbBL7wcCIftMZ8YgWg/edit?usp=drivesdk>
 Yes this mean Beastars may end around chapter 178
 A volume typically has 9 chapters
 Vol 1 has 7 due to chapter 1
