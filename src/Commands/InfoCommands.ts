@@ -40,3 +40,32 @@ export const MobileSpoilerCommand: Command = {
 https://support.discordapp.com/hc/en-us/community/posts/360040470332-Image-spoiler-for-mobile`);
     },
 };
+
+export const InterviewCommand: Command = {
+    name: "interview",
+    desc: "Information about a spanish beastars interview",
+    usage: "interview",
+    aliases: ["end", "vol20"],
+    useDefaultPrefix: true,
+    adminOnly: false,
+    async execute(msg) {
+        await msg.channel.send(`September Interview with Paru
+https://twitter.com/RamenParaDos/status/1171544074622558209?s=19
+
+https://docs.google.com/document/d/1OFtZ5NSSlIVvovq5zOqM6DSs0cbBL7wcCIftMZ8YgWg/edit?usp=drivesdk
+Yes this mean Beastars may end around chapter 178
+A volume typically has 9 chapters
+Vol 1 has 7 due to chapter 1
+Vol 14: 124
+
+Estimation
+Vol 15: 133
+Vol 16: 142
+Vol 17: 151
+Vol 18: 160
+Vol 19: 169
+Vol 20: 178 +/- 1 for long last chapter 
+
+After this week chapter of 144, there may be 34 chapters left.... `);
+    },
+};

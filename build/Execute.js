@@ -11,13 +11,14 @@ const LegCommand_1 = require("./Commands/LegCommand");
 const helpers_1 = require("./helpers");
 const ImageCommands_1 = require("./Commands/ImageCommands");
 const OOCCommand_1 = require("./Commands/OOCCommand");
-const MarkdownCommand_1 = require("./Commands/MarkdownCommand");
+const InfoCommands_1 = require("./Commands/InfoCommands");
 const prefix = process.env.PREFIX;
 const commands = [
     HelpCommand_1.HelpCommand,
-    MarkdownCommand_1.MarkdownCommand,
-    MarkdownCommand_1.SpoilerCommand,
-    MarkdownCommand_1.MobileSpoilerCommand,
+    InfoCommands_1.MarkdownCommand,
+    InfoCommands_1.SpoilerCommand,
+    InfoCommands_1.MobileSpoilerCommand,
+    InfoCommands_1.InterviewCommand,
     ChapterCommands_1.ChapterBSCommand,
     ChapterCommands_1.ChapterBCCommand,
     ChapterCommands_1.ChapterBSRCommand,

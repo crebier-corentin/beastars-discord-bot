@@ -12,7 +12,7 @@ import {
     ImageAddCommand, ImageCommand, ImageListCommand, ImageRemoveCommand,
 } from "./Commands/ImageCommands";
 import {OocCommand} from "./Commands/OOCCommand";
-import {MarkdownCommand, MobileSpoilerCommand, SpoilerCommand} from "./Commands/MarkdownCommand";
+import {InterviewCommand, MarkdownCommand, MobileSpoilerCommand, SpoilerCommand} from "./Commands/InfoCommands";
 
 const prefix = process.env.PREFIX;
 
@@ -21,6 +21,7 @@ const commands = [
     MarkdownCommand,
     SpoilerCommand,
     MobileSpoilerCommand,
+    InterviewCommand,
 
     ChapterBSCommand,
     ChapterBCCommand,
