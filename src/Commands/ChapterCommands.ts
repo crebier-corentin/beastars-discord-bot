@@ -17,7 +17,7 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
     
     //Beast Complex 7
     if(manga === Manga.BeastComplex && chapter === 7) { 
-        return await msg.channel.send("Cannot fetch image for BC7\nhttps://drive.google.com/folderview?id=1YSxes4C4YBz2CEoc4CoAvQHW9UZzBqeb");
+        return await msg.channel.send("https://drive.google.com/folderview?id=1YSxes4C4YBz2CEoc4CoAvQHW9UZzBqeb");
     }
 
     //Is page
