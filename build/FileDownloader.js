@@ -24,9 +24,7 @@ class FileDownloader {
     }
     static async fileExists(dir, filename) {
         const files = await fs.promises.readdir(dir);
-        return files.find(file => {
-            file.startsWith(filename);
-        });
+        return files.find(file => file.startsWith(filename));
     }
     static async downloadFileFromUrl(url, path) {
         const res = await axios_1.default.get(url, {

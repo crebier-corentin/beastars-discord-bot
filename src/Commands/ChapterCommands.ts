@@ -1,11 +1,9 @@
-import axios, {AxiosResponse} from "axios";
-import * as fs from "fs";
-import {Stream} from "stream";
 import {MangadexWithCache} from "../ExternalApi/Mangadex";
 import {Command, CommandError, Manga} from "../types";
 import {GoogleDriveWithCache} from "../ExternalApi/GoogleDrive";
-import {mimetypeToExtension, tmpFilename} from "../helpers";
 import {FileDownloader} from "../FileDownloader";
+
+const nonSpoilerChannels: Set<string> = new Set(process.env.NON_SPOILER_CHANNELS.split(","));
 
 const mangadex = new MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga: Manga) {
@@ -31,14 +29,13 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
 
         const response = await mangadex.getChapterPageLink(chapter, page, manga);
 
-        //Error message
-        if (typeof response === "string") {
-            throw new CommandError(response);
-        }
+        //Add spoiler prefix if needed
+        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
+        const file = isSpoiler ? await FileDownloader.Download(response.image, "SPOILER_") : response.image;
+
         //Site link + Image link
-        else {
-            msg.channel.send(`<${response.site}>`, {file: response.image});
-        }
+        await msg.channel.send(`<${response.site}>`, {file});
+
     }
     else {
         //Chapter link
@@ -97,7 +94,9 @@ export const ChapterBSRCommand: Command = {
 
         const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
 
+        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
+
         //Download file
-        await msg.channel.send({file: await FileDownloader.Download(link)});
+        await msg.channel.send({file: await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")});
     },
 };

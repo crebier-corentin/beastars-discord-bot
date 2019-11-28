@@ -4,6 +4,7 @@ const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
 const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
 const FileDownloader_1 = require("../FileDownloader");
+const nonSpoilerChannels = new Set(process.env.NON_SPOILER_CHANNELS.split(","));
 const mangadex = new Mangadex_1.MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga) {
     const chapter = Number(args[0]);
@@ -22,14 +23,11 @@ const chapterCommandExecute = async function (msg, args, manga) {
             throw new types_1.CommandError(`Invalid [page] (must be a number)\n\`${this.usage}\``);
         }
         const response = await mangadex.getChapterPageLink(chapter, page, manga);
-        //Error message
-        if (typeof response === "string") {
-            throw new types_1.CommandError(response);
-        }
+        //Add spoiler prefix if needed
+        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
+        const file = isSpoiler ? await FileDownloader_1.FileDownloader.Download(response.image, "SPOILER_") : response.image;
         //Site link + Image link
-        else {
-            msg.channel.send(`<${response.site}>`, { file: response.image });
-        }
+        await msg.channel.send(`<${response.site}>`, { file });
     }
     else {
         //Chapter link
@@ -79,8 +77,9 @@ exports.ChapterBSRCommand = {
             throw new types_1.CommandError(`Missing [page]\n\`${this.usage}\``);
         }
         const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
+        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
         //Download file
-        await msg.channel.send({ file: await FileDownloader_1.FileDownloader.Download(link) });
+        await msg.channel.send({ file: await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "") });
     },
 };
 //# sourceMappingURL=ChapterCommands.js.map

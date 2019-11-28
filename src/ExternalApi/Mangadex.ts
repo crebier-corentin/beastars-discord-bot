@@ -117,7 +117,7 @@ export class MangadexWithCache extends Mangadex {
         return chapter;
     }
 
-    async getChapterPageLink(chapterNo: number, pageNo: number, manga: Manga): Promise<string | { site: string, image: string; }> {
+    async getChapterPageLink(chapterNo: number, pageNo: number, manga: Manga): Promise<{ site: string, image: string; }> {
         //Chapter
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
 

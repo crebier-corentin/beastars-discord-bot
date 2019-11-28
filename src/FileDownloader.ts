@@ -30,9 +30,7 @@ export class FileDownloader {
 
     private static async fileExists(dir: string, filename: string): Promise<string | undefined> {
         const files = await fs.promises.readdir(dir);
-        return files.find(file => {
-            file.startsWith(filename);
-        });
+        return files.find(file => file.startsWith(filename));
     }
 
     private static async downloadFileFromUrl(url: string, path: string): Promise<string> {
