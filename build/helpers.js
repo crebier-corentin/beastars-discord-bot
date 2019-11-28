@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const os = require("os");
 const path = require("path");
+const crypto = require("crypto");
 function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
@@ -131,7 +132,6 @@ function maxArray(arr, func) {
 }
 exports.maxArray = maxArray;
 function isAdministrator(member) {
-    //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");
 }
 exports.isAdministrator = isAdministrator;
@@ -147,4 +147,10 @@ function mimetypeToExtension(mimetype) {
     return `.${ext}`;
 }
 exports.mimetypeToExtension = mimetypeToExtension;
+function hash(data, hashingAlgorithm = "sha256") {
+    const hash = crypto.createHash(hashingAlgorithm);
+    hash.update(data);
+    return hash.digest("hex");
+}
+exports.hash = hash;
 //# sourceMappingURL=helpers.js.map

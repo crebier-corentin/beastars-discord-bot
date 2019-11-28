@@ -43,6 +43,6 @@ class IncorrectBeastarsQuote {
         return await getQuotes();
     }
 }
-IncorrectBeastarsQuote.identifer = "incorrect-beastars";
 exports.IncorrectBeastarsQuote = IncorrectBeastarsQuote;
+IncorrectBeastarsQuote.identifer = "incorrect-beastars";
 //# sourceMappingURL=IncorrectBeastarsQuote.js.map

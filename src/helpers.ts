@@ -2,6 +2,7 @@ import {Guild, GuildMember} from "discord.js";
 
 const os = require("os");
 const path = require("path");
+const crypto = require("crypto");
 
 export function escapeRegExp(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
@@ -152,7 +153,6 @@ export function maxArray<T>(arr: T[], func: (t: T) => number): T {
 }
 
 export function isAdministrator(member: GuildMember): boolean {
-    //TODO Chaneg to ADMINISTRATOR when yyao is promoted
     return member.hasPermission("BAN_MEMBERS");
 }
 
@@ -168,4 +168,10 @@ export function mimetypeToExtension(mimetype: string): string {
     }
 
     return `.${ext}`;
+}
+
+export function hash(data: any, hashingAlgorithm: string = "sha256"): string {
+    const hash = crypto.createHash(hashingAlgorithm);
+    hash.update(data);
+    return hash.digest("hex");
 }

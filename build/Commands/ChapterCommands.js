@@ -1,17 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = require("axios");
-const fs = require("fs");
 const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
 const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
-const helpers_1 = require("../helpers");
+const FileDownloader_1 = require("../FileDownloader");
 const mangadex = new Mangadex_1.MangadexWithCache();
 const chapterCommandExecute = async function (msg, args, manga) {
     const chapter = Number(args[0]);
     //Missing chapter number
     if (Number.isNaN(chapter)) {
         throw new types_1.CommandError(`Missing [chapter]\n\`${this.usage}\``);
+    }
+    //Beast Complex 7
+    if (manga === types_1.Manga.BeastComplex && chapter === 7) {
+        return await msg.channel.send("https://drive.google.com/folderview?id=1YSxes4C4YBz2CEoc4CoAvQHW9UZzBqeb");
     }
     //Is page
     if (args.length >= 2) {
@@ -78,15 +80,7 @@ exports.ChapterBSRCommand = {
         }
         const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
         //Download file
-        const res = await axios_1.default.get(link, {
-            responseType: "stream",
-        });
-        const tmpFile = helpers_1.tmpFilename(`bsr-${chapter}-${page}${helpers_1.mimetypeToExtension(res.headers["content-type"])}`);
-        const fileStream = fs.createWriteStream(tmpFile);
-        fileStream.on("finish", async () => {
-            await msg.channel.send({ file: tmpFile });
-        });
-        res.data.pipe(fileStream);
+        await msg.channel.send({ file: await FileDownloader_1.FileDownloader.Download(link) });
     },
 };
 //# sourceMappingURL=ChapterCommands.js.map
