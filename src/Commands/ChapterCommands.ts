@@ -100,3 +100,34 @@ export const ChapterBSRCommand: Command = {
         await msg.channel.send({file: await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")});
     },
 };
+
+//Viz
+export const ChapterBSVCommand: Command = {
+    name: "bsv!",
+    desc: "Post page Nº(page) from chapter (chapter) Viz translation",
+    usage: "bsv! (chapter) (page)",
+    example: "bsv! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        const chapter = Number(args[0]);
+        const page = Number(args[1]);
+
+        //Missing chapter
+        if (Number.isNaN(chapter)) {
+            throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
+        }
+
+        //Missing page
+        if (Number.isNaN(page)) {
+            throw new CommandError(`Missing [page]\n\`${this.usage}\``);
+        }
+
+        const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID, chapter, page);
+
+        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
+
+        //Download file
+        await msg.channel.send({file: await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")});
+    },
+};

@@ -21,6 +21,7 @@ const commands = [
     InfoCommands_1.InterviewCommand,
     ChapterCommands_1.ChapterBSCommand,
     ChapterCommands_1.ChapterBCCommand,
+    ChapterCommands_1.ChapterBSVCommand,
     ChapterCommands_1.ChapterBSRCommand,
     WikiCommand_1.WikiCommand,
     QuoteCommand_1.QuoteComment,
