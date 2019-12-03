@@ -39,8 +39,12 @@ export class Mangadex {
             //Ignore non english chapters
             if (mangadexChapter.lang_code != "gb") continue;
 
-            //Ignore non HCS
-            if(HCSOnly && mangadexChapter.group_name != "Hot Chocolate Scans") continue;
+            //Ignore non HCS if HCS translation exists for this chapter
+            if (HCSOnly
+                && mangadexChapter.group_name != "Hot Chocolate Scans"
+                && Object.values(mangadexChapters).find(c => c.chapter === mangadexChapter.chapter && c.group_name == "Hot Chocolate Scans") != undefined) {
+                continue;
+            }
 
             //Add new chapter
             chapters.push({

@@ -18,7 +18,7 @@ typeorm_1.createConnection().then(() => {
         //Set description
         await client.user.setPresence({ status: "online", game: { name: `Use ${Context_1.Context.prefix} help` } });
         //Reddit leaks and mangadex watchers
-        (async function watchers() {
+        await (async function watchers() {
             const leaksRegex = /(informations?|infos?|raws?|leaks?)/i;
             //Reddit leaks watcher
             const redditWatcher = await Reddit_1.RedditUserWatcher.create(process.env.LEAKS_REDDIT_USERNAME, ((submission) => {
@@ -48,7 +48,7 @@ typeorm_1.createConnection().then(() => {
             }, 1000 * 30);
         }());
         //Reminders
-        (async function reminders() {
+        await (async function reminders() {
             const sendFeedbackReminder = async (channel) => {
                 await channel.send(`> This server is always looking for feedback on ways to improve. Suggestion are welcome either in #meta or as a DM to our staff. 
 > However, if you have a feedback, but you wish to stay anonymous, we have a form for that. This form is also listed in #rules 
@@ -73,7 +73,9 @@ __Current Feedback:__
                 const channel = client.channels.find(c => c.id === channelId);
                 setInterval(sendArtReminder.bind(null, channel), interval * 1000);
             }
-        })();
+        })().catch(reason => {
+            console.log(`Could not start reminders : ${reason}`);
+        });
         console.log("Bot is ready");
     });
     client.on("message", async (msg) => {

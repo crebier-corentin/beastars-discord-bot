@@ -21,7 +21,7 @@ createConnection().then(() => {
         await client.user.setPresence({status: "online", game: {name: `Use ${Context.prefix} help`}});
 
         //Reddit leaks and mangadex watchers
-        (async function watchers() {
+        await (async function watchers() {
             const leaksRegex = /(informations?|infos?|raws?|leaks?)/i;
 
             //Reddit leaks watcher
@@ -58,7 +58,7 @@ createConnection().then(() => {
         }());
 
         //Reminders
-        (async function reminders() {
+        await (async function reminders() {
 
             const sendFeedbackReminder = async (channel: TextChannel) => {
                 await channel.send(`> This server is always looking for feedback on ways to improve. Suggestion are welcome either in #meta or as a DM to our staff. 
@@ -90,7 +90,9 @@ __Current Feedback:__
                 setInterval(sendArtReminder.bind(null, channel), interval * 1000);
             }
 
-        })();
+        })().catch(reason => {
+            console.log(`Could not start reminders : ${reason}`);
+        });
 
         console.log("Bot is ready");
     });
