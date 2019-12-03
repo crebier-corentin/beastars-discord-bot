@@ -11,7 +11,7 @@ export const HelpCommand: Command = {
     useDefaultPrefix: true,
     adminOnly: false,
     execute(msg) {
-        const isAdmin = isAdministrator(msg.member);
+        const isAdmin = isAdministrator(msg.member) && msg.guild.id === process.env.ADMIN_GUILD;
 
         const embed = new RichEmbed()
             .setTitle("Help");

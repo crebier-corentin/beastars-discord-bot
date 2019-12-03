@@ -11,7 +11,7 @@ exports.HelpCommand = {
     useDefaultPrefix: true,
     adminOnly: false,
     execute(msg) {
-        const isAdmin = helpers_1.isAdministrator(msg.member);
+        const isAdmin = helpers_1.isAdministrator(msg.member) && msg.guild.id === process.env.ADMIN_GUILD;
         const embed = new discord_js_1.RichEmbed()
             .setTitle("Help");
         for (let i = 0; i < Context_1.Context.commands.length; i++) {

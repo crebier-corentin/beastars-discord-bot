@@ -81,8 +81,8 @@ export function executeCommand(msg: Message) {
         }
 
         //Check admin
-        if (res.command.adminOnly && !isAdministrator(msg.member)) {
-            throw new CommandError("Only administrators can use this command");
+        if (res.command.adminOnly && (msg.guild.id !== process.env.ADMIN_GUILD || !isAdministrator(msg.member))) {
+            throw new CommandError("Only administrators from the admin server can use this command");
         }
 
         const promise = res.command.execute.call(res.command, msg, res.args, res.fullArgs);
