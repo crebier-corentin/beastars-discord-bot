@@ -57,43 +57,6 @@ createConnection().then(() => {
             }, 1000 * 30);
         }());
 
-        //Reminders
-        await (async function reminders() {
-
-            const sendFeedbackReminder = async (channel: TextChannel) => {
-                await channel.send(`> This server is always looking for feedback on ways to improve. Suggestion are welcome either in #meta or as a DM to our staff. 
-> However, if you have a feedback, but you wish to stay anonymous, we have a form for that. This form is also listed in #rules 
-__Form:__
-<https://docs.google.com/forms/d/1n5zAsDeFgZWLpzDlbXvYPIPXxPS4t82Kcw1FIQKF7mk>
-__Current Feedback:__
-<https://docs.google.com/spreadsheets/d/140xA8Qiazq6rlITZXmL0omRXSnxk49oBHRadcFvVqyA/edit?usp=sharing>`);
-            };
-            const sendArtReminder = async (channel: TextChannel) => {
-                await channel.send("> Remember to credit the artist so people can find their artwork.");
-            };
-
-            //Load channels
-            const feedbackReminderChannels: [string, number][] = JSON.parse(process.env.FEEDBACK_REMINDER_CHANNELS);
-            const artReminderChannels: [string, number][] = JSON.parse(process.env.ART_REMINDER_CHANNELS);
-
-            //Feedback
-            for (const [channelId, interval] of feedbackReminderChannels) {
-                const channel = <TextChannel>client.channels.find(c => c.id === channelId);
-
-                setInterval(sendFeedbackReminder.bind(null, channel), interval * 1000);
-            }
-
-            //Art
-            for (const [channelId, interval] of artReminderChannels) {
-                const channel = <TextChannel>client.channels.find(c => c.id === channelId);
-
-                setInterval(sendArtReminder.bind(null, channel), interval * 1000);
-            }
-
-        })().catch(reason => {
-            console.log(`Could not start reminders : ${reason}`);
-        });
-
         console.log("Bot is ready");
     });
 
