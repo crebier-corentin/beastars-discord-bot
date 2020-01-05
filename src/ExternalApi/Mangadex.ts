@@ -28,7 +28,7 @@ interface ChapterPages {
 
 export class Mangadex {
     protected static async getChapterList(mangaId: Manga | string, HCSOnly: boolean = false): Promise<Chapter[]> {
-        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => []);
+        const result = <AxiosResponse>await axios.get(`https://mangadex.cc/api/manga/${mangaId}`).catch(() => []);
 
         const chapters: Chapter[] = [];
         const mangadexChapters: MangadexChapters = result.data.chapter;
@@ -59,7 +59,7 @@ export class Mangadex {
     }
 
     protected static async getChapterPages(chapter: Chapter): Promise<ChapterPages> {
-        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/chapter/${chapter.id}`).catch(() => {
+        const result = <AxiosResponse>await axios.get(`https://mangadex.cc/api/chapter/${chapter.id}`).catch(() => {
             throw new CommandError(`Cannot find pages for chapter Nº${chapter.chapter}`);
         });
 
@@ -85,7 +85,7 @@ export class MangadexWithCache extends Mangadex {
     async getChapterLink(chapterNo: number, manga: Manga): Promise<string> {
         const chapter = await this.getChapterWithRetry(chapterNo, manga);
 
-        return `https://mangadex.org/chapter/${chapter.id}`;
+        return `https://mangadex.cc/chapter/${chapter.id}`;
     }
 
     private async getChapterWithRetry(chapterNo: number, manga: Manga): Promise<Chapter> {
