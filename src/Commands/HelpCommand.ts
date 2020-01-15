@@ -64,6 +64,6 @@ export const HelpCommand: Command = {
         }
 
 
-        msg.channel.send({embed});
+        msg.author.send({embed});
     },
 };

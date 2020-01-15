@@ -49,7 +49,7 @@ exports.HelpCommand = {
             }
             embed.addField(title, description);
         }
-        msg.channel.send({ embed });
+        msg.author.send({ embed });
     },
 };
 //# sourceMappingURL=HelpCommand.js.map

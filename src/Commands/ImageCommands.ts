@@ -11,7 +11,7 @@ export const ImageAddCommand: Command = {
     useDefaultPrefix: true,
     adminOnly: true,
     async execute(msg, args) {
-    //Missing name
+        //Missing name
         if (args.length == 0) {
             throw new CommandError(`Missing [name]\n\`${this.usage}\``);
         }
@@ -57,7 +57,7 @@ export const ImageRemoveCommand: Command = {
     useDefaultPrefix: true,
     adminOnly: true,
     async execute(msg, args) {
-    //Missing name
+        //Missing name
         if (args.length == 0) {
             throw new CommandError(`Missing [name]\n\`${this.usage}\``);
         }
@@ -115,7 +115,7 @@ export const ImageListCommand: Command = {
         namesChunks.push(currentChunk);
 
         for (const chunk of namesChunks) {
-            await msg.channel.send(chunk);
+            await msg.author.send(chunk);
         }
     },
 };
@@ -128,7 +128,7 @@ export const ImageCommand: Command = {
     useDefaultPrefix: true,
     adminOnly: false,
     async execute(msg, args) {
-    //Missing name
+        //Missing name
         if (args.length == 0) {
             throw new CommandError(`Missing [name]\n\`${this.usage}\``);
         }

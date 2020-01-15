@@ -37,6 +37,7 @@ const parser = new Parser_1.default(prefix, commands);
 Context_1.Context.prefix = prefix;
 Context_1.Context.commands = commands;
 function executeCommand(msg) {
+    var _a, _b;
     const exceptionHandler = (e) => {
         //Respond with error message
         if (e instanceof types_1.CommandError) {
@@ -51,8 +52,8 @@ function executeCommand(msg) {
         const res = parser.parseCommand(msg.content);
         if (!res.success) {
             //Triple cheeks sebun
-            const sebunCheeks = msg.guild.emojis.find((emoji) => emoji.name == "Sebun_Cheeks");
-            const legoshiLick = msg.guild.emojis.find((emoji) => emoji.name == "Legoshi_Lick");
+            const sebunCheeks = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.emojis.find((emoji) => emoji.name == "Sebun_Cheeks");
+            const legoshiLick = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.emojis.find((emoji) => emoji.name == "Legoshi_Lick");
             //Emoji missing
             if (sebunCheeks == null || legoshiLick == null)
                 return;

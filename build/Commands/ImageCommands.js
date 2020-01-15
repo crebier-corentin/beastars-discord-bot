@@ -95,7 +95,7 @@ exports.ImageListCommand = {
         //Flush currentChunk into namesChunks
         namesChunks.push(currentChunk);
         for (const chunk of namesChunks) {
-            await msg.channel.send(chunk);
+            await msg.author.send(chunk);
         }
     },
 };

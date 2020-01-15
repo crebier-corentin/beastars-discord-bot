@@ -63,8 +63,8 @@ export function executeCommand(msg: Message) {
 
         if (!res.success) {
             //Triple cheeks sebun
-            const sebunCheeks = msg.guild.emojis.find((emoji) => emoji.name == "Sebun_Cheeks");
-            const legoshiLick = msg.guild.emojis.find((emoji) => emoji.name == "Legoshi_Lick");
+            const sebunCheeks = msg.guild?.emojis.find((emoji) => emoji.name == "Sebun_Cheeks");
+            const legoshiLick = msg.guild?.emojis.find((emoji) => emoji.name == "Legoshi_Lick");
 
             //Emoji missing
             if (sebunCheeks == null || legoshiLick == null) return;
