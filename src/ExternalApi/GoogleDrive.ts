@@ -5,6 +5,7 @@ import {CommandError} from "../types";
 interface GoogleDriveFilesListResponse {
     files: {
         id?: string;
+        name?: string;
         webContentLink?: string;
     }[];
 }
@@ -13,17 +14,20 @@ export class GoogleDrive {
     protected static async getChapterFolderId(driveFolderId: string, chapterNo: number): Promise<string> {
         const res = <AxiosResponse<GoogleDriveFilesListResponse>>await axios.get("https://www.googleapis.com/drive/v3/files", {
             params: {
-                q: `'${driveFolderId}' in parents and name contains 'Ch. ${chapterNo.toString().padStart(3, "0")}'`,
+                q: `'${driveFolderId}' in parents`,
                 key: process.env.GOOGLE_API_KEY
             }
         });
 
         const files = res.data.files;
-        if (files.length === 0) {
+
+        const folder = files.find(f => f.name.startsWith(`Ch. ${chapterNo.toString().padStart(3, "0")}`));
+
+        if (folder == undefined) {
             throw new CommandError(`Cannot find chapter N°${chapterNo}`);
         }
 
-        return files[0].id;
+        return folder.id;
     }
 
     protected static async getPagesLinks(driveFolderId: string, chapterNo: number): Promise<string[]> {

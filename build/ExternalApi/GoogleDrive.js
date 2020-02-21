@@ -7,15 +7,16 @@ class GoogleDrive {
     static async getChapterFolderId(driveFolderId, chapterNo) {
         const res = await axios_1.default.get("https://www.googleapis.com/drive/v3/files", {
             params: {
-                q: `'${driveFolderId}' in parents and name contains 'Ch. ${chapterNo.toString().padStart(3, "0")}'`,
+                q: `'${driveFolderId}' in parents`,
                 key: process.env.GOOGLE_API_KEY
             }
         });
         const files = res.data.files;
-        if (files.length === 0) {
+        const folder = files.find(f => f.name.startsWith(`Ch. ${chapterNo.toString().padStart(3, "0")}`));
+        if (folder == undefined) {
             throw new types_1.CommandError(`Cannot find chapter N°${chapterNo}`);
         }
-        return files[0].id;
+        return folder.id;
     }
     static async getPagesLinks(driveFolderId, chapterNo) {
         const folderId = await this.getChapterFolderId(driveFolderId, chapterNo);
