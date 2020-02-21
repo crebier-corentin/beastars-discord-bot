@@ -8,6 +8,8 @@ class GoogleDrive {
         const res = await axios_1.default.get("https://www.googleapis.com/drive/v3/files", {
             params: {
                 q: `'${driveFolderId}' in parents`,
+                fields: "files(id, name)",
+                pageSize: 500,
                 key: process.env.GOOGLE_API_KEY
             }
         });
