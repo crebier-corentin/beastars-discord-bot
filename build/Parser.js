@@ -5,13 +5,13 @@ const types_1 = require("./types");
 const Context_1 = require("./Context");
 class Parser {
     constructor(prefix, commands) {
+        this.customPrefixes = new Map();
         this.defaultPrefix = helpers_1.escapeRegExp(prefix);
         this.commands = commands;
-        this.customPrefixes = [];
         //Add custom customPrefixes
         for (const command of commands) {
             if (!command.useDefaultPrefix) {
-                this.customPrefixes.push({ prefix: helpers_1.escapeRegExp(command.name), command });
+                this.customPrefixes.set(helpers_1.escapeRegExp(command.name), command);
             }
         }
     }
@@ -19,6 +19,16 @@ class Parser {
         str = str.trim();
         const splitted = str.split(/\s+/);
         const prefix = splitted[0].toLowerCase();
+        //Custom prefix
+        const command = this.customPrefixes.get(prefix);
+        if (command != undefined) {
+            return {
+                success: true,
+                command: command,
+                args: splitted.slice(1),
+                fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 1),
+            };
+        }
         //Default prefix
         if (prefix == this.defaultPrefix) {
             //Missing command
@@ -61,17 +71,6 @@ class Parser {
             }
             //Invalid command
             throw new types_1.CommandError(`Invalid command, to see the list of commands use \`${Context_1.Context.prefix} help\`\nIf you want to use the image feature don't forget the command name \`${Context_1.Context.prefix} i [name]\``);
-        }
-        //Custom prefix
-        for (const custom of this.customPrefixes) {
-            if (prefix === custom.prefix) {
-                return {
-                    success: true,
-                    command: custom.command,
-                    args: splitted.slice(1),
-                    fullArgs: helpers_1.getEverythingAfterMatch(/\s+/g, str, 1),
-                };
-            }
         }
         return { success: false };
     }

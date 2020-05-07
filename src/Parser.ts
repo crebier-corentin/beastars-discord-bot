@@ -5,7 +5,7 @@ import {Context} from "./Context";
 export default class Parser {
     defaultPrefix: string;
 
-    customPrefixes: { prefix: string, command: Command }[];
+    customPrefixes: Map<string, Command> = new Map<string, Command>();
 
     commands: Command[];
 
@@ -13,11 +13,10 @@ export default class Parser {
         this.defaultPrefix = escapeRegExp(prefix);
         this.commands = commands;
 
-        this.customPrefixes = [];
         //Add custom customPrefixes
         for (const command of commands) {
             if (!command.useDefaultPrefix) {
-                this.customPrefixes.push({prefix: escapeRegExp(command.name), command});
+                this.customPrefixes.set(escapeRegExp(command.name), command);
             }
         }
     }
@@ -27,6 +26,17 @@ export default class Parser {
         const splitted = str.split(/\s+/);
 
         const prefix = splitted[0].toLowerCase();
+
+        //Custom prefix
+        const command = this.customPrefixes.get(prefix);
+        if (command != undefined) {
+            return {
+                success: true,
+                command: command,
+                args: splitted.slice(1),
+                fullArgs: getEverythingAfterMatch(/\s+/g, str, 1),
+            };
+        }
 
         //Default prefix
         if (prefix == this.defaultPrefix) {
@@ -76,17 +86,6 @@ export default class Parser {
 
             //Invalid command
             throw new CommandError(`Invalid command, to see the list of commands use \`${Context.prefix} help\`\nIf you want to use the image feature don't forget the command name \`${Context.prefix} i [name]\``);
-        }
-        //Custom prefix
-        for (const custom of this.customPrefixes) {
-            if (prefix === custom.prefix) {
-                return {
-                    success: true,
-                    command: custom.command,
-                    args: splitted.slice(1),
-                    fullArgs: getEverythingAfterMatch(/\s+/g, str, 1),
-                };
-            }
         }
 
         return {success: false};

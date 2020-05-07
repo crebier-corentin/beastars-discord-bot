@@ -7,7 +7,7 @@ const path = require("path");
 const helpers_1 = require("./helpers");
 class FileDownloader {
     static async Download(url, prefix = "", dir = null) {
-        dir = (dir !== null && dir !== void 0 ? dir : path.join(os.tmpdir(), "/bsr/"));
+        dir = dir !== null && dir !== void 0 ? dir : path.join(os.tmpdir(), "/bsr/");
         //Create dir if it does not exist
         if (!fs.existsSync(dir)) {
             await fs.promises.mkdir(dir);

@@ -66,3 +66,13 @@ createConnection().then(() => {
 
     client.login(process.env.TOKEN);
 });
+
+process.on("uncaughtException", function (e) {
+    console.error(`An error has occured. error is: ${e} and stack trace is: ${e.stack}`);
+    process.exit(1);
+});
+process.on("unhandledRejection", function (e) {
+    console.error(`An error has occured. error is: ${e}`);
+    process.exit(1);
+});
+
