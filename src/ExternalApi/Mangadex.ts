@@ -26,36 +26,61 @@ interface ChapterPages {
     page_array: string[];
 }
 
+interface ChapterByIdByGroup {
+    [chapter: number]: {
+        [group: string]: Chapter;
+    }
+}
+
 export class Mangadex {
-    protected static async getChapterList(mangaId: Manga | string, HCSOnly: boolean = false): Promise<Chapter[]> {
+
+    protected static async getChapterList(mangaId: Manga | string): Promise<Chapter[]> {
         const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => []);
 
-        const chapters: Chapter[] = [];
         const mangadexChapters: MangadexChapters = result.data.chapter;
 
-        for (const mangadexChapterName in mangadexChapters) {
-            const mangadexChapter = mangadexChapters[mangadexChapterName];
+        return Object.keys(mangadexChapters).reduce((chapters, chapterId) => {
+
+            const chapter = mangadexChapters[chapterId];
 
             //Ignore non english chapters
-            if (mangadexChapter.lang_code != "gb") continue;
+            if (chapter.lang_code != "gb") return chapters;
 
-            //Ignore non HCS if HCS translation exists for this chapter
-            if (HCSOnly
-                && mangadexChapter.group_name != "Hot Chocolate Scans"
-                && Object.values(mangadexChapters).find(c => c.chapter === mangadexChapter.chapter && c.group_name == "Hot Chocolate Scans") != undefined) {
-                continue;
-            }
-
-            //Add new chapter
             chapters.push({
-                id: mangadexChapterName,
-                title: mangadexChapter.title,
-                chapter: mangadexChapter.chapter,
-                volume: mangadexChapter.volume,
+                id: chapterId,
+                title: chapter.title,
+                chapter: chapter.chapter,
+                volume: chapter.volume,
             });
-        }
 
-        return chapters;
+            return chapters;
+        }, []);
+
+    }
+
+    protected static async getChapterByIdByGroup(mangaId: Manga | string): Promise<ChapterByIdByGroup> {
+        const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => []);
+
+        const mangadexChapters: MangadexChapters = result.data.chapter;
+
+        return Object.keys(mangadexChapters).reduce((chapterMap, chapterId) => {
+            const chapter = mangadexChapters[chapterId];
+
+            //Ignore non english chapters
+            if (chapter.lang_code != "gb") return chapterMap;
+
+            return {
+                ...chapterMap, [chapter.chapter]: {
+                    ...chapterMap[chapter.chapter], [chapter.group_name]: {
+                        id: chapterId,
+                        title: chapter.title,
+                        chapter: chapter.chapter,
+                        volume: chapter.volume,
+                    }
+                }
+            };
+
+        }, {});
     }
 
     protected static async getChapterPages(chapter: Chapter): Promise<ChapterPages> {
@@ -82,18 +107,33 @@ export class MangadexWithCache extends Mangadex {
         this.cache = new Cache(60 * 60);
     }
 
-    async getChapterLink(chapterNo: number, manga: Manga): Promise<string> {
-        const chapter = await this.getChapterWithRetry(chapterNo, manga);
+    private async getChapter(chapterNo: number, manga: Manga, group: string | null = null): Promise<Chapter> {
+        const chapters = <ChapterByIdByGroup>await this.cache.get(manga, Mangadex.getChapterByIdByGroup.bind(null, manga, true));
 
-        return `https://mangadex.org/chapter/${chapter.id}`;
+        const chapterGroups = chapters[chapterNo];
+
+        if (chapterGroups == undefined) {
+            throw new CommandError(`Cannot find chapter Nº${chapterNo}`);
+        }
+
+        //Group specification
+        if (group != null) {
+            const chapter = chapterGroups[group];
+            if (chapter == undefined) throw new CommandError(`Cannot find chapter Nº${chapterNo} from group '${group}'`);
+
+            return chapter;
+        }
+
+        //Prefers HCS over other groups
+        return chapterGroups["Hot Chocolate Scans"] ?? Object.values(chapterGroups)[0];
     }
 
-    private async getChapterWithRetry(chapterNo: number, manga: Manga): Promise<Chapter> {
+    private async getChapterWithRetry(chapterNo: number, manga: Manga, group: string | null = null): Promise<Chapter> {
         let retry = true;
 
         while (true) {
             try {
-                return await this.getChapter(chapterNo, manga);
+                return await this.getChapter(chapterNo, manga, group);
             }
             catch (e) {
                 //Retry
@@ -109,21 +149,15 @@ export class MangadexWithCache extends Mangadex {
         }
     }
 
-    private async getChapter(chapterNo: number, manga: Manga): Promise<Chapter> {
-        const chapters = <Chapter[]>await this.cache.get(manga, Mangadex.getChapterList.bind(null, manga, true));
+    async getChapterLink(chapterNo: number, manga: Manga, group: string | null = null): Promise<string> {
+        const chapter = await this.getChapterWithRetry(chapterNo, manga, group);
 
-        const chapter = chapters.find((el) => el.chapter == chapterNo);
-
-        if (chapter == undefined) {
-            throw new CommandError(`Cannot find chapter Nº${chapterNo}`);
-        }
-
-        return chapter;
+        return `https://mangadex.org/chapter/${chapter.id}`;
     }
 
-    async getChapterPageLink(chapterNo: number, pageNo: number, manga: Manga): Promise<{ site: string, image: string; }> {
+    async getChapterPageLink(chapterNo: number, pageNo: number, manga: Manga, group: string | null = null): Promise<{ site: string, image: string; }> {
         //Chapter
-        const chapter = await this.getChapterWithRetry(chapterNo, manga);
+        const chapter = await this.getChapterWithRetry(chapterNo, manga, group);
 
         //Chapter pages
         const pages = <ChapterPages>await this.cache.get(`${chapter.id}-pages`, Mangadex.getChapterPages.bind(null, chapter));

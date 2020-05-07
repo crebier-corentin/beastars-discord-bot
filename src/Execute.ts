@@ -3,7 +3,13 @@ import Parser from "./Parser";
 import {CommandError} from "./types";
 import {Context} from "./Context";
 import {HelpCommand} from "./Commands/HelpCommand";
-import {ChapterBCCommand, ChapterBSCommand, ChapterBSRCommand, ChapterBSVCommand} from "./Commands/ChapterCommands";
+import {
+    ChapterBCCommand,
+    ChapterBSCommand,
+    ChapterBSDCommand,
+    ChapterBSRCommand,
+    ChapterBSVCommand
+} from "./Commands/ChapterCommands";
 import {WikiCommand} from "./Commands/WikiCommand";
 import {QuoteComment} from "./Commands/QuoteCommand";
 import {LegStatsCommand, OfferLegCommand} from "./Commands/LegCommand";
@@ -25,6 +31,7 @@ const commands = [
 
     ChapterBSCommand,
     ChapterBCCommand,
+    ChapterBSDCommand,
     ChapterBSVCommand,
     ChapterBSRCommand,
 

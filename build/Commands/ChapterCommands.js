@@ -6,7 +6,7 @@ const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
 const FileDownloader_1 = require("../FileDownloader");
 const nonSpoilerChannels = new Set(process.env.NON_SPOILER_CHANNELS.split(","));
 const mangadex = new Mangadex_1.MangadexWithCache();
-const chapterCommandExecute = async function (msg, args, manga) {
+const chapterCommandExecute = async function (msg, args, manga, group = null) {
     const chapter = Number(args[0]);
     //Missing chapter number
     if (Number.isNaN(chapter)) {
@@ -22,7 +22,7 @@ const chapterCommandExecute = async function (msg, args, manga) {
         if (Number.isNaN(page)) {
             throw new types_1.CommandError(`Invalid [page] (must be a number)\n\`${this.usage}\``);
         }
-        const response = await mangadex.getChapterPageLink(chapter, page, manga);
+        const response = await mangadex.getChapterPageLink(chapter, page, manga, group);
         //Add spoiler prefix if needed
         const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
         const file = isSpoiler ? await FileDownloader_1.FileDownloader.Download(response.image, "SPOILER_") : response.image;
@@ -31,7 +31,7 @@ const chapterCommandExecute = async function (msg, args, manga) {
     }
     else {
         //Chapter link
-        msg.channel.send(await mangadex.getChapterLink(chapter, manga));
+        msg.channel.send(await mangadex.getChapterLink(chapter, manga, group));
     }
 };
 exports.ChapterBSCommand = {
@@ -54,6 +54,18 @@ exports.ChapterBCCommand = {
     adminOnly: false,
     async execute(msg, args) {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.BeastComplex);
+    },
+};
+//Discord
+exports.ChapterBSDCommand = {
+    name: "bsd!",
+    desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter] (Beastars Discord translation)",
+    usage: "bs! [chapter] (page)",
+    example: "bs! 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await chapterCommandExecute.call(this, msg, args, types_1.Manga.Beastars, "R/Beastars Discord");
     },
 };
 //Raw

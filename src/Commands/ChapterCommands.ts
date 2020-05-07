@@ -6,7 +6,7 @@ import {FileDownloader} from "../FileDownloader";
 const nonSpoilerChannels: Set<string> = new Set(process.env.NON_SPOILER_CHANNELS.split(","));
 
 const mangadex = new MangadexWithCache();
-const chapterCommandExecute = async function (msg, args, manga: Manga) {
+const chapterCommandExecute = async function (msg, args, manga: Manga, group: string | null = null) {
     const chapter = Number(args[0]);
 
     //Missing chapter number
@@ -27,7 +27,7 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
             throw new CommandError(`Invalid [page] (must be a number)\n\`${this.usage}\``);
         }
 
-        const response = await mangadex.getChapterPageLink(chapter, page, manga);
+        const response = await mangadex.getChapterPageLink(chapter, page, manga, group);
 
         //Add spoiler prefix if needed
         const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
@@ -39,7 +39,7 @@ const chapterCommandExecute = async function (msg, args, manga: Manga) {
     }
     else {
         //Chapter link
-        msg.channel.send(await mangadex.getChapterLink(chapter, manga));
+        msg.channel.send(await mangadex.getChapterLink(chapter, manga, group));
     }
 };
 
@@ -66,6 +66,19 @@ export const ChapterBCCommand: Command = {
     adminOnly: false,
     async execute(msg, args) {
         await chapterCommandExecute.call(this, msg, args, Manga.BeastComplex);
+    },
+};
+
+//Discord
+export const ChapterBSDCommand: Command = {
+    name: "bsd!",
+    desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter] (Beastars Discord translation)",
+    usage: "bs! [chapter] (page)",
+    example: "bs! 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await chapterCommandExecute.call(this, msg, args, Manga.Beastars, "R/Beastars Discord");
     },
 };
 
