@@ -26,7 +26,7 @@ interface ChapterPages {
     page_array: string[];
 }
 
-interface ChapterByIdByGroup {
+interface ChapterByChapterNoByGroup {
     [chapter: number]: {
         [group: string]: Chapter;
     }
@@ -58,7 +58,7 @@ export class Mangadex {
 
     }
 
-    protected static async getChapterByIdByGroup(mangaId: Manga | string): Promise<ChapterByIdByGroup> {
+    protected static async getChapterByChapterNoByGroup(mangaId: Manga | string): Promise<ChapterByChapterNoByGroup> {
         const result = <AxiosResponse>await axios.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => []);
 
         const mangadexChapters: MangadexChapters = result.data.chapter;
@@ -108,7 +108,7 @@ export class MangadexWithCache extends Mangadex {
     }
 
     private async getChapter(chapterNo: number, manga: Manga, group: string | null = null): Promise<Chapter> {
-        const chapters = <ChapterByIdByGroup>await this.cache.get(manga, Mangadex.getChapterByIdByGroup.bind(null, manga, true));
+        const chapters = <ChapterByChapterNoByGroup>await this.cache.get(manga, Mangadex.getChapterByChapterNoByGroup.bind(null, manga, true));
 
         const chapterGroups = chapters[chapterNo];
 

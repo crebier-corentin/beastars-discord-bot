@@ -78,7 +78,7 @@ export const ChapterBSDCommand: Command = {
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
-        await chapterCommandExecute.call(this, msg, args, Manga.Beastars, "R/Beastars Discord");
+        await chapterCommandExecute.call(this, msg, args, Manga.Beastars, "Hybridgumi");
     },
 };
 
