@@ -144,3 +144,16 @@ export const ChapterBSVCommand: Command = {
         await msg.channel.send({file: await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")});
     },
 };
+
+//Paru's Graffiti
+export const ChapterPGCommand: Command = {
+    name: "pg!",
+    desc: "Post page Nº(page) from chapter (chapter) of Paru's Graffiti",
+    usage: "pg! (chapter) (page)",
+    example: "pg! 1 3",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await chapterCommandExecute.call(this, msg, args, Manga.ParusGraffiti);
+    },
+};

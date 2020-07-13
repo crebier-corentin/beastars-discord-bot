@@ -24,6 +24,7 @@ const commands = [
     ChapterCommands_1.ChapterBSDCommand,
     ChapterCommands_1.ChapterBSVCommand,
     ChapterCommands_1.ChapterBSRCommand,
+    ChapterCommands_1.ChapterPGCommand,
     WikiCommand_1.WikiCommand,
     QuoteCommand_1.QuoteComment,
     OOCCommand_1.OocCommand,

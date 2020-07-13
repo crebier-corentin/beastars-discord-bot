@@ -119,4 +119,16 @@ exports.ChapterBSVCommand = {
         await msg.channel.send({ file: await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "") });
     },
 };
+//Paru's Graffiti
+exports.ChapterPGCommand = {
+    name: "pg!",
+    desc: "Post page Nº(page) from chapter (chapter) of Paru's Graffiti",
+    usage: "pg! (chapter) (page)",
+    example: "pg! 1 3",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await chapterCommandExecute.call(this, msg, args, types_1.Manga.ParusGraffiti);
+    },
+};
 //# sourceMappingURL=ChapterCommands.js.map

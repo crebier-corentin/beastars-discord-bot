@@ -2,7 +2,8 @@ import {Message} from "discord.js";
 
 export enum Manga {
     Beastars = "20523",
-    BeastComplex = "22194"
+    BeastComplex = "22194",
+    ParusGraffiti = "42209"
 }
 
 export class CommandError {

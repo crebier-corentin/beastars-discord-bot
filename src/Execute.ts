@@ -8,7 +8,7 @@ import {
     ChapterBSCommand,
     ChapterBSDCommand,
     ChapterBSRCommand,
-    ChapterBSVCommand
+    ChapterBSVCommand, ChapterPGCommand
 } from "./Commands/ChapterCommands";
 import {WikiCommand} from "./Commands/WikiCommand";
 import {QuoteComment} from "./Commands/QuoteCommand";
@@ -34,6 +34,7 @@ const commands = [
     ChapterBSDCommand,
     ChapterBSVCommand,
     ChapterBSRCommand,
+    ChapterPGCommand,
 
     WikiCommand,
 

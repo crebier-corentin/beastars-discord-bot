@@ -4,6 +4,7 @@ var Manga;
 (function (Manga) {
     Manga["Beastars"] = "20523";
     Manga["BeastComplex"] = "22194";
+    Manga["ParusGraffiti"] = "42209";
 })(Manga = exports.Manga || (exports.Manga = {}));
 class CommandError {
     constructor(message) {
