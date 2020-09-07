@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.hash = exports.mimetypeToExtension = exports.tmpFilename = exports.isAdministrator = exports.maxArray = exports.chunkArray = exports.arrayEqual = exports.includeStartsWith = exports.asyncForEach = exports.findMemberByUsername = exports.regexCount = exports.getEverythingAfterMatch = exports.escapeRegExp = void 0;
 const os = require("os");
 const path = require("path");
 const crypto = require("crypto");
@@ -38,7 +39,7 @@ function findMemberByUsername(guild, name) {
     1 : Substring nickname
      */
     const results = [];
-    for (const member of guild.members.array()) {
+    for (const member of guild.members.cache.array()) {
         if (name == `${member.user.username}#${member.user.discriminator}`) {
             return [member];
         }

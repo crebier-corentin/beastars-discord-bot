@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateUserTable1561887839564 = void 0;
 class CreateUserTable1561887839564 {
     async up(queryRunner) {
         await queryRunner.query("CREATE TABLE \"user\" (\"id\" SERIAL NOT NULL, \"discordId\" character varying NOT NULL, CONSTRAINT \"UQ_13af5754f14d8d255fd9b3ee5c7\" UNIQUE (\"discordId\"), CONSTRAINT \"PK_cace4a159ff9f2512dd42373760\" PRIMARY KEY (\"id\"))");

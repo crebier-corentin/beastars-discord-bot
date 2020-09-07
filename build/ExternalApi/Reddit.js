@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RedditUserWatcher = void 0;
 const axios_1 = require("axios");
 class RedditUserWatcher {
     constructor(user, filter) {

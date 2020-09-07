@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Imgur = void 0;
 const axios_1 = require("axios");
 const types_1 = require("../types");
 const Cache_1 = require("../Cache");

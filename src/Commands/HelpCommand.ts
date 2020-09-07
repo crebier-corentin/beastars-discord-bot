@@ -1,4 +1,4 @@
-import {RichEmbed} from "discord.js";
+import {MessageEmbed} from "discord.js";
 import {Context} from "../Context";
 import {Command} from "../types";
 import {isAdministrator} from "../helpers";
@@ -13,7 +13,7 @@ export const HelpCommand: Command = {
     execute(msg) {
         const isAdmin = isAdministrator(msg.member) && msg.guild.id === process.env.ADMIN_GUILD;
 
-        const embed = new RichEmbed()
+        const embed = new MessageEmbed()
             .setTitle("Help");
 
         for (let i = 0; i < Context.commands.length; i++) {

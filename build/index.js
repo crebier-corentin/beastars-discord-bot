@@ -16,7 +16,10 @@ typeorm_1.createConnection().then(() => {
     Context_1.Context.client = client;
     client.on("ready", async () => {
         //Set description
-        await client.user.setPresence({ status: "online", game: { name: `Use ${Context_1.Context.prefix} help` } });
+        await client.user.setPresence({
+            status: "online",
+            activity: { name: `Use ${Context_1.Context.prefix} help`, type: "CUSTOM_STATUS" }
+        });
         //Reddit leaks and mangadex watchers
         await (async function watchers() {
             const leaksRegex = /(informations?|infos?|raws?|leaks?)/i;
@@ -29,10 +32,10 @@ typeorm_1.createConnection().then(() => {
                 //Check words
                 return leaksRegex.test(submission.title);
             }));
-            const redditLeaksChannel = client.channels.find((channel) => channel.id === process.env.LEAKS_CHANNEL_ID);
+            const redditLeaksChannel = client.channels.resolve(process.env.LEAKS_CHANNEL_ID);
             //Mangadex watcher
             const mangadexWatcher = await Mangadex_1.MangadexWatcher.create(types_1.Manga.Beastars);
-            const newChapterChannel = client.channels.find((channel) => channel.id === process.env.NEW_CHAPTER_CHANNEL);
+            const newChapterChannel = client.channels.resolve(process.env.NEW_CHAPTER_CHANNEL);
             //Watchers interval
             setInterval(async () => {
                 //Reddit Leaks

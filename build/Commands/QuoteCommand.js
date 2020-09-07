@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.QuoteComment = void 0;
 const IncorrectBeastarsQuote_1 = require("../ExternalApi/IncorrectBeastarsQuote");
 exports.QuoteComment = {
     name: "quote",

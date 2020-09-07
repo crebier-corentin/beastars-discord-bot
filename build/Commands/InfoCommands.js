@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InterviewCommand = exports.MobileSpoilerCommand = exports.SpoilerCommand = exports.MarkdownCommand = void 0;
 exports.MarkdownCommand = {
     name: "markdown",
     desc: "Link to the discord markdown help page",

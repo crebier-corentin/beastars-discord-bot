@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.executeCommand = void 0;
 const Parser_1 = require("./Parser");
 const types_1 = require("./types");
 const Context_1 = require("./Context");
@@ -54,8 +55,8 @@ function executeCommand(msg) {
         const res = parser.parseCommand(msg.content);
         if (!res.success) {
             //Triple cheeks sebun
-            const sebunCheeks = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.emojis.find((emoji) => emoji.name == "Sebun_Cheeks");
-            const legoshiLick = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.emojis.find((emoji) => emoji.name == "Legoshi_Lick");
+            const sebunCheeks = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.emojis.cache.find((emoji) => emoji.name == "Sebun_Cheeks");
+            const legoshiLick = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.emojis.cache.find((emoji) => emoji.name == "Legoshi_Lick");
             //Emoji missing
             if (sebunCheeks == null || legoshiLick == null)
                 return;

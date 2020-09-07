@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CommandError = exports.Manga = void 0;
 var Manga;
 (function (Manga) {
     Manga["Beastars"] = "20523";

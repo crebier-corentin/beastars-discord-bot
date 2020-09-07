@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var Image_1;
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Image = void 0;
 const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
 const stringSimilarity = require("string-similarity");

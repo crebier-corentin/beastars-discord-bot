@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MangadexWatcher = exports.MangadexWithCache = exports.Mangadex = void 0;
 const axios_1 = require("axios");
 const Cache_1 = require("../Cache");
 const types_1 = require("../types");
@@ -21,7 +22,7 @@ class Mangadex {
             return chapters;
         }, []);
     }
-    static async getChapterByIdByGroup(mangaId) {
+    static async getChapterByChapterNoByGroup(mangaId) {
         const result = await axios_1.default.get(`https://mangadex.org/api/manga/${mangaId}`).catch(() => []);
         const mangadexChapters = result.data.chapter;
         return Object.keys(mangadexChapters).reduce((chapterMap, chapterId) => {
@@ -58,7 +59,7 @@ class MangadexWithCache extends Mangadex {
     }
     async getChapter(chapterNo, manga, group = null) {
         var _a;
-        const chapters = await this.cache.get(manga, Mangadex.getChapterByIdByGroup.bind(null, manga, true));
+        const chapters = await this.cache.get(manga, Mangadex.getChapterByChapterNoByGroup.bind(null, manga, true));
         const chapterGroups = chapters[chapterNo];
         if (chapterGroups == undefined) {
             throw new types_1.CommandError(`Cannot find chapter Nº${chapterNo}`);

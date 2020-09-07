@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FileDownloader = void 0;
 const axios_1 = require("axios");
 const fs = require("fs");
 const os = require("os");

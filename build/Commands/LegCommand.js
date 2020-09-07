@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LegStatsCommand = exports.OfferLegCommand = void 0;
 const moment = require("moment");
 const types_1 = require("../types");
 const helpers_1 = require("../helpers");

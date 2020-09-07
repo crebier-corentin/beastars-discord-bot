@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ImageCommand = exports.ImageListCommand = exports.ImageRemoveCommand = exports.ImageAddCommand = void 0;
 const types_1 = require("../types");
 const Image_1 = require("../db/entities/Image");
 const User_1 = require("../db/entities/User");

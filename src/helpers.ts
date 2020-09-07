@@ -44,7 +44,7 @@ export function findMemberByUsername(guild: Guild, name: string): GuildMember[] 
      */
     const results: GuildMember[] = [];
 
-    for (const member of guild.members.array()) {
+    for (const member of guild.members.cache.array()) {
         if (name == `${member.user.username}#${member.user.discriminator}`) {
             return [member];
         }

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HelpCommand = void 0;
 const discord_js_1 = require("discord.js");
 const Context_1 = require("../Context");
 const helpers_1 = require("../helpers");
@@ -12,7 +13,7 @@ exports.HelpCommand = {
     adminOnly: false,
     execute(msg) {
         const isAdmin = helpers_1.isAdministrator(msg.member) && msg.guild.id === process.env.ADMIN_GUILD;
-        const embed = new discord_js_1.RichEmbed()
+        const embed = new discord_js_1.MessageEmbed()
             .setTitle("Help");
         for (let i = 0; i < Context_1.Context.commands.length; i++) {
             const command = Context_1.Context.commands[i];

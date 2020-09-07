@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OocCommand = void 0;
 const Imgur_1 = require("../ExternalApi/Imgur");
 exports.OocCommand = {
     name: "ooc",

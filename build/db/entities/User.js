@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var User_1;
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const Context_1 = require("../../Context");
 let User = User_1 = class User extends typeorm_1.BaseEntity {
@@ -20,7 +21,7 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
         return this.legsRecieved.length;
     }
     getDiscordMember(guild) {
-        return guild.members.get(this.discordId);
+        return guild.members.resolve(this.discordId);
     }
     getDiscordUser(guild) {
         return this.getDiscordMember(guild).user;
@@ -33,7 +34,7 @@ let User = User_1 = class User extends typeorm_1.BaseEntity {
             }
         }
         //Last nickname
-        return delimiters + (await Context_1.Context.client.fetchUser(this.discordId)).username + delimiters;
+        return delimiters + (await Context_1.Context.client.users.fetch(this.discordId)).username + delimiters;
     }
     async getStats(guild) {
         //Legs given

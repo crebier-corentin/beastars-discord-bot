@@ -38,7 +38,7 @@ export class User extends BaseEntity {
     }
 
     getDiscordMember(guild: Guild): GuildMember | undefined {
-        return guild.members.get(this.discordId);
+        return guild.members.resolve(this.discordId);
     }
 
     getDiscordUser(guild: Guild): DiscordUser {
@@ -49,11 +49,13 @@ export class User extends BaseEntity {
         if (guild !== null) {
             const member = this.getDiscordMember(guild);
 
-            if (member != undefined) { return delimiters + member.displayName + delimiters; }
+            if (member != undefined) {
+                return delimiters + member.displayName + delimiters;
+            }
         }
 
         //Last nickname
-        return delimiters + (await Context.client.fetchUser(this.discordId)).username + delimiters;
+        return delimiters + (await Context.client.users.fetch(this.discordId)).username + delimiters;
     }
 
     async getStats(guild: Guild): Promise<string> {

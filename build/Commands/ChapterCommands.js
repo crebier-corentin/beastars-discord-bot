@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChapterPGCommand = exports.ChapterBSVCommand = exports.ChapterBSRCommand = exports.ChapterBSDCommand = exports.ChapterBCCommand = exports.ChapterBSCommand = void 0;
 const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
 const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
@@ -65,7 +66,7 @@ exports.ChapterBSDCommand = {
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
-        await chapterCommandExecute.call(this, msg, args, types_1.Manga.Beastars, "R/Beastars Discord");
+        await chapterCommandExecute.call(this, msg, args, types_1.Manga.Beastars, "Hybridgumi");
     },
 };
 //Raw
