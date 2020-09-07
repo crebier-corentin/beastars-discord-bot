@@ -10,7 +10,7 @@ exports.OocCommand = {
     adminOnly: false,
     async execute(msg) {
         const image = await Imgur_1.Imgur.getRandomImageInAlbum("tCDHjVx");
-        msg.channel.send({ file: image });
+        msg.channel.send({ files: [image] });
     },
 };
 //# sourceMappingURL=OOCCommand.js.map

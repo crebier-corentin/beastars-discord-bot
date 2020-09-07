@@ -10,6 +10,6 @@ export const OocCommand: Command = {
     async execute(msg) {
         const image = await Imgur.getRandomImageInAlbum("tCDHjVx");
 
-        msg.channel.send({file: image});
+        msg.channel.send({files: [image]});
     },
 };

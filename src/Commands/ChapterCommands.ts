@@ -110,7 +110,7 @@ export const ChapterBSRCommand: Command = {
         const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
 
         //Download file
-        await msg.channel.send({file: await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")});
+        await msg.channel.send({files: [await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")]});
     },
 };
 
@@ -141,7 +141,7 @@ export const ChapterBSVCommand: Command = {
         const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
 
         //Download file
-        await msg.channel.send({file: await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")});
+        await msg.channel.send({files: [await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")]});
     },
 };
 

@@ -92,7 +92,7 @@ exports.ChapterBSRCommand = {
         const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
         const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
         //Download file
-        await msg.channel.send({ file: await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "") });
+        await msg.channel.send({ files: [await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")] });
     },
 };
 //Viz
@@ -117,7 +117,7 @@ exports.ChapterBSVCommand = {
         const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID, chapter, page);
         const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
         //Download file
-        await msg.channel.send({ file: await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "") });
+        await msg.channel.send({ files: [await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")] });
     },
 };
 //Paru's Graffiti

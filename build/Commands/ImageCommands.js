@@ -119,7 +119,7 @@ exports.ImageCommand = {
             throw new types_1.CommandError(`Image \`${name}\` does not exist\n Did you mean \`${await Image_1.Image.mostSimilarName(name)}\`?`);
         }
         //Send image
-        await msg.channel.send({ file: image.url });
+        await msg.channel.send({ files: [image.url] });
     },
 };
 //# sourceMappingURL=ImageCommands.js.map

@@ -142,6 +142,6 @@ export const ImageCommand: Command = {
         }
 
         //Send image
-        await msg.channel.send({file: image.url});
+        await msg.channel.send({files: [image.url]});
     },
 };
