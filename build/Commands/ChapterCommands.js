@@ -28,7 +28,7 @@ const chapterCommandExecute = async function (msg, args, manga, group = null) {
         const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
         const file = isSpoiler ? await FileDownloader_1.FileDownloader.Download(response.image, "SPOILER_") : response.image;
         //Site link + Image link
-        await msg.channel.send(`<${response.site}>`, { file });
+        await msg.channel.send(`<${response.site}>`, { files: [file] });
     }
     else {
         //Chapter link
