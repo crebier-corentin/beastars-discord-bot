@@ -14,11 +14,6 @@ const chapterCommandExecute = async function (msg, args, manga: Manga, group: st
         throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
     }
 
-    //Beast Complex 7
-    if (manga === Manga.BeastComplex && chapter === 7) {
-        return await msg.channel.send("https://drive.google.com/folderview?id=1YSxes4C4YBz2CEoc4CoAvQHW9UZzBqeb");
-    }
-
     //Is page
     if (args.length >= 2) {
         const page = Number(args[1]);
