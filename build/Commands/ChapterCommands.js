@@ -13,10 +13,6 @@ const chapterCommandExecute = async function (msg, args, manga, group = null) {
     if (Number.isNaN(chapter)) {
         throw new types_1.CommandError(`Missing [chapter]\n\`${this.usage}\``);
     }
-    //Beast Complex 7
-    if (manga === types_1.Manga.BeastComplex && chapter === 7) {
-        return await msg.channel.send("https://drive.google.com/folderview?id=1YSxes4C4YBz2CEoc4CoAvQHW9UZzBqeb");
-    }
     //Is page
     if (args.length >= 2) {
         const page = Number(args[1]);
