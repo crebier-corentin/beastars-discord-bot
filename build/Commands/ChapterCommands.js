@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChapterPGCommand = exports.ChapterBSVCommand = exports.ChapterBSRCommand = exports.ChapterBSDGCommand = exports.ChapterBSGCommand = exports.ChapterBSDCommand = exports.ChapterBCCommand = exports.ChapterBSCommand = void 0;
+exports.ChapterPGCommand = exports.ChapterBCVCommand = exports.ChapterBCRCommand = exports.ChapterBCGCommand = exports.ChapterBSVCommand = exports.ChapterBSRCommand = exports.ChapterBSDGCommand = exports.ChapterBSGCommand = exports.ChapterBSDCommand = exports.ChapterBCCommand = exports.ChapterBSCommand = void 0;
 const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
 const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
@@ -65,7 +65,7 @@ exports.ChapterBSDCommand = {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.Beastars, "Hybridgumi");
     },
 };
-//Drive
+//Drive//
 const drive = new GoogleDrive_1.GoogleDriveWithCache();
 async function googleDriveChapterCommandExecute(msg, args, driveId) {
     const chapter = Number(args[0]);
@@ -83,7 +83,7 @@ async function googleDriveChapterCommandExecute(msg, args, driveId) {
     //Download file
     await msg.channel.send({ files: [await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")] });
 }
-//Drive HCS
+//Beastars Drive HCS
 exports.ChapterBSGCommand = {
     name: "bsg!",
     desc: "Post page Nº(page) from chapter (chapter) HCS translation from Google Drive",
@@ -95,7 +95,7 @@ exports.ChapterBSGCommand = {
         await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_HCS_FOLDER_ID);
     },
 };
-//Drive Discord
+//Beastars Drive Discord
 exports.ChapterBSDGCommand = {
     name: "bsdg!",
     desc: "Post page Nº(page) from chapter (chapter) Beastars Discord translation translation from Google Drive",
@@ -107,7 +107,7 @@ exports.ChapterBSDGCommand = {
         await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_DISCORD_FOLDER_ID);
     },
 };
-//Raw
+//Beastars Raw
 exports.ChapterBSRCommand = {
     name: "bsr!",
     desc: "Post page Nº(page) from chapter (chapter)",
@@ -119,7 +119,7 @@ exports.ChapterBSRCommand = {
         await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_FOLDER_ID);
     },
 };
-//Viz
+//Beastars Viz
 exports.ChapterBSVCommand = {
     name: "bsv!",
     desc: "Post page Nº(page) from chapter (chapter) Viz translation",
@@ -129,6 +129,42 @@ exports.ChapterBSVCommand = {
     adminOnly: false,
     async execute(msg, args) {
         await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID);
+    },
+};
+//Beast Complex Raw
+exports.ChapterBCGCommand = {
+    name: "bcg!",
+    desc: "Post page Nº(page) from chapter (chapter) (Beast Complex) from Google Drive",
+    usage: "bcg! (chapter) (page)",
+    example: "bcg! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEAST_COMPLEX_FOLDER_ID);
+    },
+};
+//Beast Complex Raw
+exports.ChapterBCRCommand = {
+    name: "bcr!",
+    desc: "Post page Nº(page) from chapter (chapter) (Beast Complex)",
+    usage: "bcr! (chapter) (page)",
+    example: "bcr! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEAST_COMPLEX_RAW_FOLDER_ID);
+    },
+};
+//Beast Complex Viz
+exports.ChapterBCVCommand = {
+    name: "bcv!",
+    desc: "Post page Nº(page) from chapter (chapter) Viz translation (Beast Complex)",
+    usage: "bcv! (chapter) (page)",
+    example: "bcv! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEAST_COMPLEX_VIZ_FOLDER_ID);
     },
 };
 //Paru's Graffiti

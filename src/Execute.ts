@@ -5,6 +5,9 @@ import {Context} from "./Context";
 import {HelpCommand} from "./Commands/HelpCommand";
 import {
     ChapterBCCommand,
+    ChapterBCGCommand,
+    ChapterBCRCommand,
+    ChapterBCVCommand,
     ChapterBSCommand,
     ChapterBSDCommand,
     ChapterBSDGCommand,
@@ -33,11 +36,17 @@ const commands = [
 
     ChapterBSCommand,
     ChapterBCCommand,
+
     ChapterBSDCommand,
     ChapterBSGCommand,
     ChapterBSDGCommand,
     ChapterBSVCommand,
     ChapterBSRCommand,
+
+    ChapterBCGCommand,
+    ChapterBCRCommand,
+    ChapterBCVCommand,
+
     ChapterPGCommand,
 
     WikiCommand,

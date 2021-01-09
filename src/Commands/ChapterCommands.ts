@@ -78,7 +78,7 @@ export const ChapterBSDCommand: Command = {
     },
 };
 
-//Drive
+//Drive//
 const drive = new GoogleDriveWithCache();
 async function googleDriveChapterCommandExecute(msg: Message, args: string[], driveId: string) {
     const chapter = Number(args[0]);
@@ -102,7 +102,7 @@ async function googleDriveChapterCommandExecute(msg: Message, args: string[], dr
     await msg.channel.send({files: [await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")]});
 }
 
-//Drive HCS
+//Beastars Drive HCS
 export const ChapterBSGCommand: Command = {
     name: "bsg!",
     desc: "Post page Nº(page) from chapter (chapter) HCS translation from Google Drive",
@@ -115,7 +115,7 @@ export const ChapterBSGCommand: Command = {
     },
 };
 
-//Drive Discord
+//Beastars Drive Discord
 export const ChapterBSDGCommand: Command = {
     name: "bsdg!",
     desc: "Post page Nº(page) from chapter (chapter) Beastars Discord translation translation from Google Drive",
@@ -128,7 +128,7 @@ export const ChapterBSDGCommand: Command = {
     },
 };
 
-//Raw
+//Beastars Raw
 export const ChapterBSRCommand: Command = {
     name: "bsr!",
     desc: "Post page Nº(page) from chapter (chapter)",
@@ -141,7 +141,7 @@ export const ChapterBSRCommand: Command = {
     },
 };
 
-//Viz
+//Beastars Viz
 export const ChapterBSVCommand: Command = {
     name: "bsv!",
     desc: "Post page Nº(page) from chapter (chapter) Viz translation",
@@ -151,6 +151,45 @@ export const ChapterBSVCommand: Command = {
     adminOnly: false,
     async execute(msg, args) {
         await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID);
+    },
+};
+
+//Beast Complex Drive
+export const ChapterBCGCommand: Command = {
+    name: "bcg!",
+    desc: "Post page Nº(page) from chapter (chapter) (Beast Complex) from Google Drive",
+    usage: "bcg! (chapter) (page)",
+    example: "bcg! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEAST_COMPLEX_FOLDER_ID);
+    },
+};
+
+//Beast Complex Raw
+export const ChapterBCRCommand: Command = {
+    name: "bcr!",
+    desc: "Post page Nº(page) from chapter (chapter) (Beast Complex)",
+    usage: "bcr! (chapter) (page)",
+    example: "bcr! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEAST_COMPLEX_RAW_FOLDER_ID);
+    },
+};
+
+//Beast Complex Viz
+export const ChapterBCVCommand: Command = {
+    name: "bcv!",
+    desc: "Post page Nº(page) from chapter (chapter) Viz translation (Beast Complex)",
+    usage: "bcv! (chapter) (page)",
+    example: "bcv! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEAST_COMPLEX_VIZ_FOLDER_ID);
     },
 };
 
