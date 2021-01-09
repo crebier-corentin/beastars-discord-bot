@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChapterPGCommand = exports.ChapterBSVCommand = exports.ChapterBSRCommand = exports.ChapterBSDCommand = exports.ChapterBCCommand = exports.ChapterBSCommand = void 0;
+exports.ChapterPGCommand = exports.ChapterBSVCommand = exports.ChapterBSRCommand = exports.ChapterBSDGCommand = exports.ChapterBSGCommand = exports.ChapterBSDCommand = exports.ChapterBCCommand = exports.ChapterBSCommand = void 0;
 const Mangadex_1 = require("../ExternalApi/Mangadex");
 const types_1 = require("../types");
 const GoogleDrive_1 = require("../ExternalApi/GoogleDrive");
@@ -57,16 +57,57 @@ exports.ChapterBCCommand = {
 exports.ChapterBSDCommand = {
     name: "bsd!",
     desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter] (Beastars Discord translation)",
-    usage: "bs! [chapter] (page)",
-    example: "bs! 10",
+    usage: "bsd! [chapter] (page)",
+    example: "bsd! 10",
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
         await chapterCommandExecute.call(this, msg, args, types_1.Manga.Beastars, "Hybridgumi");
     },
 };
-//Raw
+//Drive
 const drive = new GoogleDrive_1.GoogleDriveWithCache();
+async function googleDriveChapterCommandExecute(msg, args, driveId) {
+    const chapter = Number(args[0]);
+    const page = Number(args[1]);
+    //Missing chapter
+    if (Number.isNaN(chapter)) {
+        throw new types_1.CommandError(`Missing [chapter]\n\`${this.usage}\``);
+    }
+    //Missing page
+    if (Number.isNaN(page)) {
+        throw new types_1.CommandError(`Missing [page]\n\`${this.usage}\``);
+    }
+    const link = await drive.getPageLink(driveId, chapter, page);
+    const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
+    //Download file
+    await msg.channel.send({ files: [await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")] });
+}
+//Drive HCS
+exports.ChapterBSGCommand = {
+    name: "bsg!",
+    desc: "Post page Nº(page) from chapter (chapter) HCS translation from Google Drive",
+    usage: "bsg! (chapter) (page)",
+    example: "bsg! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_HCS_FOLDER_ID);
+    },
+};
+//Drive Discord
+exports.ChapterBSDGCommand = {
+    name: "bsdg!",
+    desc: "Post page Nº(page) from chapter (chapter) Beastars Discord translation translation from Google Drive",
+    usage: "bsdg! (chapter) (page)",
+    example: "bsdg! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_DISCORD_FOLDER_ID);
+    },
+};
+//Raw
 exports.ChapterBSRCommand = {
     name: "bsr!",
     desc: "Post page Nº(page) from chapter (chapter)",
@@ -75,20 +116,7 @@ exports.ChapterBSRCommand = {
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
-        const chapter = Number(args[0]);
-        const page = Number(args[1]);
-        //Missing chapter
-        if (Number.isNaN(chapter)) {
-            throw new types_1.CommandError(`Missing [chapter]\n\`${this.usage}\``);
-        }
-        //Missing page
-        if (Number.isNaN(page)) {
-            throw new types_1.CommandError(`Missing [page]\n\`${this.usage}\``);
-        }
-        const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
-        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
-        //Download file
-        await msg.channel.send({ files: [await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")] });
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_FOLDER_ID);
     },
 };
 //Viz
@@ -100,20 +128,7 @@ exports.ChapterBSVCommand = {
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
-        const chapter = Number(args[0]);
-        const page = Number(args[1]);
-        //Missing chapter
-        if (Number.isNaN(chapter)) {
-            throw new types_1.CommandError(`Missing [chapter]\n\`${this.usage}\``);
-        }
-        //Missing page
-        if (Number.isNaN(page)) {
-            throw new types_1.CommandError(`Missing [page]\n\`${this.usage}\``);
-        }
-        const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID, chapter, page);
-        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
-        //Download file
-        await msg.channel.send({ files: [await FileDownloader_1.FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")] });
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID);
     },
 };
 //Paru's Graffiti

@@ -2,6 +2,7 @@ import {MangadexWithCache} from "../ExternalApi/Mangadex";
 import {Command, CommandError, Manga} from "../types";
 import {GoogleDriveWithCache} from "../ExternalApi/GoogleDrive";
 import {FileDownloader} from "../FileDownloader";
+import {Message} from "discord.js";
 
 const nonSpoilerChannels: Set<string> = new Set(process.env.NON_SPOILER_CHANNELS.split(","));
 
@@ -68,8 +69,8 @@ export const ChapterBCCommand: Command = {
 export const ChapterBSDCommand: Command = {
     name: "bsd!",
     desc: "Send link to Beastars chapter Nº[chapter] or post page Nº(page) from chapter [chapter] (Beastars Discord translation)",
-    usage: "bs! [chapter] (page)",
-    example: "bs! 10",
+    usage: "bsd! [chapter] (page)",
+    example: "bsd! 10",
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
@@ -77,8 +78,57 @@ export const ChapterBSDCommand: Command = {
     },
 };
 
-//Raw
+//Drive
 const drive = new GoogleDriveWithCache();
+async function googleDriveChapterCommandExecute(msg: Message, args: string[], driveId: string) {
+    const chapter = Number(args[0]);
+    const page = Number(args[1]);
+
+    //Missing chapter
+    if (Number.isNaN(chapter)) {
+        throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
+    }
+
+    //Missing page
+    if (Number.isNaN(page)) {
+        throw new CommandError(`Missing [page]\n\`${this.usage}\``);
+    }
+
+    const link = await drive.getPageLink(driveId, chapter, page);
+
+    const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
+
+    //Download file
+    await msg.channel.send({files: [await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")]});
+}
+
+//Drive HCS
+export const ChapterBSGCommand: Command = {
+    name: "bsg!",
+    desc: "Post page Nº(page) from chapter (chapter) HCS translation from Google Drive",
+    usage: "bsg! (chapter) (page)",
+    example: "bsg! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_HCS_FOLDER_ID);
+    },
+};
+
+//Drive Discord
+export const ChapterBSDGCommand: Command = {
+    name: "bsdg!",
+    desc: "Post page Nº(page) from chapter (chapter) Beastars Discord translation translation from Google Drive",
+    usage: "bsdg! (chapter) (page)",
+    example: "bsdg! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_DISCORD_FOLDER_ID);
+    },
+};
+
+//Raw
 export const ChapterBSRCommand: Command = {
     name: "bsr!",
     desc: "Post page Nº(page) from chapter (chapter)",
@@ -87,25 +137,7 @@ export const ChapterBSRCommand: Command = {
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
-        const chapter = Number(args[0]);
-        const page = Number(args[1]);
-
-        //Missing chapter
-        if (Number.isNaN(chapter)) {
-            throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
-        }
-
-        //Missing page
-        if (Number.isNaN(page)) {
-            throw new CommandError(`Missing [page]\n\`${this.usage}\``);
-        }
-
-        const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_FOLDER_ID, chapter, page);
-
-        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
-
-        //Download file
-        await msg.channel.send({files: [await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")]});
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_FOLDER_ID);
     },
 };
 
@@ -118,25 +150,7 @@ export const ChapterBSVCommand: Command = {
     useDefaultPrefix: false,
     adminOnly: false,
     async execute(msg, args) {
-        const chapter = Number(args[0]);
-        const page = Number(args[1]);
-
-        //Missing chapter
-        if (Number.isNaN(chapter)) {
-            throw new CommandError(`Missing [chapter]\n\`${this.usage}\``);
-        }
-
-        //Missing page
-        if (Number.isNaN(page)) {
-            throw new CommandError(`Missing [page]\n\`${this.usage}\``);
-        }
-
-        const link = await drive.getPageLink(process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID, chapter, page);
-
-        const isSpoiler = !nonSpoilerChannels.has(msg.channel.id);
-
-        //Download file
-        await msg.channel.send({files: [await FileDownloader.Download(link, isSpoiler ? "SPOILER_" : "")]});
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID);
     },
 };
 
@@ -152,3 +166,4 @@ export const ChapterPGCommand: Command = {
         await chapterCommandExecute.call(this, msg, args, Manga.ParusGraffiti);
     },
 };
+

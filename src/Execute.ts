@@ -7,6 +7,8 @@ import {
     ChapterBCCommand,
     ChapterBSCommand,
     ChapterBSDCommand,
+    ChapterBSDGCommand,
+    ChapterBSGCommand,
     ChapterBSRCommand,
     ChapterBSVCommand, ChapterPGCommand
 } from "./Commands/ChapterCommands";
@@ -32,6 +34,8 @@ const commands = [
     ChapterBSCommand,
     ChapterBCCommand,
     ChapterBSDCommand,
+    ChapterBSGCommand,
+    ChapterBSDGCommand,
     ChapterBSVCommand,
     ChapterBSRCommand,
     ChapterPGCommand,

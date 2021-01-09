@@ -23,6 +23,8 @@ const commands = [
     ChapterCommands_1.ChapterBSCommand,
     ChapterCommands_1.ChapterBCCommand,
     ChapterCommands_1.ChapterBSDCommand,
+    ChapterCommands_1.ChapterBSGCommand,
+    ChapterCommands_1.ChapterBSDGCommand,
     ChapterCommands_1.ChapterBSVCommand,
     ChapterCommands_1.ChapterBSRCommand,
     ChapterCommands_1.ChapterPGCommand,
