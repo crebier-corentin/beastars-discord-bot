@@ -23,7 +23,12 @@ export class GoogleDrive {
 
         const files = res.data.files;
 
-        const folder = files.find(f => f.name.startsWith(`Ch. ${chapterNo.toString().padStart(3, "0")}`));
+        //Pad before '.'
+        const [int, decimal] = chapterNo.toString().split(".");
+        let chapterNoPadded = int.padStart(3, "0");
+        if(decimal != null) chapterNoPadded += `.${decimal}`;
+
+        const folder = files.find(f => f.name.startsWith(`Ch. ${chapterNoPadded}`));
 
         if (folder == undefined) {
             throw new CommandError(`Cannot find chapter N°${chapterNo}`);
