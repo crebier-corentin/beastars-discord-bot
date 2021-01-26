@@ -131,7 +131,7 @@ exports.ChapterBSVCommand = {
         await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEASTARS_VIZ_FOLDER_ID);
     },
 };
-//Beast Complex Raw
+//Beast Complex Drive
 exports.ChapterBCGCommand = {
     name: "bcg!",
     desc: "Post page Nº(page) from chapter (chapter) (Beast Complex) from Google Drive",

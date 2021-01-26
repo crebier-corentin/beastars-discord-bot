@@ -15,7 +15,12 @@ class GoogleDrive {
             }
         });
         const files = res.data.files;
-        const folder = files.find(f => f.name.startsWith(`Ch. ${chapterNo.toString().padStart(3, "0")}`));
+        //Pad before '.'
+        const [int, decimal] = chapterNo.toString().split(".");
+        const folder = files.find(f => {
+            const [, intName, decimalName] = GoogleDrive.chapterRegex.exec(f.name);
+            return Number(int) === Number(intName) && (decimal === undefined || Number(decimal) === Number(decimalName));
+        });
         if (folder == undefined) {
             throw new types_1.CommandError(`Cannot find chapter N°${chapterNo}`);
         }
@@ -35,6 +40,7 @@ class GoogleDrive {
     }
 }
 exports.GoogleDrive = GoogleDrive;
+GoogleDrive.chapterRegex = /Ch. (\d{3})(?:\.(\d+))?/;
 class GoogleDriveWithCache extends GoogleDrive {
     constructor() {
         super();

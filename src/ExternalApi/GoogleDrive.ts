@@ -11,6 +11,8 @@ interface GoogleDriveFilesListResponse {
 }
 
 export class GoogleDrive {
+    private static chapterRegex = /Ch. (\d{3})(?:\.(\d+))?/;
+    
     protected static async getChapterFolderId(driveFolderId: string, chapterNo: number): Promise<string> {
         const res = <AxiosResponse<GoogleDriveFilesListResponse>>await axios.get("https://www.googleapis.com/drive/v3/files", {
             params: {
@@ -25,10 +27,12 @@ export class GoogleDrive {
 
         //Pad before '.'
         const [int, decimal] = chapterNo.toString().split(".");
-        let chapterNoPadded = int.padStart(3, "0");
-        if(decimal != null) chapterNoPadded += `.${decimal}`;
 
-        const folder = files.find(f => f.name.startsWith(`Ch. ${chapterNoPadded}`));
+        const folder = files.find(f => {
+            const [,intName, decimalName] = GoogleDrive.chapterRegex.exec(f.name);
+
+            return Number(int) === Number(intName) && ((decimal == undefined && decimalName === undefined) || Number(decimal) === Number(decimalName));
+        });
 
         if (folder == undefined) {
             throw new CommandError(`Cannot find chapter N°${chapterNo}`);
