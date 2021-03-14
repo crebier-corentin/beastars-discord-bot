@@ -4,9 +4,10 @@ import {createConnection} from "typeorm";
 import {Context} from "./Context";
 import {executeCommand} from "./Execute";
 import Discord = require("discord.js");
+import ormconfig = require("../ormconfig.js")
 
 //Database
-createConnection().then(() => {
+createConnection(ormconfig).then(() => {
     //Client
     const client = new Discord.Client();
     Context.client = client;
@@ -28,12 +29,14 @@ createConnection().then(() => {
     client.login(process.env.TOKEN);
 });
 
-process.on("uncaughtException", function (e) {
+process.on("uncaughtException", (e) => {
     console.error(`An error has occured. error is: ${e} and stack trace is: ${e.stack}`);
     process.exit(1);
 });
-process.on("unhandledRejection", function (e) {
+process.on("unhandledRejection", (e) => {
     console.error(`An error has occured. error is: ${e}`);
     process.exit(1);
 });
+
+
 

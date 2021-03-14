@@ -21,11 +21,10 @@
     "dotenv": "^8.0.0",
     "moment": "^2.24.0",
     "node-cache": "^4.2.0",
-    "pg": "^7.11.0",
-    "pg-connection-string": "^2.1.0",
+    "pg": "^8.5.1",
     "reflect-metadata": "^0.1.13",
     "string-similarity": "^3.0.0",
-    "typeorm": "^0.2.18"
+    "typeorm": "^0.2.31"
   },
   "devDependencies": {
     "@types/chai": "^4.2.2",

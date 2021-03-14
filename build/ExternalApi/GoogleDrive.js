@@ -19,7 +19,7 @@ class GoogleDrive {
         const [int, decimal] = chapterNo.toString().split(".");
         const folder = files.find(f => {
             const [, intName, decimalName] = GoogleDrive.chapterRegex.exec(f.name);
-            return Number(int) === Number(intName) && (decimal === undefined || Number(decimal) === Number(decimalName));
+            return Number(int) === Number(intName) && ((decimal == undefined && decimalName === undefined) || Number(decimal) === Number(decimalName));
         });
         if (folder == undefined) {
             throw new types_1.CommandError(`Cannot find chapter N°${chapterNo}`);

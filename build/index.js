@@ -6,8 +6,9 @@ const typeorm_1 = require("typeorm");
 const Context_1 = require("./Context");
 const Execute_1 = require("./Execute");
 const Discord = require("discord.js");
+const ormconfig = require("../ormconfig.js");
 //Database
-typeorm_1.createConnection().then(() => {
+typeorm_1.createConnection(ormconfig).then(() => {
     //Client
     const client = new Discord.Client();
     Context_1.Context.client = client;
@@ -24,11 +25,11 @@ typeorm_1.createConnection().then(() => {
     });
     client.login(process.env.TOKEN);
 });
-process.on("uncaughtException", function (e) {
+process.on("uncaughtException", (e) => {
     console.error(`An error has occured. error is: ${e} and stack trace is: ${e.stack}`);
     process.exit(1);
 });
-process.on("unhandledRejection", function (e) {
+process.on("unhandledRejection", (e) => {
     console.error(`An error has occured. error is: ${e}`);
     process.exit(1);
 });
