@@ -206,3 +206,17 @@ export const ChapterPGCommand: Command = {
     },
 };
 
+    //Beastars Drive Discord
+export const ChapterBCDGCommand: Command = {
+    name: "bcdg!",
+    desc: "Post page Nº(page) from chapter (chapter) Beastars Discord translation from Google Drive",
+    usage: "bsdg! (chapter) (page)",
+    example: "bsdg! 1 10",
+    useDefaultPrefix: false,
+    adminOnly: false,
+    async execute(msg, args) {
+        await googleDriveChapterCommandExecute.call(this, msg, args, process.env.DRIVE_BEAST_COMPLEX_HYBRIDGUMIVE_FOLDER_ID);
+    },
+
+};
+

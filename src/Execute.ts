@@ -6,6 +6,7 @@ import {HelpCommand} from "./Commands/HelpCommand";
 import {
     ChapterBCCommand,
     ChapterBCGCommand,
+    ChapterBCDGCommand,
     ChapterBCRCommand,
     ChapterBCVCommand,
     ChapterBSCommand,
@@ -36,7 +37,7 @@ const commands = [
 
     ChapterBSCommand,
     ChapterBCCommand,
-
+    ChapterBCDGCommand,
     ChapterBSDCommand,
     ChapterBSGCommand,
     ChapterBSDGCommand,
